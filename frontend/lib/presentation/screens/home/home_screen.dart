@@ -6,6 +6,8 @@ import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../logic/notificaciones/notificacion_cubit.dart';
 import '../../../logic/notificaciones/notificacion_state.dart';
+import '../../../logic/dashboard/dashboard_cubit.dart';
+import '../../../logic/dashboard/dashboard_state.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../tickets/tickets_list_screen.dart';
@@ -14,7 +16,10 @@ import '../equipos/equipos_list_screen.dart';
 import '../equipos/equipo_form_screen.dart';
 import '../equipos/qr_scanner_screen.dart';
 import '../notificaciones/notificaciones_list_screen.dart';
+import '../usuarios/usuarios_list_screen.dart';
 import '../../widgets/notification_badge.dart';
+import '../../widgets/loading_card.dart';
+import '../../../logic/usuarios/usuario_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,14 +30,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  late final DashboardCubit _dashboardCubit;
 
   @override
   void initState() {
     super.initState();
-    // Cargar contador de notificaciones al iniciar
+    _dashboardCubit = getIt<DashboardCubit>();
+
+    // Cargar contador de notificaciones y estadísticas al iniciar
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificacionCubit>().getConteoNoLeidas();
+      _dashboardCubit.loadEstadisticas();
     });
+  }
+
+  @override
+  void dispose() {
+    _dashboardCubit.close();
+    super.dispose();
   }
 
   @override
@@ -88,7 +103,10 @@ class _HomeScreenState extends State<HomeScreen> {
           body: IndexedStack(
             index: _currentIndex,
             children: [
-              _buildDashboard(user),
+              BlocProvider.value(
+                value: _dashboardCubit,
+                child: _buildDashboard(user),
+              ),
               BlocProvider(
                 create: (context) => getIt<TicketCubit>(),
                 child: const TicketsListScreen(mode: TicketListMode.myTickets),
@@ -136,137 +154,217 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDashboard(dynamic user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Bienvenida
-          Text(
-            'Bienvenido, ${user?.nombreCompleto ?? "Usuario"}',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 24),
+    return BlocBuilder<DashboardCubit, DashboardState>(
+      builder: (context, state) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await _dashboardCubit.refresh();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Bienvenida
+                Text(
+                  'Bienvenido, ${user?.nombreCompleto ?? "Usuario"}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 24),
 
-          // Tarjetas de resumen
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  title: 'Mis Tickets',
-                  value: '0',
-                  icon: Icons.confirmation_number,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildStatCard(
-                  title: 'Pendientes',
-                  value: '0',
-                  icon: Icons.pending_actions,
-                  color: AppTheme.warningColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  title: 'Resueltos',
-                  value: '0',
-                  icon: Icons.check_circle,
-                  color: AppTheme.successColor,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildStatCard(
-                  title: 'Mis Equipos',
-                  value: '0',
-                  icon: Icons.devices,
-                  color: AppTheme.infoColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+                // Mostrar loading o stats
+                if (state is DashboardLoading) ...[
+                  const LoadingList(itemCount: 4),
+                ] else if (state is DashboardLoaded || state is DashboardRefreshing) ...[
+                  _buildStatsCards(state is DashboardLoaded
+                      ? state.stats
+                      : (state as DashboardRefreshing).previousStats),
+                ] else if (state is DashboardError) ...[
+                  Center(
+                    child: Column(
+                      children: [
+                        const Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
+                        const SizedBox(height: 16),
+                        Text('Error al cargar estadísticas',
+                            style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        Text(state.message,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => _dashboardCubit.loadEstadisticas(),
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Reintentar'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  // Estado inicial - mostrar valores por defecto
+                  _buildStatsCards(null),
+                ],
 
-          // Acciones rápidas
-          Text(
-            'Acciones Rápidas',
-            style: Theme.of(context).textTheme.titleLarge,
+                const SizedBox(height: 24),
+
+                // Acciones rápidas
+                Text(
+                  'Acciones Rápidas',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, authState) {
+                    final isAdmin = authState is Authenticated &&
+                        authState.user.rol == RolUsuario.administrador;
+
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      children: [
+                        _buildQuickActionCard(
+                          title: 'Nuevo Ticket',
+                          icon: Icons.add_circle_outline,
+                          color: AppTheme.primaryColor,
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => getIt<TicketCubit>(),
+                                  child: const TicketFormScreen(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildQuickActionCard(
+                          title: 'Escanear QR',
+                          icon: Icons.qr_code_scanner,
+                          color: AppTheme.accentColor,
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => getIt<EquipoCubit>(),
+                                  child: const QRScannerScreen(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildQuickActionCard(
+                          title: 'Mis Equipos',
+                          icon: Icons.devices,
+                          color: AppTheme.infoColor,
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => getIt<EquipoCubit>(),
+                                  child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (isAdmin)
+                          _buildQuickActionCard(
+                            title: 'Administrar Usuarios',
+                            icon: Icons.people,
+                            color: AppTheme.errorColor,
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => getIt<UsuarioCubit>(),
+                                    child: const UsuariosListScreen(),
+                                  ),
+                                ),
+                              );
+                              _dashboardCubit.refresh();
+                            },
+                          )
+                        else
+                          _buildQuickActionCard(
+                            title: 'Soporte',
+                            icon: Icons.help_outline,
+                            color: AppTheme.successColor,
+                            onTap: () {
+                              // TODO: Navegar a ayuda
+                            },
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            children: [
-              _buildQuickActionCard(
-                title: 'Nuevo Ticket',
-                icon: Icons.add_circle_outline,
+        );
+      },
+    );
+  }
+
+  Widget _buildStatsCards(dynamic stats) {
+    final misTickets = stats?.misTickets ?? 0;
+    final pendientes = stats?.ticketsPendientes ?? 0;
+    final resueltos = stats?.ticketsResueltos ?? 0;
+    final misEquipos = stats?.misEquipos ?? 0;
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                title: 'Mis Tickets',
+                value: '$misTickets',
+                icon: Icons.confirmation_number,
                 color: AppTheme.primaryColor,
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => getIt<TicketCubit>(),
-                        child: const TicketFormScreen(),
-                      ),
-                    ),
-                  );
-                },
               ),
-              _buildQuickActionCard(
-                title: 'Escanear QR',
-                icon: Icons.qr_code_scanner,
-                color: AppTheme.accentColor,
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => getIt<EquipoCubit>(),
-                        child: const QRScannerScreen(),
-                      ),
-                    ),
-                  );
-                },
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                title: 'Pendientes',
+                value: '$pendientes',
+                icon: Icons.pending_actions,
+                color: AppTheme.warningColor,
               ),
-              _buildQuickActionCard(
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                title: 'Resueltos',
+                value: '$resueltos',
+                icon: Icons.check_circle,
+                color: AppTheme.successColor,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
                 title: 'Mis Equipos',
+                value: '$misEquipos',
                 icon: Icons.devices,
                 color: AppTheme.infoColor,
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => getIt<EquipoCubit>(),
-                        child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
-                      ),
-                    ),
-                  );
-                },
               ),
-              _buildQuickActionCard(
-                title: 'Soporte',
-                icon: Icons.help_outline,
-                color: AppTheme.successColor,
-                onTap: () {
-                  // TODO: Navegar a ayuda
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
