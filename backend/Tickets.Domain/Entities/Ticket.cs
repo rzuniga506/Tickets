@@ -151,6 +151,11 @@ namespace Tickets.Domain.Entities
         public virtual ICollection<AdjuntoTicket> Adjuntos { get; set; }
 
         /// <summary>
+        /// Historial de cambios de estado del ticket
+        /// </summary>
+        public virtual ICollection<HistorialEstadoTicket> HistorialEstados { get; set; }
+
+        /// <summary>
         /// Constructor por defecto
         /// </summary>
         public Ticket()
@@ -163,6 +168,7 @@ namespace Tickets.Domain.Entities
             SLACumplido = false;
             Comentarios = new HashSet<ComentarioTicket>();
             Adjuntos = new HashSet<AdjuntoTicket>();
+            HistorialEstados = new HashSet<HistorialEstadoTicket>();
         }
     }
 }

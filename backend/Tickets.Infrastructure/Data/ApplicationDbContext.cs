@@ -34,6 +34,7 @@ namespace Tickets.Infrastructure.Data
         public DbSet<ComentarioTicket> ComentariosTicket { get; set; } = null!;
         public DbSet<AdjuntoTicket> AdjuntosTicket { get; set; } = null!;
         public DbSet<CategoriaTicket> CategoriasTicket { get; set; } = null!;
+        public DbSet<HistorialEstadoTicket> HistorialEstadosTicket { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
