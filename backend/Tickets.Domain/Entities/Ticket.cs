@@ -140,6 +140,11 @@ namespace Tickets.Domain.Entities
         public virtual ICollection<ComentarioTicket> Comentarios { get; set; }
 
         /// <summary>
+        /// Archivos adjuntos del ticket
+        /// </summary>
+        public virtual ICollection<AdjuntoTicket> Adjuntos { get; set; }
+
+        /// <summary>
         /// Constructor por defecto
         /// </summary>
         public Ticket()
@@ -151,6 +156,7 @@ namespace Tickets.Domain.Entities
             CantidadReaberturas = 0;
             SLACumplido = false;
             Comentarios = new HashSet<ComentarioTicket>();
+            Adjuntos = new HashSet<AdjuntoTicket>();
         }
     }
 }

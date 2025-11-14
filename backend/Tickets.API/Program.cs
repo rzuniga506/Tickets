@@ -86,6 +86,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 
 // Servicios de Infraestructura
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
 
 // Servicios de Aplicación
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -93,6 +94,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IComentarioTicketService, ComentarioTicketService>();
+builder.Services.AddScoped<IAdjuntoTicketService, AdjuntoTicketService>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
