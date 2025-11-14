@@ -69,7 +69,39 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     }
   }
 
+  /// Mapea el string de rol a ID de rol del backend
+  /// IDs según ApplicationDbContext.cs:
+  /// - 1: Super Admin
+  /// - 2: Administrador TI
+  /// - 3: Técnico
+  /// - 4: Usuario Final
+  int _getRolId(String rol) {
+    switch (rol.toLowerCase()) {
+      case 'administrador':
+        return 2; // Administrador TI
+      case 'tecnico':
+      case 'técnico':
+        return 3; // Técnico
+      case 'usuario':
+      default:
+        return 4; // Usuario Final
+    }
+  }
+
+  /// Separa el nombre completo en nombre y apellido
+  /// para cumplir con el DTO del backend
+  Map<String, String> _splitNombreCompleto(String nombreCompleto) {
+    final parts = nombreCompleto.trim().split(' ');
+    if (parts.isEmpty) return {'nombre': '', 'apellido': ''};
+    if (parts.length == 1) return {'nombre': parts[0], 'apellido': ''};
+
+    final nombre = parts.first;
+    final apellido = parts.sublist(1).join(' ');
+    return {'nombre': nombre, 'apellido': apellido};
+  }
+
   /// Crea un nuevo usuario
+  /// Backend espera: nombre, apellido, email, password, rolesIds (List<int>)
   Future<void> createUsuario({
     required String nombreCompleto,
     required String email,
@@ -81,11 +113,15 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     try {
       emit(UsuarioActionLoading());
 
+      final nombres = _splitNombreCompleto(nombreCompleto);
+      final rolId = _getRolId(rol);
+
       final data = {
-        'nombreCompleto': nombreCompleto,
+        'nombre': nombres['nombre'],
+        'apellido': nombres['apellido'],
         'email': email,
         'password': password,
-        'rol': rol,
+        'rolesIds': [rolId], // Backend espera array de IDs
         if (telefono != null) 'telefono': telefono,
         if (departamentoId != null) 'departamentoId': departamentoId,
       };
@@ -99,10 +135,11 @@ class UsuarioCubit extends Cubit<UsuarioState> {
   }
 
   /// Actualiza un usuario existente
+  /// Backend espera: nombre, apellido, rolesIds (List<int>)
+  /// NOTA: El email NO se puede actualizar según UsuarioUpdateDto
   Future<void> updateUsuario({
     required int id,
     required String nombreCompleto,
-    required String email,
     required String rol,
     String? telefono,
     int? departamentoId,
@@ -110,10 +147,13 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     try {
       emit(UsuarioActionLoading());
 
+      final nombres = _splitNombreCompleto(nombreCompleto);
+      final rolId = _getRolId(rol);
+
       final data = {
-        'nombreCompleto': nombreCompleto,
-        'email': email,
-        'rol': rol,
+        'nombre': nombres['nombre'],
+        'apellido': nombres['apellido'],
+        'rolesIds': [rolId], // Backend espera array de IDs
         if (telefono != null) 'telefono': telefono,
         if (departamentoId != null) 'departamentoId': departamentoId,
       };

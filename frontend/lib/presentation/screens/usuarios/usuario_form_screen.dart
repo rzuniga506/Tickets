@@ -76,7 +76,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       context.read<UsuarioCubit>().updateUsuario(
             id: widget.usuario!.id,
             nombreCompleto: _nombreController.text.trim(),
-            email: _emailController.text.trim(),
             rol: _selectedRol,
             telefono: _telefonoController.text.trim().isEmpty
                 ? null
@@ -164,11 +163,13 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                   // Email
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Email *',
                       hintText: 'ejemplo@empresa.com',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      border: const OutlineInputBorder(),
+                      helperText: _isEditing ? 'El email no se puede modificar' : null,
+                      enabled: !_isEditing,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
