@@ -7,18 +7,21 @@ import '../../data/services/equipo_service.dart';
 import '../../data/services/notificacion_service.dart';
 import '../../data/services/usuario_service.dart';
 import '../../data/services/dashboard_service.dart';
+import '../../data/services/comentario_service.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/ticket_repository.dart';
 import '../../data/repositories/equipo_repository.dart';
 import '../../data/repositories/notificacion_repository.dart';
 import '../../data/repositories/usuario_repository.dart';
 import '../../data/repositories/dashboard_repository.dart';
+import '../../data/repositories/comentario_repository.dart';
 import '../../logic/auth/auth_cubit.dart';
 import '../../logic/tickets/ticket_cubit.dart';
 import '../../logic/equipos/equipo_cubit.dart';
 import '../../logic/notificaciones/notificacion_cubit.dart';
 import '../../logic/dashboard/dashboard_cubit.dart';
 import '../../logic/usuarios/usuario_cubit.dart';
+import '../../logic/comentarios/comentario_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -37,6 +40,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton(() => NotificacionService(getIt()));
   getIt.registerLazySingleton(() => UsuarioService(getIt()));
   getIt.registerLazySingleton(() => DashboardService(getIt()));
+  getIt.registerLazySingleton(() => ComentarioService(getIt()));
 
   // Repositories
   getIt.registerLazySingleton(() => AuthRepository(getIt(), getIt()));
@@ -45,6 +49,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton(() => NotificacionRepository(getIt()));
   getIt.registerLazySingleton(() => UsuarioRepository(getIt()));
   getIt.registerLazySingleton(() => DashboardRepository(getIt()));
+  getIt.registerLazySingleton(() => ComentarioRepository(getIt()));
 
   // Cubits
   getIt.registerFactory(() => AuthCubit(getIt()));
@@ -53,4 +58,5 @@ Future<void> setupDependencies() async {
   getIt.registerFactory(() => NotificacionCubit(getIt()));
   getIt.registerFactory(() => DashboardCubit(getIt()));
   getIt.registerFactory(() => UsuarioCubit(getIt()));
+  getIt.registerFactory(() => ComentarioCubit(getIt()));
 }
