@@ -12,6 +12,7 @@ import '../../data/repositories/equipo_repository.dart';
 import '../../data/repositories/notificacion_repository.dart';
 import '../../data/repositories/usuario_repository.dart';
 import '../../logic/auth/auth_cubit.dart';
+import '../../logic/tickets/ticket_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -39,4 +40,5 @@ Future<void> setupDependencies() async {
 
   // Cubits
   getIt.registerFactory(() => AuthCubit(getIt()));
+  getIt.registerFactory(() => TicketCubit(getIt()));
 }

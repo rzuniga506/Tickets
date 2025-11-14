@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
+import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../config/theme.dart';
+import '../../../core/di/injection.dart';
+import '../tickets/tickets_list_screen.dart';
+import '../tickets/ticket_form_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
             index: _currentIndex,
             children: [
               _buildDashboard(user),
-              _buildTicketsPlaceholder(),
+              BlocProvider(
+                create: (context) => getIt<TicketCubit>(),
+                child: const TicketsListScreen(mode: TicketListMode.myTickets),
+              ),
               _buildEquiposPlaceholder(),
               _buildPerfilPlaceholder(user),
             ],
@@ -158,8 +165,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Nuevo Ticket',
                 icon: Icons.add_circle_outline,
                 color: AppTheme.primaryColor,
-                onTap: () {
-                  // TODO: Navegar a crear ticket
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => getIt<TicketCubit>(),
+                        child: const TicketFormScreen(),
+                      ),
+                    ),
+                  );
                 },
               ),
               _buildQuickActionCard(
@@ -249,20 +264,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTicketsPlaceholder() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.confirmation_number, size: 64, color: AppTheme.greyDark),
-          SizedBox(height: 16),
-          Text('Sección de Tickets'),
-          Text('En desarrollo...'),
-        ],
       ),
     );
   }
