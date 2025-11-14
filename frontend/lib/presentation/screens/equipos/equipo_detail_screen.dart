@@ -6,12 +6,11 @@ import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../logic/equipos/equipo_state.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
-import '../../../data/models/equipo_model.dart';
+import '../../../data/models/equipo/equipo_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../widgets/equipment_status_chip.dart';
 import '../../widgets/condition_badge.dart';
-import '../../widgets/tipo_equipo_badge.dart';
 import '../../widgets/qr_display_widget.dart';
 
 class EquipoDetailScreen extends StatefulWidget {
@@ -37,7 +36,8 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
     context.read<EquipoCubit>().getEquipoById(widget.equipoId);
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
@@ -135,53 +135,54 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Card con imagen/icono
+          // Header Card
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Icono grande del tipo de equipo
+                  // Icono grande
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      _getIconForTipo(equipo.tipo),
+                    child: const Icon(
+                      Icons.devices,
                       size: 64,
                       color: AppTheme.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // Marca y Modelo
+                  // Nombre
                   Text(
-                    equipo.marca,
+                    equipo.nombre,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    equipo.modelo,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
+                  if (equipo.modelo != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      equipo.modelo!,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                   const SizedBox(height: 16),
 
-                  // Tipo, Estado y Condición
+                  // Estado y Condición
                   Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      TipoEquipoBadge(tipo: equipo.tipo),
                       EquipmentStatusChip(estado: equipo.estado),
                       ConditionBadge(condicion: equipo.condicion),
                     ],
@@ -192,7 +193,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Información Técnica
+          // Información Básica
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -200,12 +201,19 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Información Técnica',
+                    'Información Básica',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   const SizedBox(height: 16),
+                  _buildInfoRow(
+                    icon: Icons.inventory_2,
+                    label: 'Código Interno',
+                    value: equipo.codigoInterno,
+                    monospace: true,
+                    copyable: true,
+                  ),
                   if (equipo.numeroSerie != null)
                     _buildInfoRow(
                       icon: Icons.tag,
@@ -214,29 +222,11 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                       monospace: true,
                       copyable: true,
                     ),
-                  if (equipo.procesador != null)
+                  if (equipo.descripcion != null)
                     _buildInfoRow(
-                      icon: Icons.memory,
-                      label: 'Procesador',
-                      value: equipo.procesador!,
-                    ),
-                  if (equipo.ram != null)
-                    _buildInfoRow(
-                      icon: Icons.storage,
-                      label: 'RAM',
-                      value: equipo.ram!,
-                    ),
-                  if (equipo.almacenamiento != null)
-                    _buildInfoRow(
-                      icon: Icons.sd_storage,
-                      label: 'Almacenamiento',
-                      value: equipo.almacenamiento!,
-                    ),
-                  if (equipo.sistemaOperativo != null)
-                    _buildInfoRow(
-                      icon: Icons.computer,
-                      label: 'Sistema Operativo',
-                      value: equipo.sistemaOperativo!,
+                      icon: Icons.description,
+                      label: 'Descripción',
+                      value: equipo.descripcion!,
                     ),
                 ],
               ),
@@ -244,53 +234,90 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Información General
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Información General',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildInfoRow(
-                    icon: Icons.location_on,
-                    label: 'Ubicación',
-                    value: equipo.ubicacion,
-                  ),
-                  _buildInfoRow(
-                    icon: Icons.event,
-                    label: 'Fecha de Adquisición',
-                    value: _formatDate(equipo.fechaAdquisicion),
-                  ),
-                  if (equipo.valorAdquisicion != null)
-                    _buildInfoRow(
-                      icon: Icons.attach_money,
-                      label: 'Valor de Adquisición',
-                      value: _formatCurrency(equipo.valorAdquisicion!),
+          // Información Financiera
+          if (equipo.costoAdquisicion != null || equipo.fechaAdquisicion != null) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Información Financiera',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
-                  if (equipo.proveedor != null && equipo.proveedor!.isNotEmpty)
+                    const SizedBox(height: 16),
+                    if (equipo.fechaAdquisicion != null)
+                      _buildInfoRow(
+                        icon: Icons.event,
+                        label: 'Fecha de Adquisición',
+                        value: _formatDate(equipo.fechaAdquisicion),
+                      ),
+                    if (equipo.costoAdquisicion != null)
+                      _buildInfoRow(
+                        icon: Icons.attach_money,
+                        label: 'Costo de Adquisición',
+                        value: _formatCurrency(equipo.costoAdquisicion!),
+                      ),
                     _buildInfoRow(
-                      icon: Icons.business,
-                      label: 'Proveedor',
-                      value: equipo.proveedor!,
+                      icon: Icons.timelapse,
+                      label: 'Vida Útil',
+                      value: '${equipo.vidaUtilMeses} meses',
                     ),
-                  if (equipo.garantiaMeses != null)
-                    _buildInfoRow(
-                      icon: Icons.verified_user,
-                      label: 'Garantía',
-                      value: '${equipo.garantiaMeses} meses',
-                    ),
-                ],
+                    if (equipo.valorResidual != null)
+                      _buildInfoRow(
+                        icon: Icons.savings,
+                        label: 'Valor Residual',
+                        value: _formatCurrency(equipo.valorResidual!),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
+          ],
+
+          // Garantía
+          if (equipo.fechaInicioGarantia != null || equipo.fechaFinGarantia != null) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Garantía',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (equipo.fechaInicioGarantia != null)
+                      _buildInfoRow(
+                        icon: Icons.event_available,
+                        label: 'Inicio de Garantía',
+                        value: _formatDate(equipo.fechaInicioGarantia),
+                      ),
+                    if (equipo.fechaFinGarantia != null)
+                      _buildInfoRow(
+                        icon: Icons.event_busy,
+                        label: 'Fin de Garantía',
+                        value: _formatDate(equipo.fechaFinGarantia),
+                      ),
+                    _buildInfoRow(
+                      icon: equipo.enGarantia ? Icons.verified_user : Icons.warning,
+                      label: 'Estado de Garantía',
+                      value: equipo.enGarantia ? 'En garantía' : 'Fuera de garantía',
+                      valueColor: equipo.enGarantia ? AppTheme.successColor : AppTheme.warningColor,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Asignación
           Card(
@@ -306,18 +333,24 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                         ),
                   ),
                   const SizedBox(height: 16),
-                  if (equipo.usuarioAsignado != null) ...[
+                  if (equipo.usuarioAsignadoNombre != null) ...[
                     _buildInfoRow(
                       icon: Icons.person,
                       label: 'Asignado a',
-                      value: equipo.usuarioAsignado!.nombreCompleto,
+                      value: equipo.usuarioAsignadoNombre!,
                       valueColor: AppTheme.primaryColor,
                     ),
                     if (equipo.fechaAsignacion != null)
                       _buildInfoRow(
                         icon: Icons.event_available,
                         label: 'Fecha de Asignación',
-                        value: _formatDate(equipo.fechaAsignacion!),
+                        value: _formatDate(equipo.fechaAsignacion),
+                      ),
+                    if (equipo.departamentoAsignadoNombre != null)
+                      _buildInfoRow(
+                        icon: Icons.business,
+                        label: 'Departamento',
+                        value: equipo.departamentoAsignadoNombre!,
                       ),
                   ] else ...[
                     Container(
@@ -382,7 +415,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                     Center(
                       child: QRDisplayWidget(
                         qrData: equipo.codigoQR!,
-                        equipoInfo: '${equipo.marca} ${equipo.modelo}',
+                        equipoInfo: '${equipo.nombre}${equipo.modelo != null ? " - ${equipo.modelo}" : ""}',
                         size: 150,
                       ),
                     ),
@@ -393,8 +426,8 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
             const SizedBox(height: 16),
           ],
 
-          // Notas (si existen)
-          if (equipo.notas != null && equipo.notas!.isNotEmpty) ...[
+          // Observaciones
+          if (equipo.observaciones != null && equipo.observaciones!.isNotEmpty) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -406,7 +439,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                         const Icon(Icons.notes, size: 20, color: AppTheme.primaryColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Notas',
+                          'Observaciones',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
@@ -416,7 +449,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      equipo.notas!,
+                      equipo.observaciones!,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -496,37 +529,9 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
     );
   }
 
-  IconData _getIconForTipo(TipoEquipo tipo) {
-    switch (tipo) {
-      case TipoEquipo.computadora:
-        return Icons.computer;
-      case TipoEquipo.laptop:
-        return Icons.laptop;
-      case TipoEquipo.monitor:
-        return Icons.monitor;
-      case TipoEquipo.impresora:
-        return Icons.print;
-      case TipoEquipo.escaner:
-        return Icons.scanner;
-      case TipoEquipo.telefono:
-        return Icons.phone;
-      case TipoEquipo.tablet:
-        return Icons.tablet;
-      case TipoEquipo.servidor:
-        return Icons.dns;
-      case TipoEquipo.router:
-        return Icons.router;
-      case TipoEquipo.switch_:
-        return Icons.device_hub;
-      case TipoEquipo.otro:
-        return Icons.devices_other;
-    }
-  }
-
   Widget _buildActionButtons(EquipoModel equipo, dynamic user) {
     final isAdmin = user.rol == RolUsuario.administrador;
     final isTecnico = user.rol == RolUsuario.tecnico;
-    final isAsignadoAMi = equipo.usuarioAsignado?.id == user.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -546,7 +551,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           ),
 
         // Asignar equipo (admin o técnico, solo si está disponible)
-        if ((isAdmin || isTecnico) && equipo.usuarioAsignado == null)
+        if ((isAdmin || isTecnico) && equipo.usuarioAsignadoId == null)
           ElevatedButton.icon(
             onPressed: () => _showAsignarDialog(equipo),
             icon: const Icon(Icons.assignment_ind),
@@ -557,7 +562,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           ),
 
         // Desasignar equipo (admin o técnico, solo si está asignado)
-        if ((isAdmin || isTecnico) && equipo.usuarioAsignado != null)
+        if ((isAdmin || isTecnico) && equipo.usuarioAsignadoId != null)
           OutlinedButton.icon(
             onPressed: () => _confirmarDesasignar(equipo),
             icon: const Icon(Icons.person_remove),
@@ -581,7 +586,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
       context: context,
       builder: (context) => QRDisplayDialog(
         qrData: qrCode,
-        equipoInfo: '${equipo.marca} ${equipo.modelo}',
+        equipoInfo: '${equipo.nombre}${equipo.modelo != null ? " - ${equipo.modelo}" : ""}',
       ),
     );
   }
@@ -611,7 +616,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Desasignar Equipo'),
         content: Text(
-          '¿Desea desasignar este equipo de ${equipo.usuarioAsignado!.nombreCompleto}?',
+          '¿Desea desasignar este equipo de ${equipo.usuarioAsignadoNombre}?',
         ),
         actions: [
           TextButton(

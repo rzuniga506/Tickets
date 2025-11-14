@@ -28,7 +28,6 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
 
-  TipoEquipo? _tipoFilter;
   EstadoEquipo? _estadoFilter;
   CondicionEquipo? _condicionFilter;
   int _currentPage = 1;
@@ -58,7 +57,6 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
         context.read<EquipoCubit>().getEquipos(
               pageNumber: _currentPage,
               pageSize: _pageSize,
-              tipo: _tipoFilter,
               estado: _estadoFilter,
               condicion: _condicionFilter,
               searchTerm: _searchController.text.isNotEmpty
@@ -67,18 +65,10 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
             );
         break;
       case EquipoListMode.myEquipos:
-        context.read<EquipoCubit>().getMisEquipos(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              tipo: _tipoFilter,
-            );
+        context.read<EquipoCubit>().getMisEquipos();
         break;
       case EquipoListMode.disponibles:
-        context.read<EquipoCubit>().getEquiposDisponibles(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              tipo: _tipoFilter,
-            );
+        context.read<EquipoCubit>().getEquiposDisponibles();
         break;
     }
   }
@@ -93,7 +83,6 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
           context.read<EquipoCubit>().getEquipos(
                 pageNumber: _currentPage,
                 pageSize: _pageSize,
-                tipo: _tipoFilter,
                 estado: _estadoFilter,
                 condicion: _condicionFilter,
                 searchTerm: _searchController.text.isNotEmpty
@@ -116,12 +105,10 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) => _FilterSheet(
-        tipoFilter: _tipoFilter,
         estadoFilter: _estadoFilter,
         condicionFilter: _condicionFilter,
-        onApply: (tipo, estado, condicion) {
+        onApply: (estado, condicion) {
           setState(() {
-            _tipoFilter = tipo;
             _estadoFilter = estado;
             _condicionFilter = condicion;
           });
@@ -129,7 +116,6 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
         },
         onClear: () {
           setState(() {
-            _tipoFilter = null;
             _estadoFilter = null;
             _condicionFilter = null;
           });
@@ -178,9 +164,7 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
             icon: Stack(
               children: [
                 const Icon(Icons.filter_list),
-                if (_tipoFilter != null ||
-                    _estadoFilter != null ||
-                    _condicionFilter != null)
+                if (_estadoFilter != null || _condicionFilter != null)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -360,14 +344,12 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
 
 /// Hoja de filtros
 class _FilterSheet extends StatefulWidget {
-  final TipoEquipo? tipoFilter;
   final EstadoEquipo? estadoFilter;
   final CondicionEquipo? condicionFilter;
-  final Function(TipoEquipo?, EstadoEquipo?, CondicionEquipo?) onApply;
+  final Function(EstadoEquipo?, CondicionEquipo?) onApply;
   final VoidCallback onClear;
 
   const _FilterSheet({
-    required this.tipoFilter,
     required this.estadoFilter,
     required this.condicionFilter,
     required this.onApply,
@@ -379,14 +361,12 @@ class _FilterSheet extends StatefulWidget {
 }
 
 class _FilterSheetState extends State<_FilterSheet> {
-  TipoEquipo? _selectedTipo;
   EstadoEquipo? _selectedEstado;
   CondicionEquipo? _selectedCondicion;
 
   @override
   void initState() {
     super.initState();
-    _selectedTipo = widget.tipoFilter;
     _selectedEstado = widget.estadoFilter;
     _selectedCondicion = widget.condicionFilter;
   }
@@ -423,30 +403,6 @@ class _FilterSheetState extends State<_FilterSheet> {
                 child: ListView(
                   controller: scrollController,
                   children: [
-                    // Filtro de tipo
-                    Text(
-                      'Tipo de Equipo',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: TipoEquipo.values.map((tipo) {
-                        final isSelected = _selectedTipo == tipo;
-                        return FilterChip(
-                          label: Text(tipo.displayName),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedTipo = selected ? tipo : null;
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 24),
-
                     // Filtro de estado
                     Text(
                       'Estado',
@@ -504,7 +460,6 @@ class _FilterSheetState extends State<_FilterSheet> {
                 child: ElevatedButton(
                   onPressed: () {
                     widget.onApply(
-                      _selectedTipo,
                       _selectedEstado,
                       _selectedCondicion,
                     );

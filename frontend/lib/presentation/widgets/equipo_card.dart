@@ -4,7 +4,6 @@ import '../../data/models/equipo_model.dart';
 import '../../config/theme.dart';
 import 'equipment_status_chip.dart';
 import 'condition_badge.dart';
-import 'tipo_equipo_badge.dart';
 
 /// Widget para mostrar un equipo en formato de tarjeta
 class EquipoCard extends StatelessWidget {
@@ -17,7 +16,8 @@ class EquipoCard extends StatelessWidget {
     required this.onTap,
   });
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
@@ -34,31 +34,33 @@ class EquipoCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: Tipo y Condición
+              // Header: Estado y Condición
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TipoEquipoBadge(tipo: equipo.tipo, compact: true),
+                  EquipmentStatusChip(estado: equipo.estado, compact: true),
                   ConditionBadge(condicion: equipo.condicion, compact: true),
                 ],
               ),
               const SizedBox(height: 12),
 
-              // Nombre/Marca y Modelo
+              // Nombre y Modelo
               Text(
-                equipo.marca,
+                equipo.nombre,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppTheme.primaryColor,
                     ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                equipo.modelo,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
+              if (equipo.modelo != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  equipo.modelo!,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
               const SizedBox(height: 8),
 
               // Número de serie
@@ -84,44 +86,29 @@ class EquipoCard extends StatelessWidget {
                 const SizedBox(height: 8),
               ],
 
-              // Estado y ubicación
+              // Código interno
               Row(
                 children: [
-                  EquipmentStatusChip(estado: equipo.estado, compact: true),
-                  const SizedBox(width: 8),
-                  if (equipo.ubicacion.isNotEmpty)
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.greyLight,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.location_on, size: 14, color: AppTheme.greyDark),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                equipo.ubicacion,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppTheme.greyDark,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  const Icon(
+                    Icons.inventory_2_outlined,
+                    size: 14,
+                    color: AppTheme.greyDark,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Código: ${equipo.codigoInterno}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.greyDark,
+                      fontFamily: 'monospace',
                     ),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
 
               // Usuario asignado o disponibilidad
-              if (equipo.usuarioAsignado != null)
+              if (equipo.usuarioAsignadoNombre != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
@@ -139,7 +126,7 @@ class EquipoCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          'Asignado a: ${equipo.usuarioAsignado!.nombreCompleto}',
+                          'Asignado a: ${equipo.usuarioAsignadoNombre!}',
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppTheme.primaryColor,
