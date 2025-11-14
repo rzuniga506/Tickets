@@ -33,6 +33,7 @@ namespace Tickets.Infrastructure.Data
         public DbSet<Ticket> Tickets { get; set; } = null!;
         public DbSet<ComentarioTicket> ComentariosTicket { get; set; } = null!;
         public DbSet<AdjuntoTicket> AdjuntosTicket { get; set; } = null!;
+        public DbSet<CategoriaTicket> CategoriasTicket { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -232,6 +233,87 @@ namespace Tickets.Infrastructure.Data
             // Asignar rol Super Admin al usuario administrador
             modelBuilder.Entity<UsuarioRol>().HasData(
                 new UsuarioRol { UsuarioId = 1, RolId = 1 }
+            );
+
+            // Seed Categorías de Tickets
+            modelBuilder.Entity<CategoriaTicket>().HasData(
+                new CategoriaTicket
+                {
+                    Id = 1,
+                    Nombre = "Hardware",
+                    Descripcion = "Problemas relacionados con equipos físicos",
+                    Color = "#EF4444",
+                    Icono = "computer",
+                    Orden = 1,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 2,
+                    Nombre = "Software",
+                    Descripcion = "Problemas con aplicaciones y sistemas operativos",
+                    Color = "#3B82F6",
+                    Icono = "apps",
+                    Orden = 2,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 3,
+                    Nombre = "Red",
+                    Descripcion = "Problemas de conectividad y red",
+                    Color = "#10B981",
+                    Icono = "wifi",
+                    Orden = 3,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 4,
+                    Nombre = "Seguridad",
+                    Descripcion = "Incidentes de seguridad informática",
+                    Color = "#F59E0B",
+                    Icono = "security",
+                    Orden = 4,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 5,
+                    Nombre = "Acceso",
+                    Descripcion = "Solicitudes de acceso a sistemas y aplicaciones",
+                    Color = "#8B5CF6",
+                    Icono = "vpn_key",
+                    Orden = 5,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 6,
+                    Nombre = "Configuración",
+                    Descripcion = "Cambios de configuración en equipos y sistemas",
+                    Color = "#6366F1",
+                    Icono = "settings",
+                    Orden = 6,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                },
+                new CategoriaTicket
+                {
+                    Id = 7,
+                    Nombre = "Otros",
+                    Descripcion = "Otros tipos de solicitudes",
+                    Color = "#6B7280",
+                    Icono = "help",
+                    Orden = 7,
+                    Activo = true,
+                    FechaCreacion = DateTime.UtcNow
+                }
             );
         }
     }

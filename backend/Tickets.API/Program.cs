@@ -95,6 +95,7 @@ builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IComentarioTicketService, ComentarioTicketService>();
 builder.Services.AddScoped<IAdjuntoTicketService, AdjuntoTicketService>();
+builder.Services.AddScoped<ICategoriaTicketService, CategoriaTicketService>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 

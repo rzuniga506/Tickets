@@ -135,6 +135,12 @@ namespace Tickets.Domain.Entities
         public virtual Equipo? Equipo { get; set; }
 
         /// <summary>
+        /// Categoría del ticket
+        /// </summary>
+        public int? CategoriaTicketId { get; set; }
+        public virtual CategoriaTicket? CategoriaTicket { get; set; }
+
+        /// <summary>
         /// Comentarios del ticket
         /// </summary>
         public virtual ICollection<ComentarioTicket> Comentarios { get; set; }
