@@ -3,10 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../logic/tickets/ticket_cubit.dart';
+import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../tickets/tickets_list_screen.dart';
 import '../tickets/ticket_form_screen.dart';
+import '../equipos/equipos_list_screen.dart';
+import '../equipos/equipo_form_screen.dart';
+import '../equipos/qr_scanner_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,7 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 create: (context) => getIt<TicketCubit>(),
                 child: const TicketsListScreen(mode: TicketListMode.myTickets),
               ),
-              _buildEquiposPlaceholder(),
+              BlocProvider(
+                create: (context) => getIt<EquipoCubit>(),
+                child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
+              ),
               _buildPerfilPlaceholder(user),
             ],
           ),
@@ -181,16 +188,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Escanear QR',
                 icon: Icons.qr_code_scanner,
                 color: AppTheme.accentColor,
-                onTap: () {
-                  // TODO: Navegar a escanear QR
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => getIt<EquipoCubit>(),
+                        child: const QRScannerScreen(),
+                      ),
+                    ),
+                  );
                 },
               ),
               _buildQuickActionCard(
                 title: 'Mis Equipos',
                 icon: Icons.devices,
                 color: AppTheme.infoColor,
-                onTap: () {
-                  // TODO: Navegar a mis equipos
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => getIt<EquipoCubit>(),
+                        child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
+                      ),
+                    ),
+                  );
                 },
               ),
               _buildQuickActionCard(
@@ -264,20 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEquiposPlaceholder() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.devices, size: 64, color: AppTheme.greyDark),
-          SizedBox(height: 16),
-          Text('Sección de Equipos'),
-          Text('En desarrollo...'),
-        ],
       ),
     );
   }
