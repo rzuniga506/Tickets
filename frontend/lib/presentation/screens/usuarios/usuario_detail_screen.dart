@@ -243,17 +243,11 @@ class _UsuarioDetailScreenState extends State<UsuarioDetailScreen> {
                 label: 'Rol',
                 value: _getRolLabel(usuario.rol),
               ),
-              if (usuario.cargo != null)
-                _buildInfoRow(
-                  icon: Icons.work_outline,
-                  label: 'Cargo',
-                  value: usuario.cargo!,
-                ),
-              if (usuario.departamento != null)
+              if (usuario.departamentoNombre != null)
                 _buildInfoRow(
                   icon: Icons.business_outlined,
                   label: 'Departamento',
-                  value: usuario.departamento!.nombre,
+                  value: usuario.departamentoNombre!,
                 ),
             ],
           ),
@@ -274,12 +268,11 @@ class _UsuarioDetailScreenState extends State<UsuarioDetailScreen> {
                 label: 'Estado',
                 value: usuario.activo ? 'Activo' : 'Inactivo',
               ),
-              if (usuario.fechaCreacion != null)
-                _buildInfoRow(
-                  icon: Icons.calendar_today_outlined,
-                  label: 'Fecha de Creación',
-                  value: _formatDate(usuario.fechaCreacion!),
-                ),
+              _buildInfoRow(
+                icon: Icons.calendar_today_outlined,
+                label: 'Fecha de Creación',
+                value: _formatDate(usuario.fechaCreacion),
+              ),
             ],
           ),
 

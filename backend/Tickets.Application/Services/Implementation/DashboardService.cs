@@ -6,7 +6,7 @@ using Tickets.Application.DTOs.Dashboard;
 using Tickets.Application.Services.Interfaces;
 using Tickets.Domain.Entities;
 using Tickets.Domain.Enums;
-using Tickets.Infrastructure.Persistence.Interfaces;
+using Tickets.Infrastructure.Repositories.Interfaces;
 
 namespace Tickets.Application.Services.Implementation
 {

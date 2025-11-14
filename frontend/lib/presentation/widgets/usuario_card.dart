@@ -97,18 +97,6 @@ class UsuarioCard extends StatelessWidget {
                   // Rol
                   RolBadge(rol: usuario.rol, showIcon: true),
 
-                  const SizedBox(width: 12),
-
-                  // Cargo
-                  if (usuario.cargo != null) ...[
-                    const Icon(Icons.work_outline, size: 14, color: AppTheme.greyDark),
-                    const SizedBox(width: 4),
-                    Text(
-                      usuario.cargo!,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-
                   const Spacer(),
 
                   // Botón de toggle activo (solo para admins)

@@ -1,3 +1,10 @@
+/// Enum para roles de usuario
+enum RolUsuario {
+  administrador,
+  tecnico,
+  usuario,
+}
+
 class UserModel {
   final int id;
   final String nombre;
@@ -11,6 +18,18 @@ class UserModel {
   final List<String> roles;
   final DateTime? ultimoAcceso;
   final DateTime fechaCreacion;
+
+  /// Obtiene el rol principal del usuario como enum
+  RolUsuario get rol {
+    if (roles.isEmpty) return RolUsuario.usuario;
+
+    final primerRol = roles.first.toLowerCase();
+    if (primerRol.contains('admin')) return RolUsuario.administrador;
+    if (primerRol.contains('técnico') || primerRol.contains('tecnico')) {
+      return RolUsuario.tecnico;
+    }
+    return RolUsuario.usuario;
+  }
 
   UserModel({
     required this.id,

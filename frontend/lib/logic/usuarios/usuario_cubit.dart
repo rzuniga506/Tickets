@@ -75,7 +75,6 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     required String email,
     required String password,
     required String rol,
-    String? cargo,
     String? telefono,
     int? departamentoId,
   }) async {
@@ -87,7 +86,6 @@ class UsuarioCubit extends Cubit<UsuarioState> {
         'email': email,
         'password': password,
         'rol': rol,
-        if (cargo != null) 'cargo': cargo,
         if (telefono != null) 'telefono': telefono,
         if (departamentoId != null) 'departamentoId': departamentoId,
       };
@@ -106,7 +104,6 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     required String nombreCompleto,
     required String email,
     required String rol,
-    String? cargo,
     String? telefono,
     int? departamentoId,
   }) async {
@@ -117,7 +114,6 @@ class UsuarioCubit extends Cubit<UsuarioState> {
         'nombreCompleto': nombreCompleto,
         'email': email,
         'rol': rol,
-        if (cargo != null) 'cargo': cargo,
         if (telefono != null) 'telefono': telefono,
         if (departamentoId != null) 'departamentoId': departamentoId,
       };

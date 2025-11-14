@@ -22,7 +22,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
   late final TextEditingController _nombreController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  late final TextEditingController _cargoController;
   late final TextEditingController _telefonoController;
   String _selectedRol = 'Usuario';
   bool _isLoading = false;
@@ -39,9 +38,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       text: widget.usuario?.email ?? '',
     );
     _passwordController = TextEditingController();
-    _cargoController = TextEditingController(
-      text: widget.usuario?.cargo ?? '',
-    );
     _telefonoController = TextEditingController(
       text: widget.usuario?.telefono ?? '',
     );
@@ -56,7 +52,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
     _nombreController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _cargoController.dispose();
     _telefonoController.dispose();
     super.dispose();
   }
@@ -83,9 +78,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
             nombreCompleto: _nombreController.text.trim(),
             email: _emailController.text.trim(),
             rol: _selectedRol,
-            cargo: _cargoController.text.trim().isEmpty
-                ? null
-                : _cargoController.text.trim(),
             telefono: _telefonoController.text.trim().isEmpty
                 ? null
                 : _telefonoController.text.trim(),
@@ -96,9 +88,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
             email: _emailController.text.trim(),
             password: _passwordController.text,
             rol: _selectedRol,
-            cargo: _cargoController.text.trim().isEmpty
-                ? null
-                : _cargoController.text.trim(),
             telefono: _telefonoController.text.trim().isEmpty
                 ? null
                 : _telefonoController.text.trim(),
@@ -255,20 +244,6 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                       }
                       return null;
                     },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Cargo
-                  TextFormField(
-                    controller: _cargoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Cargo (Opcional)',
-                      hintText: 'Ej: Gerente de TI',
-                      prefixIcon: Icon(Icons.work_outline),
-                      border: OutlineInputBorder(),
-                    ),
-                    textCapitalization: TextCapitalization.words,
                   ),
 
                   const SizedBox(height: 16),
