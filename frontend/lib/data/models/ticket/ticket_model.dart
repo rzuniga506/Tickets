@@ -132,15 +132,16 @@ class TicketModel {
   }
 
   static PrioridadTicket _parsePrioridad(int prioridad) {
-    return PrioridadTicket.values[prioridad];
+    // Backend envía valores 1-4, no 0-3
+    return PrioridadTicketExtension.fromJson(prioridad);
   }
 
   static EstadoTicket _parseEstado(int estado) {
-    return EstadoTicket.values[estado];
+    return EstadoTicketExtension.fromJson(estado);
   }
 
   static TipoSolucion _parseTipoSolucion(int tipo) {
-    return TipoSolucion.values[tipo];
+    return TipoSolucionExtension.fromJson(tipo);
   }
 
   bool get slaProximoVencer {

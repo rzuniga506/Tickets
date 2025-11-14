@@ -24,7 +24,6 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
   final _tituloController = TextEditingController();
   final _descripcionController = TextEditingController();
 
-  CategoriaTicket _categoria = CategoriaTicket.hardware;
   PrioridadTicket _prioridad = PrioridadTicket.media;
 
   bool get _isEditing => widget.ticket != null;
@@ -33,9 +32,8 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
   void initState() {
     super.initState();
     if (_isEditing) {
-      _tituloController.text = widget.ticket!.titulo;
+      _tituloController.text = widget.ticket!.asunto;
       _descripcionController.text = widget.ticket!.descripcion;
-      _categoria = widget.ticket!.categoria;
       _prioridad = widget.ticket!.prioridad;
     }
   }
@@ -52,23 +50,19 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
       if (_isEditing) {
         // Actualizar ticket existente
         context.read<TicketCubit>().updateTicket(
-              widget.ticket!.id,
-              UpdateTicketRequest(
-                titulo: _tituloController.text.trim(),
-                descripcion: _descripcionController.text.trim(),
-                categoria: _categoria,
-                prioridad: _prioridad,
-              ),
+              id: widget.ticket!.id,
+              asunto: _tituloController.text.trim(),
+              descripcion: _descripcionController.text.trim(),
+              prioridad: _prioridad,
+              equipoId: null, // TODO: Agregar selector de equipo si es necesario
             );
       } else {
         // Crear nuevo ticket
         context.read<TicketCubit>().createTicket(
-              CreateTicketRequest(
-                titulo: _tituloController.text.trim(),
-                descripcion: _descripcionController.text.trim(),
-                categoria: _categoria,
-                prioridad: _prioridad,
-              ),
+              asunto: _tituloController.text.trim(),
+              descripcion: _descripcionController.text.trim(),
+              prioridad: _prioridad,
+              equipoId: null, // TODO: Agregar selector de equipo si es necesario
             );
       }
     }

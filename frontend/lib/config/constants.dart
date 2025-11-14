@@ -54,47 +54,52 @@ class AppConstants {
   static const Duration ticketRefresh = Duration(minutes: 2);
 }
 
-/// Estados de equipos
+/// Estados de equipos (alineado con EstadoEquipo.cs del backend)
 enum EstadoEquipo {
-  disponible,
-  asignado,
-  enMantenimiento,
-  dadoDeBaja,
-  enReparacion
+  disponible,      // 0
+  enUso,           // 1 (antes era "asignado")
+  enMantenimiento, // 2
+  enReparacion,    // 3
+  dadoDeBaja,      // 4
+  perdido,         // 5
+  robado           // 6
 }
 
-/// Condiciones de equipos
+/// Condiciones de equipos (alineado con CondicionEquipo.cs del backend)
 enum CondicionEquipo {
-  nuevo,
-  bueno,
-  regular,
-  malo
+  nuevo,        // 0
+  excelente,    // 1
+  bueno,        // 2
+  regular,      // 3
+  malo,         // 4
+  noFuncional   // 5
 }
 
-/// Estados de tickets
+/// Estados de tickets (alineado con EstadoTicket.cs del backend)
 enum EstadoTicket {
-  nuevo,
-  asignado,
-  enProceso,
-  resuelto,
-  cerrado
+  nuevo,       // 0
+  asignado,    // 1
+  enProceso,   // 2
+  resuelto,    // 3
+  cerrado      // 4
 }
 
-/// Prioridades de tickets
+/// Prioridades de tickets (alineado con PrioridadTicket.cs del backend)
+/// IMPORTANTE: Backend usa valores 1-4, no 0-3
 enum PrioridadTicket {
-  baja,
-  media,
-  alta,
-  urgente,
-  critica
+  baja,     // backend: 1
+  media,    // backend: 2
+  alta,     // backend: 3
+  critica   // backend: 4
 }
 
-/// Tipos de solución
+/// Tipos de solución (alineado con TipoSolucion.cs del backend)
+/// IMPORTANTE: Clasifica el RESULTADO de la solución, no el método de atención
 enum TipoSolucion {
-  remota,
-  presencial,
-  telefonica,
-  guiada
+  resuelto,    // 0 - Problema completamente resuelto
+  workaround,  // 1 - Solución temporal
+  noResuelto,  // 2 - No se pudo resolver
+  derivado     // 3 - Derivado a otra área
 }
 
 /// Tipos de notificación
@@ -122,20 +127,33 @@ enum PrioridadNotificacion {
 }
 
 /// Extensiones para enums
+
 extension EstadoEquipoExtension on EstadoEquipo {
   String get displayName {
     switch (this) {
       case EstadoEquipo.disponible:
         return 'Disponible';
-      case EstadoEquipo.asignado:
-        return 'Asignado';
+      case EstadoEquipo.enUso:
+        return 'En Uso';
       case EstadoEquipo.enMantenimiento:
         return 'En Mantenimiento';
-      case EstadoEquipo.dadoDeBaja:
-        return 'Dado de Baja';
       case EstadoEquipo.enReparacion:
         return 'En Reparación';
+      case EstadoEquipo.dadoDeBaja:
+        return 'Dado de Baja';
+      case EstadoEquipo.perdido:
+        return 'Perdido';
+      case EstadoEquipo.robado:
+        return 'Robado';
     }
+  }
+
+  /// Convierte el enum a valor entero para el backend (0-6)
+  int toJson() => index;
+
+  /// Crea un EstadoEquipo desde valor entero del backend
+  static EstadoEquipo fromJson(int value) {
+    return EstadoEquipo.values[value];
   }
 }
 
@@ -144,13 +162,25 @@ extension CondicionEquipoExtension on CondicionEquipo {
     switch (this) {
       case CondicionEquipo.nuevo:
         return 'Nuevo';
+      case CondicionEquipo.excelente:
+        return 'Excelente';
       case CondicionEquipo.bueno:
         return 'Bueno';
       case CondicionEquipo.regular:
         return 'Regular';
       case CondicionEquipo.malo:
         return 'Malo';
+      case CondicionEquipo.noFuncional:
+        return 'No Funcional';
     }
+  }
+
+  /// Convierte el enum a valor entero para el backend (0-5)
+  int toJson() => index;
+
+  /// Crea un CondicionEquipo desde valor entero del backend
+  static CondicionEquipo fromJson(int value) {
+    return CondicionEquipo.values[value];
   }
 }
 
@@ -169,6 +199,14 @@ extension EstadoTicketExtension on EstadoTicket {
         return 'Cerrado';
     }
   }
+
+  /// Convierte el enum a valor entero para el backend (0-4)
+  int toJson() => index;
+
+  /// Crea un EstadoTicket desde valor entero del backend
+  static EstadoTicket fromJson(int value) {
+    return EstadoTicket.values[value];
+  }
 }
 
 extension PrioridadTicketExtension on PrioridadTicket {
@@ -180,10 +218,85 @@ extension PrioridadTicketExtension on PrioridadTicket {
         return 'Media';
       case PrioridadTicket.alta:
         return 'Alta';
-      case PrioridadTicket.urgente:
-        return 'Urgente';
       case PrioridadTicket.critica:
         return 'Crítica';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend (1-4, no 0-3!)
+  int toJson() => index + 1;
+
+  /// Crea un PrioridadTicket desde valor entero del backend (1-4)
+  static PrioridadTicket fromJson(int value) {
+    return PrioridadTicket.values[value - 1];
+  }
+}
+
+extension TipoSolucionExtension on TipoSolucion {
+  String get displayName {
+    switch (this) {
+      case TipoSolucion.resuelto:
+        return 'Resuelto';
+      case TipoSolucion.workaround:
+        return 'Solución Temporal';
+      case TipoSolucion.noResuelto:
+        return 'No Resuelto';
+      case TipoSolucion.derivado:
+        return 'Derivado';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend (0-3)
+  int toJson() => index;
+
+  /// Crea un TipoSolucion desde valor entero del backend
+  static TipoSolucion fromJson(int value) {
+    return TipoSolucion.values[value];
+  }
+}
+
+extension TipoNotificacionExtension on TipoNotificacion {
+  String get displayName {
+    switch (this) {
+      case TipoNotificacion.ticketNuevo:
+        return 'Ticket Nuevo';
+      case TipoNotificacion.ticketAsignado:
+        return 'Ticket Asignado';
+      case TipoNotificacion.ticketEnProceso:
+        return 'Ticket en Proceso';
+      case TipoNotificacion.ticketResuelto:
+        return 'Ticket Resuelto';
+      case TipoNotificacion.ticketCerrado:
+        return 'Ticket Cerrado';
+      case TipoNotificacion.ticketActualizado:
+        return 'Ticket Actualizado';
+      case TipoNotificacion.equipoAsignado:
+        return 'Equipo Asignado';
+      case TipoNotificacion.equipoDesasignado:
+        return 'Equipo Desasignado';
+      case TipoNotificacion.slaProximoVencer:
+        return 'SLA Próximo a Vencer';
+      case TipoNotificacion.slaCumplido:
+        return 'SLA Cumplido';
+      case TipoNotificacion.slaIncumplido:
+        return 'SLA Incumplido';
+      case TipoNotificacion.general:
+        return 'General';
+    }
+  }
+}
+
+extension PrioridadNotificacionExtension on PrioridadNotificacion {
+  String get displayName {
+    switch (this) {
+      case PrioridadNotificacion.baja:
+        return 'Baja';
+      case PrioridadNotificacion.normal:
+        return 'Normal';
+      case PrioridadNotificacion.alta:
+        return 'Alta';
+      case PrioridadNotificacion.urgente:
+        return 'Urgente';
     }
   }
 }

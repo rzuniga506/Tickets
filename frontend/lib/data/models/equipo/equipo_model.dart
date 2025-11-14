@@ -102,11 +102,11 @@ class EquipoModel {
   }
 
   static EstadoEquipo _parseEstado(int estado) {
-    return EstadoEquipo.values[estado];
+    return EstadoEquipoExtension.fromJson(estado);
   }
 
   static CondicionEquipo _parseCondicion(int condicion) {
-    return CondicionEquipo.values[condicion];
+    return CondicionEquipoExtension.fromJson(condicion);
   }
 
   bool get estaAsignado => usuarioAsignadoId != null;

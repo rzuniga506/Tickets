@@ -34,9 +34,9 @@ class TicketCubit extends Cubit<TicketState> {
       final result = await _ticketRepository.getTickets(
         pageNumber: pageNumber,
         pageSize: pageSize,
-        estado: estado,
-        prioridad: prioridad,
-        usuarioId: usuarioId,
+        estado: estado?.toJson(), // Convierte enum a int si no es null
+        prioridad: prioridad?.toJson(), // Convierte enum a int (1-4) si no es null
+        solicitanteId: usuarioId,
         tecnicoId: tecnicoId,
         searchTerm: searchTerm,
       );
@@ -72,10 +72,20 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Crear nuevo ticket
-  Future<void> createTicket(CreateTicketRequest request) async {
+  Future<void> createTicket({
+    required String asunto,
+    required String descripcion,
+    required PrioridadTicket prioridad,
+    int? equipoId,
+  }) async {
     try {
       emit(TicketActionLoading('Creando ticket...'));
-      final ticket = await _ticketRepository.createTicket(request);
+      final ticket = await _ticketRepository.createTicket(
+        asunto: asunto,
+        descripcion: descripcion,
+        prioridad: prioridad.toJson(), // Convierte enum a int (1-4)
+        equipoId: equipoId,
+      );
       emit(TicketCreated(ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -83,10 +93,22 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Actualizar ticket
-  Future<void> updateTicket(int id, UpdateTicketRequest request) async {
+  Future<void> updateTicket({
+    required int id,
+    required String asunto,
+    required String descripcion,
+    required PrioridadTicket prioridad,
+    int? equipoId,
+  }) async {
     try {
       emit(TicketActionLoading('Actualizando ticket...'));
-      final ticket = await _ticketRepository.updateTicket(id, request);
+      final ticket = await _ticketRepository.updateTicket(
+        id: id,
+        asunto: asunto,
+        descripcion: descripcion,
+        prioridad: prioridad.toJson(), // Convierte enum a int (1-4)
+        equipoId: equipoId,
+      );
       emit(TicketUpdated(ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -116,11 +138,22 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Resolver ticket
-  Future<void> resolverTicket(int ticketId, String solucion) async {
+  Future<void> resolverTicket({
+    required int ticketId,
+    required String solucion,
+    required TipoSolucion tipoSolucion,
+    int? minutosInvertidos,
+  }) async {
     try {
       emit(TicketActionLoading('Resolviendo ticket...'));
-      final ticket = await _ticketRepository.resolverTicket(ticketId, solucion);
-      emit(TicketActionSuccess('Ticket resuelto correctamente', ticket));
+      await _ticketRepository.resolverTicket(
+        ticketId: ticketId,
+        solucion: solucion,
+        tipoSolucion: tipoSolucion.toJson(), // Convierte enum a int (0-3)
+        minutosInvertidos: minutosInvertidos,
+      );
+      // Recargar el ticket para obtener estado actualizado
+      await getTicketById(ticketId);
     } catch (e) {
       emit(TicketError(e.toString()));
     }
