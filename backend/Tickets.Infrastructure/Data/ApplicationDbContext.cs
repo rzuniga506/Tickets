@@ -31,6 +31,7 @@ namespace Tickets.Infrastructure.Data
         public DbSet<Notificacion> Notificaciones { get; set; } = null!;
         public DbSet<Equipo> Equipos { get; set; } = null!;
         public DbSet<Ticket> Tickets { get; set; } = null!;
+        public DbSet<ComentarioTicket> ComentariosTicket { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

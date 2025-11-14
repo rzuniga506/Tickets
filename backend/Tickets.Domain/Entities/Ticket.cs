@@ -135,6 +135,11 @@ namespace Tickets.Domain.Entities
         public virtual Equipo? Equipo { get; set; }
 
         /// <summary>
+        /// Comentarios del ticket
+        /// </summary>
+        public virtual ICollection<ComentarioTicket> Comentarios { get; set; }
+
+        /// <summary>
         /// Constructor por defecto
         /// </summary>
         public Ticket()
@@ -145,6 +150,7 @@ namespace Tickets.Domain.Entities
             FueReabierto = false;
             CantidadReaberturas = 0;
             SLACumplido = false;
+            Comentarios = new HashSet<ComentarioTicket>();
         }
     }
 }
