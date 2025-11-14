@@ -15,11 +15,10 @@ class EquipoCubit extends Cubit<EquipoState> {
   Future<void> getEquipos({
     int pageNumber = 1,
     int pageSize = 10,
-    TipoEquipo? tipo,
     EstadoEquipo? estado,
     CondicionEquipo? condicion,
-    String? ubicacion,
     int? usuarioAsignadoId,
+    int? departamentoId,
     String? searchTerm,
     bool loadMore = false,
   }) async {
@@ -35,11 +34,10 @@ class EquipoCubit extends Cubit<EquipoState> {
       final result = await _equipoRepository.getEquipos(
         pageNumber: pageNumber,
         pageSize: pageSize,
-        tipo: tipo,
-        estado: estado,
-        condicion: condicion,
-        ubicacion: ubicacion,
+        estado: estado?.toJson(), // Convierte enum a int (0-6)
+        condicion: condicion?.toJson(), // Convierte enum a int (0-5)
         usuarioAsignadoId: usuarioAsignadoId,
+        departamentoId: departamentoId,
         searchTerm: searchTerm,
       );
 
@@ -85,10 +83,55 @@ class EquipoCubit extends Cubit<EquipoState> {
   }
 
   /// Crear nuevo equipo
-  Future<void> createEquipo(CreateEquipoRequest request) async {
+  /// Campos requeridos según EquipoCreateDto del backend
+  Future<void> createEquipo({
+    required String codigoInterno,
+    required String nombre,
+    required EstadoEquipo estado,
+    required CondicionEquipo condicion,
+    String? numeroSerie,
+    String? descripcion,
+    String? modelo,
+    String? especificacionesJson,
+    double? costoAdquisicion,
+    DateTime? fechaAdquisicion,
+    int vidaUtilMeses = 36,
+    double? valorResidual,
+    DateTime? fechaInicioGarantia,
+    DateTime? fechaFinGarantia,
+    String? observaciones,
+    int? usuarioAsignadoId,
+    int? departamentoAsignadoId,
+  }) async {
     try {
       emit(EquipoActionLoading('Creando equipo...'));
-      final equipo = await _equipoRepository.createEquipo(request);
+
+      final data = {
+        'codigoInterno': codigoInterno,
+        'nombre': nombre,
+        'estado': estado.toJson(), // Convierte enum a int (0-6)
+        'condicion': condicion.toJson(), // Convierte enum a int (0-5)
+        if (numeroSerie != null) 'numeroSerie': numeroSerie,
+        if (descripcion != null) 'descripcion': descripcion,
+        if (modelo != null) 'modelo': modelo,
+        if (especificacionesJson != null)
+          'especificacionesJson': especificacionesJson,
+        if (costoAdquisicion != null) 'costoAdquisicion': costoAdquisicion,
+        if (fechaAdquisicion != null)
+          'fechaAdquisicion': fechaAdquisicion.toIso8601String(),
+        'vidaUtilMeses': vidaUtilMeses,
+        if (valorResidual != null) 'valorResidual': valorResidual,
+        if (fechaInicioGarantia != null)
+          'fechaInicioGarantia': fechaInicioGarantia.toIso8601String(),
+        if (fechaFinGarantia != null)
+          'fechaFinGarantia': fechaFinGarantia.toIso8601String(),
+        if (observaciones != null) 'observaciones': observaciones,
+        if (usuarioAsignadoId != null) 'usuarioAsignadoId': usuarioAsignadoId,
+        if (departamentoAsignadoId != null)
+          'departamentoAsignadoId': departamentoAsignadoId,
+      };
+
+      final equipo = await _equipoRepository.createEquipo(data);
       emit(EquipoCreated(equipo));
     } catch (e) {
       emit(EquipoError(e.toString()));
@@ -96,10 +139,49 @@ class EquipoCubit extends Cubit<EquipoState> {
   }
 
   /// Actualizar equipo
-  Future<void> updateEquipo(int id, UpdateEquipoRequest request) async {
+  /// Campos según EquipoUpdateDto del backend
+  Future<void> updateEquipo({
+    required int id,
+    required String nombre,
+    required EstadoEquipo estado,
+    required CondicionEquipo condicion,
+    String? numeroSerie,
+    String? descripcion,
+    String? modelo,
+    String? especificacionesJson,
+    double? costoAdquisicion,
+    DateTime? fechaAdquisicion,
+    int? vidaUtilMeses,
+    double? valorResidual,
+    DateTime? fechaInicioGarantia,
+    DateTime? fechaFinGarantia,
+    String? observaciones,
+  }) async {
     try {
       emit(EquipoActionLoading('Actualizando equipo...'));
-      final equipo = await _equipoRepository.updateEquipo(id, request);
+
+      final data = {
+        'nombre': nombre,
+        'estado': estado.toJson(), // Convierte enum a int
+        'condicion': condicion.toJson(), // Convierte enum a int
+        if (numeroSerie != null) 'numeroSerie': numeroSerie,
+        if (descripcion != null) 'descripcion': descripcion,
+        if (modelo != null) 'modelo': modelo,
+        if (especificacionesJson != null)
+          'especificacionesJson': especificacionesJson,
+        if (costoAdquisicion != null) 'costoAdquisicion': costoAdquisicion,
+        if (fechaAdquisicion != null)
+          'fechaAdquisicion': fechaAdquisicion.toIso8601String(),
+        if (vidaUtilMeses != null) 'vidaUtilMeses': vidaUtilMeses,
+        if (valorResidual != null) 'valorResidual': valorResidual,
+        if (fechaInicioGarantia != null)
+          'fechaInicioGarantia': fechaInicioGarantia.toIso8601String(),
+        if (fechaFinGarantia != null)
+          'fechaFinGarantia': fechaFinGarantia.toIso8601String(),
+        if (observaciones != null) 'observaciones': observaciones,
+      };
+
+      final equipo = await _equipoRepository.updateEquipo(id, data);
       emit(EquipoUpdated(equipo));
     } catch (e) {
       emit(EquipoError(e.toString()));
@@ -110,8 +192,9 @@ class EquipoCubit extends Cubit<EquipoState> {
   Future<void> asignarEquipo(int equipoId, int usuarioId) async {
     try {
       emit(EquipoActionLoading('Asignando equipo...'));
-      final equipo = await _equipoRepository.asignarEquipo(equipoId, usuarioId);
-      emit(EquipoActionSuccess('Equipo asignado correctamente', equipo));
+      await _equipoRepository.asignarEquipo(equipoId, usuarioId);
+      // Recargar el equipo actualizado
+      await getEquipoById(equipoId);
     } catch (e) {
       emit(EquipoError(e.toString()));
     }
@@ -121,8 +204,9 @@ class EquipoCubit extends Cubit<EquipoState> {
   Future<void> desasignarEquipo(int equipoId) async {
     try {
       emit(EquipoActionLoading('Desasignando equipo...'));
-      final equipo = await _equipoRepository.desasignarEquipo(equipoId);
-      emit(EquipoActionSuccess('Equipo desasignado correctamente', equipo));
+      await _equipoRepository.desasignarEquipo(equipoId);
+      // Recargar el equipo actualizado
+      await getEquipoById(equipoId);
     } catch (e) {
       emit(EquipoError(e.toString()));
     }
@@ -144,17 +228,16 @@ class EquipoCubit extends Cubit<EquipoState> {
   }
 
   /// Obtener equipos disponibles (no asignados)
-  Future<void> getEquiposDisponibles({
-    int pageNumber = 1,
-    int pageSize = 10,
-    TipoEquipo? tipo,
-  }) async {
+  Future<void> getEquiposDisponibles() async {
     try {
       emit(EquipoLoading());
-      final result = await _equipoRepository.getEquiposDisponibles(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        tipo: tipo,
+      final equipos = await _equipoRepository.getEquiposDisponibles();
+      // Convertir List a PagedResult para mantener consistencia
+      final result = PagedResult<EquipoModel>(
+        items: equipos,
+        totalItems: equipos.length,
+        pageNumber: 1,
+        pageSize: equipos.length,
       );
       emit(EquiposLoaded(result));
     } catch (e) {
@@ -163,17 +246,16 @@ class EquipoCubit extends Cubit<EquipoState> {
   }
 
   /// Obtener mis equipos asignados
-  Future<void> getMisEquipos({
-    int pageNumber = 1,
-    int pageSize = 10,
-    TipoEquipo? tipo,
-  }) async {
+  Future<void> getMisEquipos() async {
     try {
       emit(EquipoLoading());
-      final result = await _equipoRepository.getMisEquipos(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        tipo: tipo,
+      final equipos = await _equipoRepository.getMisEquipos();
+      // Convertir List a PagedResult para mantener consistencia
+      final result = PagedResult<EquipoModel>(
+        items: equipos,
+        totalItems: equipos.length,
+        pageNumber: 1,
+        pageSize: equipos.length,
       );
       emit(EquiposLoaded(result));
     } catch (e) {
@@ -186,7 +268,7 @@ class EquipoCubit extends Cubit<EquipoState> {
     try {
       emit(EquipoActionLoading('Eliminando equipo...'));
       await _equipoRepository.deleteEquipo(id);
-      emit(const EquipoActionSuccess('Equipo eliminado correctamente', null as EquipoModel));
+      emit(const EquipoActionSuccess('Equipo eliminado correctamente', null));
     } catch (e) {
       emit(EquipoError(e.toString()));
     }
