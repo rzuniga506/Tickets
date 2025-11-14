@@ -4,10 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../logic/equipos/equipo_state.dart';
-import '../../../data/models/equipo_model.dart';
+import '../../../data/models/equipo/equipo_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
-import '../../widgets/tipo_equipo_badge.dart';
 import '../../widgets/condition_badge.dart';
 
 class EquipoFormScreen extends StatefulWidget {
@@ -24,23 +23,25 @@ class EquipoFormScreen extends StatefulWidget {
 
 class _EquipoFormScreenState extends State<EquipoFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _marcaController = TextEditingController();
-  final _modeloController = TextEditingController();
-  final _numeroSerieController = TextEditingController();
-  final _ubicacionController = TextEditingController();
-  final _procesadorController = TextEditingController();
-  final _ramController = TextEditingController();
-  final _almacenamientoController = TextEditingController();
-  final _sistemaOperativoController = TextEditingController();
-  final _valorAdquisicionController = TextEditingController();
-  final _proveedorController = TextEditingController();
-  final _garantiaMesesController = TextEditingController();
-  final _notasController = TextEditingController();
 
-  TipoEquipo _tipo = TipoEquipo.computadora;
+  // Campos requeridos
+  final _codigoInternoController = TextEditingController();
+  final _nombreController = TextEditingController();
+
+  // Campos opcionales
+  final _numeroSerieController = TextEditingController();
+  final _descripcionController = TextEditingController();
+  final _modeloController = TextEditingController();
+  final _costoAdquisicionController = TextEditingController();
+  final _vidaUtilMesesController = TextEditingController();
+  final _valorResidualController = TextEditingController();
+  final _observacionesController = TextEditingController();
+
   EstadoEquipo _estado = EstadoEquipo.disponible;
-  CondicionEquipo _condicion = CondicionEquipo.bueno;
-  DateTime _fechaAdquisicion = DateTime.now();
+  CondicionEquipo _condicion = CondicionEquipo.nuevo;
+  DateTime? _fechaAdquisicion;
+  DateTime? _fechaInicioGarantia;
+  DateTime? _fechaFinGarantia;
 
   bool get _isEditing => widget.equipo != null;
 
@@ -53,146 +54,120 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
   }
 
   void _initializeFromEquipo(EquipoModel equipo) {
-    _marcaController.text = equipo.marca;
-    _modeloController.text = equipo.modelo;
+    _codigoInternoController.text = equipo.codigoInterno;
+    _nombreController.text = equipo.nombre;
     _numeroSerieController.text = equipo.numeroSerie ?? '';
-    _ubicacionController.text = equipo.ubicacion;
-    _procesadorController.text = equipo.procesador ?? '';
-    _ramController.text = equipo.ram ?? '';
-    _almacenamientoController.text = equipo.almacenamiento ?? '';
-    _sistemaOperativoController.text = equipo.sistemaOperativo ?? '';
-    _valorAdquisicionController.text =
-        equipo.valorAdquisicion?.toString() ?? '';
-    _proveedorController.text = equipo.proveedor ?? '';
-    _garantiaMesesController.text = equipo.garantiaMeses?.toString() ?? '';
-    _notasController.text = equipo.notas ?? '';
+    _descripcionController.text = equipo.descripcion ?? '';
+    _modeloController.text = equipo.modelo ?? '';
+    _costoAdquisicionController.text = equipo.costoAdquisicion?.toString() ?? '';
+    _vidaUtilMesesController.text = equipo.vidaUtilMeses.toString();
+    _valorResidualController.text = equipo.valorResidual?.toString() ?? '';
+    _observacionesController.text = equipo.observaciones ?? '';
 
-    _tipo = equipo.tipo;
     _estado = equipo.estado;
     _condicion = equipo.condicion;
     _fechaAdquisicion = equipo.fechaAdquisicion;
+    _fechaInicioGarantia = equipo.fechaInicioGarantia;
+    _fechaFinGarantia = equipo.fechaFinGarantia;
   }
 
   @override
   void dispose() {
-    _marcaController.dispose();
-    _modeloController.dispose();
+    _codigoInternoController.dispose();
+    _nombreController.dispose();
     _numeroSerieController.dispose();
-    _ubicacionController.dispose();
-    _procesadorController.dispose();
-    _ramController.dispose();
-    _almacenamientoController.dispose();
-    _sistemaOperativoController.dispose();
-    _valorAdquisicionController.dispose();
-    _proveedorController.dispose();
-    _garantiaMesesController.dispose();
-    _notasController.dispose();
+    _descripcionController.dispose();
+    _modeloController.dispose();
+    _costoAdquisicionController.dispose();
+    _vidaUtilMesesController.dispose();
+    _valorResidualController.dispose();
+    _observacionesController.dispose();
     super.dispose();
   }
 
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
+      final costoAdquisicion = _costoAdquisicionController.text.trim().isNotEmpty
+          ? double.tryParse(_costoAdquisicionController.text)
+          : null;
+
+      final vidaUtilMeses = _vidaUtilMesesController.text.trim().isNotEmpty
+          ? int.tryParse(_vidaUtilMesesController.text) ?? 36
+          : 36;
+
+      final valorResidual = _valorResidualController.text.trim().isNotEmpty
+          ? double.tryParse(_valorResidualController.text)
+          : null;
+
       if (_isEditing) {
         // Actualizar equipo existente
         context.read<EquipoCubit>().updateEquipo(
-              widget.equipo!.id,
-              UpdateEquipoRequest(
-                marca: _marcaController.text.trim(),
-                modelo: _modeloController.text.trim(),
-                numeroSerie: _numeroSerieController.text.trim().isNotEmpty
-                    ? _numeroSerieController.text.trim()
-                    : null,
-                tipo: _tipo,
-                estado: _estado,
-                condicion: _condicion,
-                ubicacion: _ubicacionController.text.trim(),
-                fechaAdquisicion: _fechaAdquisicion,
-                valorAdquisicion:
-                    _valorAdquisicionController.text.trim().isNotEmpty
-                        ? double.tryParse(_valorAdquisicionController.text)
-                        : null,
-                proveedor: _proveedorController.text.trim().isNotEmpty
-                    ? _proveedorController.text.trim()
-                    : null,
-                garantiaMeses: _garantiaMesesController.text.trim().isNotEmpty
-                    ? int.tryParse(_garantiaMesesController.text)
-                    : null,
-                procesador: _procesadorController.text.trim().isNotEmpty
-                    ? _procesadorController.text.trim()
-                    : null,
-                ram: _ramController.text.trim().isNotEmpty
-                    ? _ramController.text.trim()
-                    : null,
-                almacenamiento: _almacenamientoController.text.trim().isNotEmpty
-                    ? _almacenamientoController.text.trim()
-                    : null,
-                sistemaOperativo:
-                    _sistemaOperativoController.text.trim().isNotEmpty
-                        ? _sistemaOperativoController.text.trim()
-                        : null,
-                notas: _notasController.text.trim().isNotEmpty
-                    ? _notasController.text.trim()
-                    : null,
-              ),
+              id: widget.equipo!.id,
+              nombre: _nombreController.text.trim(),
+              estado: _estado,
+              condicion: _condicion,
+              numeroSerie: _numeroSerieController.text.trim().isNotEmpty
+                  ? _numeroSerieController.text.trim()
+                  : null,
+              descripcion: _descripcionController.text.trim().isNotEmpty
+                  ? _descripcionController.text.trim()
+                  : null,
+              modelo: _modeloController.text.trim().isNotEmpty
+                  ? _modeloController.text.trim()
+                  : null,
+              costoAdquisicion: costoAdquisicion,
+              fechaAdquisicion: _fechaAdquisicion,
+              vidaUtilMeses: vidaUtilMeses,
+              valorResidual: valorResidual,
+              fechaInicioGarantia: _fechaInicioGarantia,
+              fechaFinGarantia: _fechaFinGarantia,
+              observaciones: _observacionesController.text.trim().isNotEmpty
+                  ? _observacionesController.text.trim()
+                  : null,
             );
       } else {
         // Crear nuevo equipo
         context.read<EquipoCubit>().createEquipo(
-              CreateEquipoRequest(
-                marca: _marcaController.text.trim(),
-                modelo: _modeloController.text.trim(),
-                numeroSerie: _numeroSerieController.text.trim().isNotEmpty
-                    ? _numeroSerieController.text.trim()
-                    : null,
-                tipo: _tipo,
-                estado: _estado,
-                condicion: _condicion,
-                ubicacion: _ubicacionController.text.trim(),
-                fechaAdquisicion: _fechaAdquisicion,
-                valorAdquisicion:
-                    _valorAdquisicionController.text.trim().isNotEmpty
-                        ? double.tryParse(_valorAdquisicionController.text)
-                        : null,
-                proveedor: _proveedorController.text.trim().isNotEmpty
-                    ? _proveedorController.text.trim()
-                    : null,
-                garantiaMeses: _garantiaMesesController.text.trim().isNotEmpty
-                    ? int.tryParse(_garantiaMesesController.text)
-                    : null,
-                procesador: _procesadorController.text.trim().isNotEmpty
-                    ? _procesadorController.text.trim()
-                    : null,
-                ram: _ramController.text.trim().isNotEmpty
-                    ? _ramController.text.trim()
-                    : null,
-                almacenamiento: _almacenamientoController.text.trim().isNotEmpty
-                    ? _almacenamientoController.text.trim()
-                    : null,
-                sistemaOperativo:
-                    _sistemaOperativoController.text.trim().isNotEmpty
-                        ? _sistemaOperativoController.text.trim()
-                        : null,
-                notas: _notasController.text.trim().isNotEmpty
-                    ? _notasController.text.trim()
-                    : null,
-              ),
+              codigoInterno: _codigoInternoController.text.trim(),
+              nombre: _nombreController.text.trim(),
+              estado: _estado,
+              condicion: _condicion,
+              numeroSerie: _numeroSerieController.text.trim().isNotEmpty
+                  ? _numeroSerieController.text.trim()
+                  : null,
+              descripcion: _descripcionController.text.trim().isNotEmpty
+                  ? _descripcionController.text.trim()
+                  : null,
+              modelo: _modeloController.text.trim().isNotEmpty
+                  ? _modeloController.text.trim()
+                  : null,
+              costoAdquisicion: costoAdquisicion,
+              fechaAdquisicion: _fechaAdquisicion,
+              vidaUtilMeses: vidaUtilMeses,
+              valorResidual: valorResidual,
+              fechaInicioGarantia: _fechaInicioGarantia,
+              fechaFinGarantia: _fechaFinGarantia,
+              observaciones: _observacionesController.text.trim().isNotEmpty
+                  ? _observacionesController.text.trim()
+                  : null,
             );
       }
     }
   }
 
-  Future<void> _selectFechaAdquisicion() async {
+  Future<void> _selectDate(BuildContext context, DateTime? initialDate,
+      Function(DateTime) onDateSelected) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _fechaAdquisicion,
+      initialDate: initialDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2100),
       locale: const Locale('es', 'ES'),
     );
 
     if (picked != null) {
       setState(() {
-        _fechaAdquisicion = picked;
+        onDateSelected(picked);
       });
     }
   }
@@ -243,423 +218,384 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.info_outline,
-                                color: AppTheme.primaryColor,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Información Básica',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ],
+                          Text(
+                            'Información Básica',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Código Interno (REQUERIDO)
+                          TextFormField(
+                            controller: _codigoInternoController,
+                            decoration: const InputDecoration(
+                              labelText: 'Código Interno *',
+                              hintText: 'Ej: EQ-001',
+                              prefixIcon: Icon(Icons.qr_code),
+                              border: OutlineInputBorder(),
+                            ),
+                            enabled: !_isEditing, // No se puede cambiar al editar
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'El código interno es requerido';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Nombre (REQUERIDO)
+                          TextFormField(
+                            controller: _nombreController,
+                            decoration: const InputDecoration(
+                              labelText: 'Nombre *',
+                              hintText: 'Ej: Laptop Dell Latitude 5420',
+                              prefixIcon: Icon(Icons.devices),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'El nombre es requerido';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Número de Serie
+                          TextFormField(
+                            controller: _numeroSerieController,
+                            decoration: const InputDecoration(
+                              labelText: 'Número de Serie',
+                              hintText: 'Ej: ABC123456789',
+                              prefixIcon: Icon(Icons.tag),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Modelo
+                          TextFormField(
+                            controller: _modeloController,
+                            decoration: const InputDecoration(
+                              labelText: 'Modelo',
+                              hintText: 'Ej: Latitude 5420',
+                              prefixIcon: Icon(Icons.info_outline),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Descripción
+                          TextFormField(
+                            controller: _descripcionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Descripción',
+                              hintText: 'Descripción del equipo',
+                              prefixIcon: Icon(Icons.description),
+                              border: OutlineInputBorder(),
+                            ),
+                            maxLines: 3,
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
-                  // Marca *
-                  TextFormField(
-                    controller: _marcaController,
-                    decoration: const InputDecoration(
-                      labelText: 'Marca *',
-                      hintText: 'Ej: Dell, HP, Lenovo',
-                      prefixIcon: Icon(Icons.branding_watermark),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'La marca es requerida';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Modelo *
-                  TextFormField(
-                    controller: _modeloController,
-                    decoration: const InputDecoration(
-                      labelText: 'Modelo *',
-                      hintText: 'Ej: OptiPlex 7090, ThinkPad T14',
-                      prefixIcon: Icon(Icons.computer),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'El modelo es requerido';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Número de Serie
-                  TextFormField(
-                    controller: _numeroSerieController,
-                    decoration: const InputDecoration(
-                      labelText: 'Número de Serie',
-                      hintText: 'Ej: ABC123XYZ',
-                      prefixIcon: Icon(Icons.tag),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tipo de Equipo *
-                  Text(
-                    'Tipo de Equipo *',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: TipoEquipo.values.map((tipo) {
-                      final isSelected = _tipo == tipo;
-                      return ChoiceChip(
-                        label: Text(tipo.displayName),
-                        selected: isSelected,
-                        onSelected: isLoading
-                            ? null
-                            : (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _tipo = tipo;
-                                  });
-                                }
-                              },
-                        avatar: isSelected
-                            ? const Icon(Icons.check, size: 18)
-                            : null,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Estado *
-                  Text(
-                    'Estado *',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: EstadoEquipo.values.map((estado) {
-                      final isSelected = _estado == estado;
-                      return ChoiceChip(
-                        label: Text(estado.displayName),
-                        selected: isSelected,
-                        onSelected: isLoading
-                            ? null
-                            : (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _estado = estado;
-                                  });
-                                }
-                              },
-                        avatar: isSelected
-                            ? const Icon(Icons.check, size: 18)
-                            : null,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Condición *
-                  Text(
-                    'Condición *',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: CondicionEquipo.values.map((condicion) {
-                      final isSelected = _condicion == condicion;
-                      return ChoiceChip(
-                        label: Text(condicion.displayName),
-                        selected: isSelected,
-                        onSelected: isLoading
-                            ? null
-                            : (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _condicion = condicion;
-                                  });
-                                }
-                              },
-                        avatar: isSelected
-                            ? const Icon(Icons.check, size: 18)
-                            : null,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Ubicación *
-                  TextFormField(
-                    controller: _ubicacionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ubicación *',
-                      hintText: 'Ej: Oficina 301, Almacén TI',
-                      prefixIcon: Icon(Icons.location_on),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'La ubicación es requerida';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Fecha de Adquisición *
-                  InkWell(
-                    onTap: isLoading ? null : _selectFechaAdquisicion,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Fecha de Adquisición *',
-                        prefixIcon: Icon(Icons.event),
-                        border: OutlineInputBorder(),
-                      ),
-                      child: Text(
-                        DateFormat('dd/MM/yyyy').format(_fechaAdquisicion),
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Información Técnica (Opcional)
+                  // Estado y Condición
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.memory,
-                                color: AppTheme.infoColor,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Especificaciones Técnicas (Opcional)',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ],
+                          Text(
+                            'Estado y Condición',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Estado
+                          DropdownButtonFormField<EstadoEquipo>(
+                            value: _estado,
+                            decoration: const InputDecoration(
+                              labelText: 'Estado *',
+                              prefixIcon: Icon(Icons.signal_cellular_alt),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: EstadoEquipo.values.map((estado) {
+                              return DropdownMenuItem(
+                                value: estado,
+                                child: Text(estado.displayName),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _estado = value;
+                                });
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Condición
+                          DropdownButtonFormField<CondicionEquipo>(
+                            value: _condicion,
+                            decoration: const InputDecoration(
+                              labelText: 'Condición *',
+                              prefixIcon: Icon(Icons.star_outline),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: CondicionEquipo.values.map((condicion) {
+                              return DropdownMenuItem(
+                                value: condicion,
+                                child: Text(condicion.displayName),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _condicion = value;
+                                });
+                              }
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
-                  // Procesador
-                  TextFormField(
-                    controller: _procesadorController,
-                    decoration: const InputDecoration(
-                      labelText: 'Procesador',
-                      hintText: 'Ej: Intel Core i7-11700',
-                      prefixIcon: Icon(Icons.memory),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // RAM
-                  TextFormField(
-                    controller: _ramController,
-                    decoration: const InputDecoration(
-                      labelText: 'RAM',
-                      hintText: 'Ej: 16GB DDR4',
-                      prefixIcon: Icon(Icons.storage),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Almacenamiento
-                  TextFormField(
-                    controller: _almacenamientoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Almacenamiento',
-                      hintText: 'Ej: 512GB SSD',
-                      prefixIcon: Icon(Icons.sd_storage),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Sistema Operativo
-                  TextFormField(
-                    controller: _sistemaOperativoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Sistema Operativo',
-                      hintText: 'Ej: Windows 11 Pro',
-                      prefixIcon: Icon(Icons.computer),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Información Comercial (Opcional)
+                  // Información Financiera
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.business,
-                                color: AppTheme.successColor,
-                                size: 20,
+                          Text(
+                            'Información Financiera',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Costo de Adquisición
+                          TextFormField(
+                            controller: _costoAdquisicionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Costo de Adquisición',
+                              hintText: '0.00',
+                              prefixIcon: Icon(Icons.attach_money),
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Fecha de Adquisición
+                          InkWell(
+                            onTap: () => _selectDate(
+                              context,
+                              _fechaAdquisicion,
+                              (date) => _fechaAdquisicion = date,
+                            ),
+                            child: InputDecorator(
+                              decoration: const InputDecoration(
+                                labelText: 'Fecha de Adquisición',
+                                prefixIcon: Icon(Icons.calendar_today),
+                                border: OutlineInputBorder(),
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Información Comercial (Opcional)',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                              child: Text(
+                                _fechaAdquisicion != null
+                                    ? DateFormat('dd/MM/yyyy')
+                                        .format(_fechaAdquisicion!)
+                                    : 'Seleccionar fecha',
                               ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Vida Útil en Meses
+                          TextFormField(
+                            controller: _vidaUtilMesesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Vida Útil (meses)',
+                              hintText: '36',
+                              prefixIcon: Icon(Icons.timelapse),
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Valor Residual
+                          TextFormField(
+                            controller: _valorResidualController,
+                            decoration: const InputDecoration(
+                              labelText: 'Valor Residual',
+                              hintText: '0.00',
+                              prefixIcon: Icon(Icons.savings),
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
-                  // Valor de Adquisición
-                  TextFormField(
-                    controller: _valorAdquisicionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Valor de Adquisición',
-                      hintText: 'Ej: 1500.00',
-                      prefixIcon: Icon(Icons.attach_money),
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                    ],
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
+                  // Garantía
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Información de Garantía',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
 
-                  // Proveedor
-                  TextFormField(
-                    controller: _proveedorController,
-                    decoration: const InputDecoration(
-                      labelText: 'Proveedor',
-                      hintText: 'Ej: TechStore S.A.',
-                      prefixIcon: Icon(Icons.business),
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
+                          // Fecha Inicio Garantía
+                          InkWell(
+                            onTap: () => _selectDate(
+                              context,
+                              _fechaInicioGarantia,
+                              (date) => _fechaInicioGarantia = date,
+                            ),
+                            child: InputDecorator(
+                              decoration: const InputDecoration(
+                                labelText: 'Inicio de Garantía',
+                                prefixIcon: Icon(Icons.event),
+                                border: OutlineInputBorder(),
+                              ),
+                              child: Text(
+                                _fechaInicioGarantia != null
+                                    ? DateFormat('dd/MM/yyyy')
+                                        .format(_fechaInicioGarantia!)
+                                    : 'Seleccionar fecha',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                  // Garantía (meses)
-                  TextFormField(
-                    controller: _garantiaMesesController,
-                    decoration: const InputDecoration(
-                      labelText: 'Garantía (meses)',
-                      hintText: 'Ej: 12, 24, 36',
-                      prefixIcon: Icon(Icons.verified_user),
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Notas
-                  TextFormField(
-                    controller: _notasController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notas',
-                      hintText: 'Información adicional...',
-                      prefixIcon: Icon(Icons.notes),
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                    ),
-                    maxLines: 4,
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Botones
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => Navigator.pop(context),
-                          child: const Text('Cancelar'),
-                        ),
+                          // Fecha Fin Garantía
+                          InkWell(
+                            onTap: () => _selectDate(
+                              context,
+                              _fechaFinGarantia,
+                              (date) => _fechaFinGarantia = date,
+                            ),
+                            child: InputDecorator(
+                              decoration: const InputDecoration(
+                                labelText: 'Fin de Garantía',
+                                prefixIcon: Icon(Icons.event_busy),
+                                border: OutlineInputBorder(),
+                              ),
+                              child: Text(
+                                _fechaFinGarantia != null
+                                    ? DateFormat('dd/MM/yyyy')
+                                        .format(_fechaFinGarantia!)
+                                    : 'Seleccionar fecha',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: isLoading ? null : _handleSubmit,
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
-                                  ),
-                                )
-                              : Text(_isEditing ? 'Actualizar' : 'Crear'),
-                        ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Observaciones
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Observaciones',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+
+                          TextFormField(
+                            controller: _observacionesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Observaciones',
+                              hintText: 'Notas adicionales...',
+                              prefixIcon: Icon(Icons.note),
+                              border: OutlineInputBorder(),
+                            ),
+                            maxLines: 4,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Botón de envío
+                  ElevatedButton(
+                    onPressed: isLoading ? null : _handleSubmit,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            _isEditing ? 'Actualizar Equipo' : 'Crear Equipo',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ],
               ),
