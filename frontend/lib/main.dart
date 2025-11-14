@@ -5,6 +5,7 @@ import 'config/routes.dart';
 import 'core/di/injection.dart';
 import 'logic/auth/auth_cubit.dart';
 import 'logic/auth/auth_state.dart';
+import 'logic/notificaciones/notificacion_cubit.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
 
@@ -22,8 +23,15 @@ class TicketsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<AuthCubit>()..checkAuthStatus(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<AuthCubit>()..checkAuthStatus(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<NotificacionCubit>(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Tickets TI',
         debugShowCheckedModeBanner: false,

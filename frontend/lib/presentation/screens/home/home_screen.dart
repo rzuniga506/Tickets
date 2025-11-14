@@ -4,6 +4,8 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/equipos/equipo_cubit.dart';
+import '../../../logic/notificaciones/notificacion_cubit.dart';
+import '../../../logic/notificaciones/notificacion_state.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../tickets/tickets_list_screen.dart';
@@ -11,6 +13,8 @@ import '../tickets/ticket_form_screen.dart';
 import '../equipos/equipos_list_screen.dart';
 import '../equipos/equipo_form_screen.dart';
 import '../equipos/qr_scanner_screen.dart';
+import '../notificaciones/notificaciones_list_screen.dart';
+import '../../widgets/notification_badge.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +27,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // Cargar contador de notificaciones al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NotificacionCubit>().getConteoNoLeidas();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
@@ -32,10 +45,36 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             title: const Text('Tickets TI'),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {
-                  // TODO: Navegar a notificaciones
+              BlocBuilder<NotificacionCubit, NotificacionState>(
+                builder: (context, notifState) {
+                  int conteo = 0;
+                  if (notifState is NotificacionesLoaded) {
+                    conteo = notifState.conteoNoLeidas;
+                  } else if (notifState is ConteoNoLeidasLoaded) {
+                    conteo = notifState.conteo;
+                  }
+
+                  return IconButton(
+                    icon: NotificationBadge(
+                      count: conteo,
+                      child: const Icon(Icons.notifications_outlined),
+                    ),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider.value(
+                            value: context.read<NotificacionCubit>(),
+                            child: const NotificacionesListScreen(),
+                          ),
+                        ),
+                      );
+                      // Actualizar contador al regresar
+                      if (mounted) {
+                        context.read<NotificacionCubit>().actualizarContador();
+                      }
+                    },
+                  );
                 },
               ),
               IconButton(
