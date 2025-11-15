@@ -5,10 +5,13 @@ import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/tickets/ticket_state.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
+import '../../../logic/usuarios/usuario_cubit.dart';
+import '../../../logic/usuarios/usuario_state.dart';
 import '../../../data/models/ticket_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/di/injection.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/priority_badge.dart';
 import '../../widgets/loading_card.dart';
@@ -541,7 +544,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 }
 
                 if (state is TecnicosLoaded) {
-                  final tecnicos = state.usuarios;
+                  final tecnicos = state.tecnicos;
 
                   if (tecnicos.isEmpty) {
                     return const Padding(
@@ -562,12 +565,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: tecnico.fotoPerfilUrl != null
-                              ? NetworkImage(tecnico.fotoPerfilUrl!)
-                              : null,
-                          child: tecnico.fotoPerfilUrl == null
-                              ? Text(tecnico.nombreCompleto.substring(0, 1).toUpperCase())
-                              : null,
+                          backgroundColor: AppTheme.primaryColor,
+                          child: Text(
+                            tecnico.nombreCompleto.substring(0, 1).toUpperCase(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
                         title: Text(tecnico.nombreCompleto),
                         subtitle: Text(tecnico.departamentoNombre ?? 'Sin departamento'),
@@ -577,7 +579,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         selected: isAssigned,
                         onTap: () {
                           Navigator.pop(dialogContext);
-                          context.read<TicketCubit>().asignarTicket(ticket.id, tecnico.id);
+                          context.read<TicketCubit>().asignarTecnico(ticket.id, tecnico.id);
                         },
                       );
                     },
