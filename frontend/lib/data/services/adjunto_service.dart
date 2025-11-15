@@ -90,7 +90,7 @@ class AdjuntoService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          response.data,
+          json.decode(response.body),
           (json) => json as Map<String, dynamic>,
         );
 
@@ -101,7 +101,7 @@ class AdjuntoService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          response.data,
+          json.decode(response.body),
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al subir archivo: ${response.statusCode}');
