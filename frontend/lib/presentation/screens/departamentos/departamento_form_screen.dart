@@ -62,6 +62,7 @@ class _DepartamentoFormScreenState extends State<DepartamentoFormScreen> {
         descripcion: _descripcionController.text.trim().isEmpty
             ? null
             : _descripcionController.text.trim(),
+        activo: widget.departamento!.activo,
       );
       context.read<DepartamentoCubit>().updateDepartamento(
             widget.departamento!.id,

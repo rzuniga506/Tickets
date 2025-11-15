@@ -82,6 +82,8 @@ class _CategoriaFormScreenState extends State<CategoriaFormScreen> {
             : _descripcionController.text.trim(),
         color: _selectedColor,
         icono: _selectedIcon,
+        orden: widget.categoria!.orden,
+        activo: widget.categoria!.activo,
       );
       context.read<CategoriaCubit>().updateCategoria(
             widget.categoria!.id,
@@ -183,8 +185,8 @@ class _CategoriaFormScreenState extends State<CategoriaFormScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'El nombre es requerido';
                       }
-                      if (value.trim().length > 50) {
-                        return 'El nombre no puede exceder 50 caracteres';
+                      if (value.trim().length > 100) {
+                        return 'El nombre no puede exceder 100 caracteres';
                       }
                       return null;
                     },
@@ -204,8 +206,8 @@ class _CategoriaFormScreenState extends State<CategoriaFormScreen> {
                     enabled: !_isLoading,
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
-                        if (value.trim().length > 200) {
-                          return 'La descripción no puede exceder 200 caracteres';
+                        if (value.trim().length > 500) {
+                          return 'La descripción no puede exceder 500 caracteres';
                         }
                       }
                       return null;
