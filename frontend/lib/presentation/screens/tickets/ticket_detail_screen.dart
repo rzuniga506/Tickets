@@ -646,8 +646,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               if (controller.text.isNotEmpty) {
                 Navigator.pop(context);
                 context.read<TicketCubit>().resolverTicket(
-                      ticket.id,
-                      controller.text,
+                      ticketId: ticket.id,
+                      solucion: controller.text,
+                      tipoSolucion: TipoSolucion.exitosa, // Valor por defecto
                     );
               }
             },

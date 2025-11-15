@@ -29,7 +29,7 @@ class NotificacionCubit extends Cubit<NotificacionState> {
       final result = await _notificacionRepository.getNotificaciones(
         pageNumber: pageNumber,
         pageSize: pageSize,
-        soloNoLeidas: soloNoLeidas,
+        leida: soloNoLeidas ? false : null,
       );
 
       // Obtener conteo de no leídas

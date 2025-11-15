@@ -70,7 +70,7 @@ class TicketUpdated extends TicketState {
 /// Acción de ticket ejecutada exitosamente (asignar, resolver, cerrar, etc.)
 class TicketActionSuccess extends TicketState {
   final String message;
-  final TicketModel ticket;
+  final TicketModel? ticket;
 
   const TicketActionSuccess(this.message, this.ticket);
 

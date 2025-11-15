@@ -47,7 +47,7 @@ class TicketCubit extends Cubit<TicketState> {
         final updatedItems = [...currentState.tickets.items, ...result.items];
         final updatedResult = PagedResult<TicketModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -119,7 +119,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> asignarTecnico(int ticketId, int tecnicoId) async {
     try {
       emit(TicketActionLoading('Asignando técnico...'));
-      final ticket = await _ticketRepository.asignarTecnico(ticketId, tecnicoId);
+      await _ticketRepository.asignarTecnico(ticketId, tecnicoId);
+      final ticket = await _ticketRepository.getTicketById(ticketId);
       emit(TicketActionSuccess('Técnico asignado correctamente', ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -130,7 +131,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> iniciarProceso(int ticketId) async {
     try {
       emit(TicketActionLoading('Iniciando proceso...'));
-      final ticket = await _ticketRepository.iniciarProceso(ticketId);
+      await _ticketRepository.iniciarProceso(ticketId);
+      final ticket = await _ticketRepository.getTicketById(ticketId);
       emit(TicketActionSuccess('Proceso iniciado correctamente', ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -163,7 +165,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> cerrarTicket(int ticketId) async {
     try {
       emit(TicketActionLoading('Cerrando ticket...'));
-      final ticket = await _ticketRepository.cerrarTicket(ticketId);
+      await _ticketRepository.cerrarTicket(ticketId);
+      final ticket = await _ticketRepository.getTicketById(ticketId);
       emit(TicketActionSuccess('Ticket cerrado correctamente', ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -174,7 +177,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> reabrirTicket(int ticketId, String motivo) async {
     try {
       emit(TicketActionLoading('Reabriendo ticket...'));
-      final ticket = await _ticketRepository.reabrirTicket(ticketId, motivo);
+      await _ticketRepository.reabrirTicket(ticketId, motivo);
+      final ticket = await _ticketRepository.getTicketById(ticketId);
       emit(TicketActionSuccess('Ticket reabierto correctamente', ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -189,11 +193,12 @@ class TicketCubit extends Cubit<TicketState> {
   ) async {
     try {
       emit(TicketActionLoading('Evaluando ticket...'));
-      final ticket = await _ticketRepository.evaluarTicket(
-        ticketId,
-        calificacion,
-        comentario,
+      await _ticketRepository.evaluarTicket(
+        ticketId: ticketId,
+        calificacion: calificacion,
+        comentario: comentario,
       );
+      final ticket = await _ticketRepository.getTicketById(ticketId);
       emit(TicketActionSuccess('Ticket evaluado correctamente', ticket));
     } catch (e) {
       emit(TicketError(e.toString()));
@@ -201,17 +206,16 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Obtener mis tickets (tickets creados por el usuario actual)
-  Future<void> getMisTickets({
-    int pageNumber = 1,
-    int pageSize = 10,
-    EstadoTicket? estado,
-  }) async {
+  Future<void> getMisTickets() async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getMisTickets(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        estado: estado,
+      final tickets = await _ticketRepository.getMisTickets();
+      // Convertir List a PagedResult para mantener consistencia
+      final result = PagedResult<TicketModel>(
+        items: tickets,
+        totalRecords: tickets.length,
+        pageNumber: 1,
+        pageSize: tickets.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -220,17 +224,16 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Obtener tickets asignados al técnico actual
-  Future<void> getTicketsAsignados({
-    int pageNumber = 1,
-    int pageSize = 10,
-    EstadoTicket? estado,
-  }) async {
+  Future<void> getTicketsAsignados() async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getTicketsAsignados(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        estado: estado,
+      final tickets = await _ticketRepository.getTicketsAsignados();
+      // Convertir List a PagedResult para mantener consistencia
+      final result = PagedResult<TicketModel>(
+        items: tickets,
+        totalRecords: tickets.length,
+        pageNumber: 1,
+        pageSize: tickets.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -239,15 +242,16 @@ class TicketCubit extends Cubit<TicketState> {
   }
 
   /// Obtener tickets pendientes
-  Future<void> getTicketsPendientes({
-    int pageNumber = 1,
-    int pageSize = 10,
-  }) async {
+  Future<void> getTicketsPendientes() async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getTicketsPendientes(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
+      final tickets = await _ticketRepository.getTicketsPendientes();
+      // Convertir List a PagedResult para mantener consistencia
+      final result = PagedResult<TicketModel>(
+        items: tickets,
+        totalRecords: tickets.length,
+        pageNumber: 1,
+        pageSize: tickets.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -260,7 +264,7 @@ class TicketCubit extends Cubit<TicketState> {
     try {
       emit(TicketActionLoading('Eliminando ticket...'));
       await _ticketRepository.deleteTicket(id);
-      emit(const TicketActionSuccess('Ticket eliminado correctamente', null as TicketModel));
+      emit(const TicketActionSuccess('Ticket eliminado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }

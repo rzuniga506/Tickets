@@ -197,39 +197,6 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Categoría
-                  Text(
-                    'Categoría *',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: CategoriaTicket.values.map((categoria) {
-                      final isSelected = _categoria == categoria;
-                      return ChoiceChip(
-                        label: Text(categoria.displayName),
-                        selected: isSelected,
-                        onSelected: isLoading
-                            ? null
-                            : (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _categoria = categoria;
-                                  });
-                                }
-                              },
-                        avatar: isSelected
-                            ? const Icon(Icons.check, size: 18)
-                            : null,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-
                   // Prioridad
                   Text(
                     'Prioridad *',
