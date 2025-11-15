@@ -156,6 +156,11 @@ namespace Tickets.Domain.Entities
         public virtual ICollection<HistorialEstadoTicket> HistorialEstados { get; set; }
 
         /// <summary>
+        /// Historial de asignaciones del ticket
+        /// </summary>
+        public virtual ICollection<AsignacionTicket> Asignaciones { get; set; }
+
+        /// <summary>
         /// Constructor por defecto
         /// </summary>
         public Ticket()
@@ -169,6 +174,7 @@ namespace Tickets.Domain.Entities
             Comentarios = new HashSet<ComentarioTicket>();
             Adjuntos = new HashSet<AdjuntoTicket>();
             HistorialEstados = new HashSet<HistorialEstadoTicket>();
+            Asignaciones = new HashSet<AsignacionTicket>();
         }
     }
 }
