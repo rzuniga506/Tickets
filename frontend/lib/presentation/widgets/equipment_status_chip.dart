@@ -17,6 +17,7 @@ class EquipmentStatusChip extends StatelessWidget {
     switch (estado) {
       case EstadoEquipo.disponible:
         return AppTheme.successColor;
+      case EstadoEquipo.asignado:
       case EstadoEquipo.enUso:
         return AppTheme.primaryColor;
       case EstadoEquipo.enMantenimiento:
@@ -36,6 +37,7 @@ class EquipmentStatusChip extends StatelessWidget {
     switch (estado) {
       case EstadoEquipo.disponible:
         return Icons.check_circle;
+      case EstadoEquipo.asignado:
       case EstadoEquipo.enUso:
         return Icons.assignment_ind;
       case EstadoEquipo.enMantenimiento:

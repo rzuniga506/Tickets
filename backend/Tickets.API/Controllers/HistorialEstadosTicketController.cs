@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Tickets.API.Models;
+using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.HistorialEstadoTicket;
 using Tickets.Application.Services.Interfaces;
 
@@ -74,7 +74,7 @@ public class HistorialEstadosTicketController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(ApiResponse<HistorialEstadoTicketDto>.ErrorResponse(
-                    "Datos inválidos", ModelState));
+                    "Datos inválidos", null, ModelState));
             }
 
             var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

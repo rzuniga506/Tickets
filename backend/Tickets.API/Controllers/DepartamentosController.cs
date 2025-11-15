@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Tickets.API.Models;
+using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.Departamento;
 using Tickets.Application.Services.Interfaces;
 
@@ -92,7 +92,7 @@ public class DepartamentosController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(ApiResponse<DepartamentoDto>.ErrorResponse(
-                    "Datos inválidos", ModelState));
+                    "Datos inválidos", null, ModelState));
             }
 
             var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -127,7 +127,7 @@ public class DepartamentosController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(ApiResponse<DepartamentoDto>.ErrorResponse(
-                    "Datos inválidos", ModelState));
+                    "Datos inválidos", null, ModelState));
             }
 
             var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

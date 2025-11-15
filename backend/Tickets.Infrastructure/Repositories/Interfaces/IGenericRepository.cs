@@ -24,6 +24,14 @@ namespace Tickets.Infrastructure.Repositories.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
 
         /// <summary>
+        /// Obtiene todas las entidades con filtro opcional y ordenamiento
+        /// </summary>
+        Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            string includeProperties = "");
+
+        /// <summary>
         /// Busca entidades que cumplan con un predicado
         /// </summary>
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
@@ -54,6 +62,11 @@ namespace Tickets.Infrastructure.Repositories.Interfaces
         void Add(T entity);
 
         /// <summary>
+        /// Agrega una nueva entidad de forma asíncrona
+        /// </summary>
+        Task<T> AddAsync(T entity);
+
+        /// <summary>
         /// Agrega múltiples entidades
         /// </summary>
         void AddRange(IEnumerable<T> entities);
@@ -72,6 +85,11 @@ namespace Tickets.Infrastructure.Repositories.Interfaces
         /// Elimina una entidad (soft delete)
         /// </summary>
         void Remove(T entity);
+
+        /// <summary>
+        /// Alias de Remove para compatibilidad
+        /// </summary>
+        void Delete(T entity);
 
         /// <summary>
         /// Elimina múltiples entidades (soft delete)

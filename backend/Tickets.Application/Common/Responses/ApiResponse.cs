@@ -93,6 +93,15 @@ namespace Tickets.Application.Common.Responses
         public int Page { get; set; }
 
         /// <summary>
+        /// Alias para Page (compatibilidad)
+        /// </summary>
+        public int PageNumber
+        {
+            get => Page;
+            set => Page = value;
+        }
+
+        /// <summary>
         /// Tamaño de página
         /// </summary>
         public int PageSize { get; set; }
@@ -101,6 +110,15 @@ namespace Tickets.Application.Common.Responses
         /// Total de elementos
         /// </summary>
         public int TotalItems { get; set; }
+
+        /// <summary>
+        /// Alias para TotalItems (compatibilidad)
+        /// </summary>
+        public int TotalRecords
+        {
+            get => TotalItems;
+            set => TotalItems = value;
+        }
 
         /// <summary>
         /// Total de páginas

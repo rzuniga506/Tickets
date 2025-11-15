@@ -46,6 +46,11 @@ namespace Tickets.Domain.Entities
         public string? EspecificacionesJson { get; set; }
 
         /// <summary>
+        /// Tipo de equipo
+        /// </summary>
+        public TipoEquipo Tipo { get; set; }
+
+        /// <summary>
         /// Estado actual del equipo
         /// </summary>
         public EstadoEquipo Estado { get; set; }

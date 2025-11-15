@@ -11,7 +11,12 @@ namespace Tickets.Domain.Enums
         Disponible = 0,
 
         /// <summary>
-        /// Equipo actualmente en uso
+        /// Equipo asignado a un usuario
+        /// </summary>
+        Asignado = 1,
+
+        /// <summary>
+        /// Equipo actualmente en uso (alias de Asignado)
         /// </summary>
         EnUso = 1,
 
@@ -90,5 +95,26 @@ namespace Tickets.Domain.Enums
         Componentes = 5,
         MovilesTablets = 6,
         Otros = 7
+    }
+
+    /// <summary>
+    /// Alias de CategoriaEquipo para compatibilidad
+    /// </summary>
+    public enum TipoEquipo
+    {
+        Computadora = 0,
+        Laptop = 1,
+        Servidor = 2,
+        Impresora = 3,
+        Scanner = 4,
+        Router = 5,
+        Switch = 6,
+        Firewall = 7,
+        Monitor = 8,
+        Teclado = 9,
+        Mouse = 10,
+        Telefono = 11,
+        Tablet = 12,
+        Otro = 99
     }
 }

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter --version:*)",
+      "Bash(dotnet:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter analyze:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

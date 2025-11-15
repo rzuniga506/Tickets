@@ -141,6 +141,16 @@ namespace Tickets.Domain.Entities
         public virtual CategoriaTicket? CategoriaTicket { get; set; }
 
         /// <summary>
+        /// Alias para CategoriaTicket (compatibilidad)
+        /// </summary>
+        public virtual CategoriaTicket? Categoria => CategoriaTicket;
+
+        /// <summary>
+        /// Alias para CalificacionServicio (compatibilidad)
+        /// </summary>
+        public int? Calificacion => CalificacionServicio;
+
+        /// <summary>
         /// Comentarios del ticket
         /// </summary>
         public virtual ICollection<ComentarioTicket> Comentarios { get; set; }

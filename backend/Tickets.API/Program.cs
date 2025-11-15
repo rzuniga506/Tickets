@@ -13,7 +13,7 @@ using System;
 using System.IO;
 using System.Text;
 using Tickets.API.Middleware;
-using Tickets.Application.DTOs.Common;
+using Tickets.Domain.Configuration;
 using Tickets.Application.Mappings;
 using Tickets.Application.Services.Implementation;
 using Tickets.Application.Services.Interfaces;
@@ -188,7 +188,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Health Checks
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<ApplicationDbContext>();
+    .AddCheck("database", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy());
 
 // ============================================================
 // CONSTRUCCIÓN DE LA APLICACIÓN

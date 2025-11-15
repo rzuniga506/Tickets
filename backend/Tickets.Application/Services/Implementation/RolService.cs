@@ -42,7 +42,7 @@ public class RolService : IRolService
             Nombre = dto.Nombre,
             Descripcion = dto.Descripcion,
             EsSistema = false,
-            CreadoPor = usuarioId
+            CreadoPor = usuarioId.ToString()
         };
 
         await _unitOfWork.Repository<Rol>().AddAsync(rol);
@@ -76,7 +76,7 @@ public class RolService : IRolService
 
         rol.Nombre = dto.Nombre;
         rol.Descripcion = dto.Descripcion;
-        rol.ModificadoPor = usuarioId;
+        rol.ModificadoPor = usuarioId.ToString();
 
         _unitOfWork.Repository<Rol>().Update(rol);
 

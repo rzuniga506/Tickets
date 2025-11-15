@@ -1,9 +1,11 @@
+using Tickets.Domain.Common;
+
 namespace Tickets.Domain.Entities
 {
     /// <summary>
     /// Tabla intermedia Many-to-Many entre Rol y Permiso
     /// </summary>
-    public class RolPermiso
+    public class RolPermiso : BaseEntity
     {
         /// <summary>
         /// ID del rol

@@ -88,7 +88,7 @@ public class DepartamentoService : IDepartamentoService
             Descripcion = dto.Descripcion,
             Codigo = dto.Codigo,
             Activo = dto.Activo,
-            CreadoPor = usuarioId
+            CreadoPor = usuarioId.ToString()
         };
 
         await _unitOfWork.Repository<Departamento>().AddAsync(departamento);
@@ -131,7 +131,7 @@ public class DepartamentoService : IDepartamentoService
         departamento.Descripcion = dto.Descripcion;
         departamento.Codigo = dto.Codigo;
         departamento.Activo = dto.Activo;
-        departamento.ModificadoPor = usuarioId;
+        departamento.ModificadoPor = usuarioId.ToString();
 
         _unitOfWork.Repository<Departamento>().Update(departamento);
         await _unitOfWork.SaveChangesAsync();
@@ -161,7 +161,7 @@ public class DepartamentoService : IDepartamentoService
 
         // Verificar si hay equipos asociados
         var equiposCount = await _unitOfWork.Repository<Equipo>()
-            .CountAsync(e => e.DepartamentoId == id);
+            .CountAsync(e => e.DepartamentoAsignadoId == id);
 
         if (equiposCount > 0)
         {
@@ -184,7 +184,7 @@ public class DepartamentoService : IDepartamentoService
         }
 
         departamento.Activo = !departamento.Activo;
-        departamento.ModificadoPor = usuarioId;
+        departamento.ModificadoPor = usuarioId.ToString();
 
         _unitOfWork.Repository<Departamento>().Update(departamento);
         await _unitOfWork.SaveChangesAsync();
@@ -205,7 +205,7 @@ public class DepartamentoService : IDepartamentoService
             .CountAsync(u => u.DepartamentoId == id);
 
         var equiposCount = await _unitOfWork.Repository<Equipo>()
-            .CountAsync(e => e.DepartamentoId == id);
+            .CountAsync(e => e.DepartamentoAsignadoId == id);
 
         var ticketsCount = await _unitOfWork.Repository<Ticket>()
             .CountAsync(t => t.Solicitante.DepartamentoId == id);

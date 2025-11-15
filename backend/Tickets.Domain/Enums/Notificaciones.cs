@@ -8,15 +8,17 @@ namespace Tickets.Domain.Enums
         Sistema = 0,
         TicketNuevo = 1,
         TicketAsignado = 2,
-        TicketActualizado = 3,
-        TicketResuelto = 4,
-        TicketComentario = 5,
-        EquipoAsignado = 6,
-        EquipoLiberado = 7,
-        SoftwarePorVencer = 8,
-        GarantiaPorVencer = 9,
-        AlertaSLA = 10,
-        Otro = 11
+        TicketEnProceso = 3,
+        TicketActualizado = 4,
+        TicketResuelto = 5,
+        TicketComentario = 6,
+        EquipoAsignado = 7,
+        EquipoLiberado = 8,
+        SoftwarePorVencer = 9,
+        GarantiaPorVencer = 10,
+        AlertaSLA = 11,
+        SLAProximoVencer = 12,
+        Otro = 99
     }
 
     /// <summary>

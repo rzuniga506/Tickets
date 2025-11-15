@@ -1,3 +1,4 @@
+using Tickets.Domain.Common;
 using Tickets.Domain.Enums;
 
 namespace Tickets.Domain.Entities;

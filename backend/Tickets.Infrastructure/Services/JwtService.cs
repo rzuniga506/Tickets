@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Tickets.Application.DTOs.Common;
+using Tickets.Domain.Configuration;
 using Tickets.Domain.Entities;
 
 namespace Tickets.Infrastructure.Services

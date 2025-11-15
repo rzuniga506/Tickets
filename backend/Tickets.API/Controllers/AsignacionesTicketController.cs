@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Tickets.API.Models;
+using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.AsignacionTicket;
 using Tickets.Application.Services.Interfaces;
 
@@ -74,7 +74,7 @@ public class AsignacionesTicketController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(ApiResponse<AsignacionTicketDto>.ErrorResponse(
-                    "Datos inválidos", ModelState));
+                    "Datos inválidos", null, ModelState));
             }
 
             var asignadoPorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

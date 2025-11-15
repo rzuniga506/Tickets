@@ -71,7 +71,7 @@ public class CategoriaTicketService : ICategoriaTicketService
             Icono = dto.Icono,
             Orden = dto.Orden,
             Activo = dto.Activo,
-            CreadoPor = usuarioId
+            CreadoPor = usuarioId.ToString()
         };
 
         await _unitOfWork.Repository<CategoriaTicket>().AddAsync(categoria);
@@ -104,7 +104,7 @@ public class CategoriaTicketService : ICategoriaTicketService
         categoria.Icono = dto.Icono;
         categoria.Orden = dto.Orden;
         categoria.Activo = dto.Activo;
-        categoria.ModificadoPor = usuarioId;
+        categoria.ModificadoPor = usuarioId.ToString();
 
         _unitOfWork.Repository<CategoriaTicket>().Update(categoria);
         await _unitOfWork.SaveChangesAsync();
@@ -146,7 +146,7 @@ public class CategoriaTicketService : ICategoriaTicketService
         }
 
         categoria.Activo = !categoria.Activo;
-        categoria.ModificadoPor = usuarioId;
+        categoria.ModificadoPor = usuarioId.ToString();
 
         _unitOfWork.Repository<CategoriaTicket>().Update(categoria);
         await _unitOfWork.SaveChangesAsync();
@@ -163,7 +163,7 @@ public class CategoriaTicketService : ICategoriaTicketService
             if (categoria != null)
             {
                 categoria.Orden = kvp.Value;
-                categoria.ModificadoPor = usuarioId;
+                categoria.ModificadoPor = usuarioId.ToString();
                 _unitOfWork.Repository<CategoriaTicket>().Update(categoria);
             }
         }

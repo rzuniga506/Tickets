@@ -21,10 +21,14 @@ class StatusChip extends StatelessWidget {
         return AppTheme.primaryColor;
       case EstadoTicket.enProceso:
         return AppTheme.warningColor;
+      case EstadoTicket.enEspera:
+        return AppTheme.warningColor;
       case EstadoTicket.resuelto:
         return AppTheme.successColor;
       case EstadoTicket.cerrado:
         return AppTheme.greyDark;
+      case EstadoTicket.cancelado:
+        return AppTheme.errorColor;
       case EstadoTicket.reabierto:
         return AppTheme.errorColor;
     }
@@ -38,10 +42,14 @@ class StatusChip extends StatelessWidget {
         return Icons.assignment_ind;
       case EstadoTicket.enProceso:
         return Icons.pending_actions;
+      case EstadoTicket.enEspera:
+        return Icons.pause_circle;
       case EstadoTicket.resuelto:
         return Icons.check_circle;
       case EstadoTicket.cerrado:
         return Icons.done_all;
+      case EstadoTicket.cancelado:
+        return Icons.cancel;
       case EstadoTicket.reabierto:
         return Icons.refresh;
     }

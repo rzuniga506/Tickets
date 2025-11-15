@@ -90,7 +90,7 @@ public class AsignacionTicketService : IAsignacionTicketService
             EsAsignacionAutomatica = dto.EsAsignacionAutomatica,
             MinutosConTecnicoAnterior = dto.MinutosConTecnicoAnterior,
             AsignadoPorId = asignadoPorId,
-            CreadoPor = asignadoPorId
+            CreadoPor = asignadoPorId.ToString()
         };
 
         await _unitOfWork.Repository<AsignacionTicket>().AddAsync(asignacion);

@@ -389,8 +389,7 @@ namespace Tickets.Application.Services.Implementation
                 PrioridadTicket.Baja => PrioridadNotificacion.Baja,
                 PrioridadTicket.Media => PrioridadNotificacion.Normal,
                 PrioridadTicket.Alta => PrioridadNotificacion.Alta,
-                PrioridadTicket.Urgente => PrioridadNotificacion.Urgente,
-                PrioridadTicket.Critica => PrioridadNotificacion.Urgente,
+                PrioridadTicket.Critica or PrioridadTicket.Urgente => PrioridadNotificacion.Urgente,
                 _ => PrioridadNotificacion.Normal
             };
         }

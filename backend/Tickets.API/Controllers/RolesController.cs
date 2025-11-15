@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Tickets.API.Models;
+using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.Rol;
 using Tickets.Application.Services.Interfaces;
 

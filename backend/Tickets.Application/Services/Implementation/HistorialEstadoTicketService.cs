@@ -71,7 +71,7 @@ public class HistorialEstadoTicketService : IHistorialEstadoTicketService
             Comentario = dto.Comentario,
             MinutosEnEstadoAnterior = dto.MinutosEnEstadoAnterior,
             UsuarioId = usuarioId,
-            CreadoPor = usuarioId
+            CreadoPor = usuarioId.ToString()
         };
 
         await _unitOfWork.Repository<HistorialEstadoTicket>().AddAsync(historial);

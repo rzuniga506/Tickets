@@ -34,6 +34,34 @@ namespace Tickets.Infrastructure.Repositories.Implementation
             return await _dbSet.ToListAsync();
         }
 
+        public virtual async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            string includeProperties = "")
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
+        }
+
         public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.Where(predicate).ToListAsync();
@@ -66,6 +94,12 @@ namespace Tickets.Infrastructure.Repositories.Implementation
             _dbSet.Add(entity);
         }
 
+        public virtual async Task<T> AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            return entity;
+        }
+
         public virtual void AddRange(IEnumerable<T> entities)
         {
             _dbSet.AddRange(entities);
@@ -85,6 +119,11 @@ namespace Tickets.Infrastructure.Repositories.Implementation
         {
             // El DbContext maneja automáticamente el soft delete
             _dbSet.Remove(entity);
+        }
+
+        public virtual void Delete(T entity)
+        {
+            Remove(entity);
         }
 
         public virtual void RemoveRange(IEnumerable<T> entities)

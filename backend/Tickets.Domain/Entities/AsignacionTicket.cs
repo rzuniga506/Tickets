@@ -1,3 +1,5 @@
+using Tickets.Domain.Common;
+
 namespace Tickets.Domain.Entities;
 
 /// <summary>

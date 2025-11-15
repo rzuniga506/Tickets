@@ -57,12 +57,31 @@ class AppConstants {
 /// Estados de equipos (alineado con EstadoEquipo.cs del backend)
 enum EstadoEquipo {
   disponible,      // 0
-  enUso,           // 1 (antes era "asignado")
+  asignado,        // 1
+  enUso,           // 1 (alias de asignado)
   enMantenimiento, // 2
   enReparacion,    // 3
   dadoDeBaja,      // 4
   perdido,         // 5
   robado           // 6
+}
+
+/// Tipos de equipo (alineado con TipoEquipo.cs del backend)
+enum TipoEquipo {
+  computadora,  // 0
+  laptop,       // 1
+  servidor,     // 2
+  impresora,    // 3
+  scanner,      // 4
+  router,       // 5
+  switch_,      // 6 (switch es palabra reservada)
+  firewall,     // 7
+  monitor,      // 8
+  teclado,      // 9
+  mouse,        // 10
+  telefono,     // 11
+  tablet,       // 12
+  otro          // 99
 }
 
 /// Condiciones de equipos (alineado con CondicionEquipo.cs del backend)
@@ -80,8 +99,11 @@ enum EstadoTicket {
   nuevo,       // 0
   asignado,    // 1
   enProceso,   // 2
-  resuelto,    // 3
-  cerrado      // 4
+  enEspera,    // 3
+  resuelto,    // 4
+  cerrado,     // 5
+  cancelado,   // 6
+  reabierto    // 7
 }
 
 /// Prioridades de tickets (alineado con PrioridadTicket.cs del backend)
@@ -133,6 +155,7 @@ extension EstadoEquipoExtension on EstadoEquipo {
     switch (this) {
       case EstadoEquipo.disponible:
         return 'Disponible';
+      case EstadoEquipo.asignado:
       case EstadoEquipo.enUso:
         return 'En Uso';
       case EstadoEquipo.enMantenimiento:
@@ -193,10 +216,16 @@ extension EstadoTicketExtension on EstadoTicket {
         return 'Asignado';
       case EstadoTicket.enProceso:
         return 'En Proceso';
+      case EstadoTicket.enEspera:
+        return 'En Espera';
       case EstadoTicket.resuelto:
         return 'Resuelto';
       case EstadoTicket.cerrado:
         return 'Cerrado';
+      case EstadoTicket.cancelado:
+        return 'Cancelado';
+      case EstadoTicket.reabierto:
+        return 'Reabierto';
     }
   }
 

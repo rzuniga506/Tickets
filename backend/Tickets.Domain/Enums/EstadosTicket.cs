@@ -23,7 +23,12 @@ namespace Tickets.Domain.Enums
         /// <summary>
         /// Prioridad crítica - Requiere atención inmediata
         /// </summary>
-        Critica = 4
+        Critica = 4,
+
+        /// <summary>
+        /// Prioridad urgente - Alias de Crítica
+        /// </summary>
+        Urgente = 4
     }
 
     /// <summary>
@@ -64,7 +69,12 @@ namespace Tickets.Domain.Enums
         /// <summary>
         /// Ticket cancelado
         /// </summary>
-        Cancelado = 6
+        Cancelado = 6,
+
+        /// <summary>
+        /// Ticket reabierto después de haber sido cerrado
+        /// </summary>
+        Reabierto = 7
     }
 
     /// <summary>
