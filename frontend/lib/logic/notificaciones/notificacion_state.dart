@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/notificacion_model.dart';
+import '../../data/models/notificacion/notificacion_model.dart';
 import '../../data/models/paged_result.dart';
 
 /// Estados para la gestión de notificaciones

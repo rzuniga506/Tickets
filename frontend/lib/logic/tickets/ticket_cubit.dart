@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/ticket_repository.dart';
-import '../../data/models/ticket_model.dart';
+import '../../data/models/ticket/ticket_model.dart';
 import '../../data/models/paged_result.dart';
 import '../../config/constants.dart';
 import 'ticket_state.dart';

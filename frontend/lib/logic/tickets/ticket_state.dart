@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/ticket_model.dart';
+import '../../data/models/ticket/ticket_model.dart';
 import '../../data/models/paged_result.dart';
 
 /// Estados para la gestión de tickets

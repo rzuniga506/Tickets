@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/equipo_model.dart';
+import '../../data/models/equipo/equipo_model.dart';
 import '../../data/models/paged_result.dart';
 
 /// Estados para la gestión de equipos/inventario

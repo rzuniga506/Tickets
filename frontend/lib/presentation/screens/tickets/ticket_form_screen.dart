@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/tickets/ticket_state.dart';
-import '../../../data/models/ticket_model.dart';
+import '../../../data/models/ticket/ticket_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../widgets/priority_badge.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/notificacion_repository.dart';
-import '../../data/models/notificacion_model.dart';
+import '../../data/models/notificacion/notificacion_model.dart';
 import '../../data/models/paged_result.dart';
 import 'notificacion_state.dart';
 

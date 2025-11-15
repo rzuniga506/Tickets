@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import '../../data/models/notificacion_model.dart';
+import '../../data/models/notificacion/notificacion_model.dart';
 import '../../config/constants.dart';
 import '../../config/theme.dart';
 
