@@ -80,6 +80,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
             telefono: _telefonoController.text.trim().isEmpty
                 ? null
                 : _telefonoController.text.trim(),
+            activo: widget.usuario!.activo,
           );
     } else {
       context.read<UsuarioCubit>().createUsuario(

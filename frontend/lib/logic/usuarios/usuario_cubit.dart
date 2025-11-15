@@ -135,7 +135,7 @@ class UsuarioCubit extends Cubit<UsuarioState> {
   }
 
   /// Actualiza un usuario existente
-  /// Backend espera: nombre, apellido, rolesIds (List<int>)
+  /// Backend espera: nombre, apellido, telefono, departamentoId, activo, rolesIds (List<int>)
   /// NOTA: El email NO se puede actualizar según UsuarioUpdateDto
   Future<void> updateUsuario({
     required int id,
@@ -143,6 +143,7 @@ class UsuarioCubit extends Cubit<UsuarioState> {
     required String rol,
     String? telefono,
     int? departamentoId,
+    bool activo = true,
   }) async {
     try {
       emit(UsuarioActionLoading());
@@ -153,6 +154,7 @@ class UsuarioCubit extends Cubit<UsuarioState> {
       final data = {
         'nombre': nombres['nombre'],
         'apellido': nombres['apellido'],
+        'activo': activo, // Campo requerido por backend
         'rolesIds': [rolId], // Backend espera array de IDs
         if (telefono != null) 'telefono': telefono,
         if (departamentoId != null) 'departamentoId': departamentoId,

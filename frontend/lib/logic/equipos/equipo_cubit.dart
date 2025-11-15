@@ -151,7 +151,7 @@ class EquipoCubit extends Cubit<EquipoState> {
     String? especificacionesJson,
     double? costoAdquisicion,
     DateTime? fechaAdquisicion,
-    int? vidaUtilMeses,
+    int vidaUtilMeses = 36, // Campo requerido por backend
     double? valorResidual,
     DateTime? fechaInicioGarantia,
     DateTime? fechaFinGarantia,
@@ -164,6 +164,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         'nombre': nombre,
         'estado': estado.toJson(), // Convierte enum a int
         'condicion': condicion.toJson(), // Convierte enum a int
+        'vidaUtilMeses': vidaUtilMeses, // Campo requerido por backend
         if (numeroSerie != null) 'numeroSerie': numeroSerie,
         if (descripcion != null) 'descripcion': descripcion,
         if (modelo != null) 'modelo': modelo,
@@ -172,7 +173,6 @@ class EquipoCubit extends Cubit<EquipoState> {
         if (costoAdquisicion != null) 'costoAdquisicion': costoAdquisicion,
         if (fechaAdquisicion != null)
           'fechaAdquisicion': fechaAdquisicion.toIso8601String(),
-        if (vidaUtilMeses != null) 'vidaUtilMeses': vidaUtilMeses,
         if (valorResidual != null) 'valorResidual': valorResidual,
         if (fechaInicioGarantia != null)
           'fechaInicioGarantia': fechaInicioGarantia.toIso8601String(),
