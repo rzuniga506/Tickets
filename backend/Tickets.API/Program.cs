@@ -92,6 +92,8 @@ builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IDepartamentoService, DepartamentoService>();
+builder.Services.AddScoped<IRolService, RolService>();
+builder.Services.AddScoped<IPermisoService, PermisoService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IComentarioTicketService, ComentarioTicketService>();
