@@ -7,6 +7,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
 using System;
 using System.IO;
 using System.Text;
@@ -20,7 +22,31 @@ using Tickets.Infrastructure.Repositories.Implementation;
 using Tickets.Infrastructure.Repositories.Interfaces;
 using Tickets.Infrastructure.Services;
 
+// Configurar Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "Tickets TI")
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(
+        path: Path.Combine("logs", "tickets-.log"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
+
+try
+{
+    Log.Information("Iniciando aplicación Tickets TI");
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar Serilog como el provider de logging
+builder.Host.UseSerilog();
 
 // ============================================================
 // CONFIGURACIÓN DE SERVICIOS
@@ -260,4 +286,15 @@ using (var scope = app.Services.CreateScope())
 // EJECUTAR LA APLICACIÓN
 // ============================================================
 
+Log.Information("Aplicación Tickets TI iniciada exitosamente");
 app.Run();
+Log.Information("Aplicación Tickets TI detenida");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "La aplicación falló al iniciar");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

@@ -29,6 +29,7 @@ import '../../../logic/departamentos/departamento_cubit.dart';
 import '../../../logic/categorias/categoria_cubit.dart';
 import '../../../logic/roles/rol_cubit.dart';
 import '../../../logic/permisos/permiso_cubit.dart';
+import '../usuarios/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -124,7 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 create: (context) => getIt<EquipoCubit>(),
                 child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
               ),
-              _buildPerfilPlaceholder(user),
+              BlocProvider.value(
+                value: context.read<AuthCubit>(),
+                child: const ProfileScreen(),
+              ),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -554,31 +558,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPerfilPlaceholder(dynamic user) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.person, size: 64, color: AppTheme.greyDark),
-          const SizedBox(height: 16),
-          Text('Perfil de ${user?.nombreCompleto ?? "Usuario"}'),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {
-              context.read<AuthCubit>().logout();
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-            icon: const Icon(Icons.logout),
-            label: const Text('Cerrar Sesión'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.errorColor,
-            ),
-          ),
-        ],
       ),
     );
   }

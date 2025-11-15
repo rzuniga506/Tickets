@@ -514,20 +514,110 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 
-  void _showAsignarTecnicoDialog(TicketModel ticket) {
-    // TODO: Implementar selector de técnico
-    // Por ahora, mostrar un diálogo simple
+  Future<void> _showAsignarTecnicoDialog(TicketModel ticket) async {
+    // Cargar lista de técnicos disponibles
+    final usuarioCubit = getIt<UsuarioCubit>();
+    await usuarioCubit.getTecnicos();
+
+    if (!mounted) return;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Asignar Técnico'),
-        content: const Text('Funcionalidad de asignación de técnico en desarrollo.\n\nRequiere integración con la lista de técnicos disponibles.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
+      builder: (dialogContext) => BlocProvider.value(
+        value: usuarioCubit,
+        child: AlertDialog(
+          title: const Text('Asignar Técnico'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: BlocBuilder<UsuarioCubit, UsuarioState>(
+              builder: (context, state) {
+                if (state is UsuarioLoading) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                if (state is TecnicosLoaded) {
+                  final tecnicos = state.usuarios;
+
+                  if (tecnicos.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'No hay técnicos disponibles',
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: tecnicos.length,
+                    itemBuilder: (context, index) {
+                      final tecnico = tecnicos[index];
+                      final isAssigned = ticket.tecnicoAsignadoId == tecnico.id;
+
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: tecnico.fotoPerfilUrl != null
+                              ? NetworkImage(tecnico.fotoPerfilUrl!)
+                              : null,
+                          child: tecnico.fotoPerfilUrl == null
+                              ? Text(tecnico.nombreCompleto.substring(0, 1).toUpperCase())
+                              : null,
+                        ),
+                        title: Text(tecnico.nombreCompleto),
+                        subtitle: Text(tecnico.departamentoNombre ?? 'Sin departamento'),
+                        trailing: isAssigned
+                            ? const Icon(Icons.check_circle, color: AppTheme.successColor)
+                            : null,
+                        selected: isAssigned,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          context.read<TicketCubit>().asignarTicket(ticket.id, tecnico.id);
+                        },
+                      );
+                    },
+                  );
+                }
+
+                if (state is UsuarioError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline, size: 48, color: AppTheme.errorColor),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Error al cargar técnicos',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          state.message,
+                          style: Theme.of(context).textTheme.bodySmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+          ],
+        ),
       ),
     );
   }
