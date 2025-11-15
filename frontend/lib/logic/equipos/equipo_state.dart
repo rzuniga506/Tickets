@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../data/models/equipo/equipo_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../core/api/api_response.dart';
 
 /// Estados para la gestión de equipos/inventario
 abstract class EquipoState extends Equatable {
@@ -91,7 +91,7 @@ class QRGenerated extends EquipoState {
 /// Acción de equipo ejecutada exitosamente (asignar, desasignar, etc.)
 class EquipoActionSuccess extends EquipoState {
   final String message;
-  final EquipoModel equipo;
+  final EquipoModel? equipo;
 
   const EquipoActionSuccess(this.message, this.equipo);
 

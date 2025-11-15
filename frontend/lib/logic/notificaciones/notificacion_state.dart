@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../data/models/notificacion/notificacion_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../core/api/api_response.dart';
 
 /// Estados para la gestión de notificaciones
 abstract class NotificacionState extends Equatable {

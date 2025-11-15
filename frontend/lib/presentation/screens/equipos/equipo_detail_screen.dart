@@ -7,6 +7,7 @@ import '../../../logic/equipos/equipo_state.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/equipo/equipo_model.dart';
+import '../../../data/models/user/user_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/responsive.dart';

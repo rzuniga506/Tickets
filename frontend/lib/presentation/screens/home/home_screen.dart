@@ -8,6 +8,7 @@ import '../../../logic/notificaciones/notificacion_cubit.dart';
 import '../../../logic/notificaciones/notificacion_state.dart';
 import '../../../logic/dashboard/dashboard_cubit.dart';
 import '../../../logic/dashboard/dashboard_state.dart';
+import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';

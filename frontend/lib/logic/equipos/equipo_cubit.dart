@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/equipo_repository.dart';
 import '../../data/models/equipo/equipo_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../core/api/api_response.dart';
 import '../../config/constants.dart';
 import 'equipo_state.dart';
 
@@ -47,7 +47,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         final updatedItems = [...currentState.equipos.items, ...result.items];
         final updatedResult = PagedResult<EquipoModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -235,7 +235,7 @@ class EquipoCubit extends Cubit<EquipoState> {
       // Convertir List a PagedResult para mantener consistencia
       final result = PagedResult<EquipoModel>(
         items: equipos,
-        totalItems: equipos.length,
+        totalRecords: equipos.length,
         pageNumber: 1,
         pageSize: equipos.length,
       );
@@ -253,7 +253,7 @@ class EquipoCubit extends Cubit<EquipoState> {
       // Convertir List a PagedResult para mantener consistencia
       final result = PagedResult<EquipoModel>(
         items: equipos,
-        totalItems: equipos.length,
+        totalRecords: equipos.length,
         pageNumber: 1,
         pageSize: equipos.length,
       );

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/notificacion_repository.dart';
 import '../../data/models/notificacion/notificacion_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../core/api/api_response.dart';
 import 'notificacion_state.dart';
 
 /// Cubit para gestionar notificaciones
@@ -44,7 +44,7 @@ class NotificacionCubit extends Cubit<NotificacionState> {
         ];
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -73,14 +73,26 @@ class NotificacionCubit extends Cubit<NotificacionState> {
             return NotificacionModel(
               id: notif.id,
               tipo: notif.tipo,
+              tipoNombre: notif.tipoNombre,
+              prioridad: notif.prioridad,
+              prioridadNombre: notif.prioridadNombre,
               titulo: notif.titulo,
               mensaje: notif.mensaje,
               leida: true,
-              fechaCreacion: notif.fechaCreacion,
               fechaLeida: DateTime.now(),
+              enviada: notif.enviada,
+              fechaEnvio: notif.fechaEnvio,
+              entidadTipo: notif.entidadTipo,
+              entidadId: notif.entidadId,
+              accion: notif.accion,
+              datosJson: notif.datosJson,
+              urlAccion: notif.urlAccion,
+              iconoUrl: notif.iconoUrl,
+              enviarPush: notif.enviarPush,
+              enviarEmail: notif.enviarEmail,
+              mostrarInApp: notif.mostrarInApp,
               usuarioId: notif.usuarioId,
-              ticketId: notif.ticketId,
-              equipoId: notif.equipoId,
+              fechaCreacion: notif.fechaCreacion,
             );
           }
           return notif;
@@ -88,7 +100,7 @@ class NotificacionCubit extends Cubit<NotificacionState> {
 
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalItems: currentState.notificaciones.totalItems,
+          totalRecords: currentState.notificaciones.totalRecords,
           pageNumber: currentState.notificaciones.pageNumber,
           pageSize: currentState.notificaciones.pageSize,
         );
