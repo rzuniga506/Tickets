@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -37,7 +35,7 @@ class ComentarioService {
             (json) => ComentarioTicketModel.fromJson(json as Map<String, dynamic>),
           );
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener comentarios');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener comentarios');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -61,7 +59,7 @@ class ComentarioService {
         if (apiResponse.success && apiResponse.data != null) {
           return ComentarioTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener comentario');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener comentario');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -88,7 +86,7 @@ class ComentarioService {
         if (apiResponse.success && apiResponse.data != null) {
           return ComentarioTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear comentario');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al crear comentario');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -115,7 +113,7 @@ class ComentarioService {
         if (apiResponse.success && apiResponse.data != null) {
           return ComentarioTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al actualizar comentario');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al actualizar comentario');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -135,7 +133,7 @@ class ComentarioService {
           response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al eliminar comentario');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al eliminar comentario');
       }
     } catch (e) {
       throw ServerException(e.toString());

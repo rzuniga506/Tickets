@@ -27,7 +27,7 @@ class AdjuntoService {
               .map((json) => AdjuntoTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener adjuntos');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener adjuntos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -51,7 +51,7 @@ class AdjuntoService {
         if (apiResponse.success && apiResponse.data != null) {
           return AdjuntoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener adjunto');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener adjunto');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -97,14 +97,14 @@ class AdjuntoService {
         if (apiResponse.success && apiResponse.data != null) {
           return AdjuntoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al subir archivo');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al subir archivo');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
           json.decode(response.body),
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al subir archivo: ${response.statusCode}');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al subir archivo: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -145,7 +145,7 @@ class AdjuntoService {
           response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al eliminar adjunto');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al eliminar adjunto');
       }
     } catch (e) {
       throw ServerException(e.toString());

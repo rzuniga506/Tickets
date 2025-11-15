@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -25,7 +24,7 @@ class RolService {
               .map((json) => RolModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener roles');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener roles');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -49,7 +48,7 @@ class RolService {
         if (apiResponse.success && apiResponse.data != null) {
           return RolModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener rol');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener rol');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -76,7 +75,7 @@ class RolService {
         if (apiResponse.success && apiResponse.data != null) {
           return RolModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear rol');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al crear rol');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
@@ -84,7 +83,7 @@ class RolService {
           (json) => json,
         );
         throw ServerException(
-            apiResponse.error ?? 'Error al crear rol: ${response.statusCode}');
+            apiResponse.error?.toString() ?? 'Error al crear rol: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -109,7 +108,7 @@ class RolService {
           return RolModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al actualizar rol');
+              apiResponse.error?.toString() ?? 'Error al actualizar rol');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
@@ -135,7 +134,7 @@ class RolService {
           (json) => json,
         );
         throw ServerException(
-            apiResponse.error ?? 'Error al eliminar rol');
+            apiResponse.error?.toString() ?? 'Error al eliminar rol');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -160,7 +159,7 @@ class RolService {
           return RolModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al asignar permisos');
+              apiResponse.error?.toString() ?? 'Error al asignar permisos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

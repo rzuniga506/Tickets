@@ -15,6 +15,8 @@ class ConditionBadge extends StatelessWidget {
 
   Color _getColorForCondicion(CondicionEquipo condicion) {
     switch (condicion) {
+      case CondicionEquipo.nuevo:
+        return AppTheme.primaryColor;
       case CondicionEquipo.excelente:
         return AppTheme.successColor;
       case CondicionEquipo.bueno:
@@ -23,15 +25,15 @@ class ConditionBadge extends StatelessWidget {
         return AppTheme.warningColor;
       case CondicionEquipo.malo:
         return AppTheme.errorColor;
-      case CondicionEquipo.reparacion:
-        return const Color(0xFFFF6B35);
-      case CondicionEquipo.baja:
+      case CondicionEquipo.noFuncional:
         return AppTheme.greyDark;
     }
   }
 
   IconData _getIconForCondicion(CondicionEquipo condicion) {
     switch (condicion) {
+      case CondicionEquipo.nuevo:
+        return Icons.fiber_new;
       case CondicionEquipo.excelente:
         return Icons.star;
       case CondicionEquipo.bueno:
@@ -40,9 +42,7 @@ class ConditionBadge extends StatelessWidget {
         return Icons.info;
       case CondicionEquipo.malo:
         return Icons.warning;
-      case CondicionEquipo.reparacion:
-        return Icons.build;
-      case CondicionEquipo.baja:
+      case CondicionEquipo.noFuncional:
         return Icons.delete_forever;
     }
   }

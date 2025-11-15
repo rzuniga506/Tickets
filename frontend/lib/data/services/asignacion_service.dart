@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -49,7 +48,7 @@ class AsignacionService {
         if (apiResponse.success && apiResponse.data != null) {
           return AsignacionTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener asignación');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener asignación');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -76,14 +75,14 @@ class AsignacionService {
         if (apiResponse.success && apiResponse.data != null) {
           return AsignacionTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear asignación');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al crear asignación');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
           response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al crear asignación: ${response.statusCode}');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al crear asignación: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -104,7 +103,7 @@ class AsignacionService {
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, value as int));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener estadísticas');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener estadísticas');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -128,7 +127,7 @@ class AsignacionService {
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, value as int));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener carga de trabajo');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener carga de trabajo');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -152,7 +151,7 @@ class AsignacionService {
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, (value as num).toDouble()));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener tiempos promedio');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener tiempos promedio');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

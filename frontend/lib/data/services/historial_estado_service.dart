@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -25,7 +24,7 @@ class HistorialEstadoService {
               .map((json) => HistorialEstadoTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener historial del ticket');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener historial del ticket');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -49,7 +48,7 @@ class HistorialEstadoService {
         if (apiResponse.success && apiResponse.data != null) {
           return HistorialEstadoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener registro de historial');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener registro de historial');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -76,14 +75,14 @@ class HistorialEstadoService {
         if (apiResponse.success && apiResponse.data != null) {
           return HistorialEstadoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear registro de historial');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al crear registro de historial');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
           response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al crear registro: ${response.statusCode}');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al crear registro: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -104,7 +103,7 @@ class HistorialEstadoService {
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, value as int));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener estadísticas');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener estadísticas');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -128,7 +127,7 @@ class HistorialEstadoService {
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, (value as num).toDouble()));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener tiempos promedio');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener tiempos promedio');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

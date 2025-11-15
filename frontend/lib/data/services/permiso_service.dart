@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -27,7 +26,7 @@ class PermisoService {
               .toList();
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permisos');
+              apiResponse.error?.toString() ?? 'Error al obtener permisos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -55,7 +54,7 @@ class PermisoService {
               .toList();
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permisos por módulo');
+              apiResponse.error?.toString() ?? 'Error al obtener permisos por módulo');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -80,7 +79,7 @@ class PermisoService {
           return PermisoModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permiso');
+              apiResponse.error?.toString() ?? 'Error al obtener permiso');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
