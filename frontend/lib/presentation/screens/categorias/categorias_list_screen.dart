@@ -4,9 +4,7 @@ import '../../../logic/categorias/categoria_cubit.dart';
 import '../../../logic/categorias/categoria_state.dart';
 import '../../../data/models/categoria/categoria_ticket_model.dart';
 import '../../../config/theme.dart';
-import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
-import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'categoria_form_screen.dart';
 
@@ -227,6 +225,7 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
           return _categorias.isEmpty
               ? const EmptyState(
                   icon: Icons.category,
+                  title: 'Sin categorías',
                   message: 'No se encontraron categorías',
                 )
               : RefreshIndicator(

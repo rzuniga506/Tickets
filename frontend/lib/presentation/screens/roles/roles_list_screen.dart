@@ -4,9 +4,7 @@ import '../../../logic/roles/rol_cubit.dart';
 import '../../../logic/roles/rol_state.dart';
 import '../../../data/models/rol/rol_model.dart';
 import '../../../config/theme.dart';
-import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
-import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'rol_form_screen.dart';
 
@@ -181,6 +179,7 @@ class _RolesListScreenState extends State<RolesListScreen> {
                 child: displayList.isEmpty
                     ? const EmptyState(
                         icon: Icons.admin_panel_settings,
+                        title: 'Sin roles',
                         message: 'No se encontraron roles',
                       )
                     : RefreshIndicator(

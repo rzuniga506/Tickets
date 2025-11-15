@@ -65,24 +65,13 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
             );
         break;
       case TicketListMode.myTickets:
-        context.read<TicketCubit>().getMisTickets(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              estado: _estadoFilter,
-            );
+        context.read<TicketCubit>().getMisTickets();
         break;
       case TicketListMode.assigned:
-        context.read<TicketCubit>().getTicketsAsignados(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              estado: _estadoFilter,
-            );
+        context.read<TicketCubit>().getTicketsAsignados();
         break;
       case TicketListMode.pending:
-        context.read<TicketCubit>().getTicketsPendientes(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-            );
+        context.read<TicketCubit>().getTicketsPendientes();
         break;
     }
   }

@@ -156,6 +156,7 @@ class _PermisosViewScreenState extends State<PermisosViewScreen> {
                 child: _filteredPermisos.isEmpty
                     ? const EmptyState(
                         icon: Icons.security,
+                        title: 'Sin permisos',
                         message: 'No se encontraron permisos',
                       )
                     : RefreshIndicator(

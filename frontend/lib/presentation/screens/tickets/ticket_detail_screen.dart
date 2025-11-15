@@ -15,7 +15,6 @@ import '../../../core/utils/responsive.dart';
 import '../../../core/di/injection.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/priority_badge.dart';
-import '../../widgets/loading_card.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int ticketId;
@@ -89,7 +88,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
           // Mantener el ticket visible durante acciones
           if (state is TicketActionSuccess && state.ticket != null) {
-            return _buildTicketDetail(state.ticket);
+            return _buildTicketDetail(state.ticket!);
           }
 
           return Center(
@@ -648,7 +647,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 context.read<TicketCubit>().resolverTicket(
                       ticketId: ticket.id,
                       solucion: controller.text,
-                      tipoSolucion: TipoSolucion.exitosa, // Valor por defecto
+                      tipoSolucion: TipoSolucion.resuelto, // Valor por defecto
                     );
               }
             },

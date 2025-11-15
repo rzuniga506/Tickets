@@ -15,7 +15,6 @@ import '../../../core/utils/responsive.dart';
 import '../tickets/tickets_list_screen.dart';
 import '../tickets/ticket_form_screen.dart';
 import '../equipos/equipos_list_screen.dart';
-import '../equipos/equipo_form_screen.dart';
 import '../equipos/qr_scanner_screen.dart';
 import '../notificaciones/notificaciones_list_screen.dart';
 import '../usuarios/usuarios_list_screen.dart';

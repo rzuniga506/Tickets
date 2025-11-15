@@ -4,9 +4,7 @@ import '../../../logic/departamentos/departamento_cubit.dart';
 import '../../../logic/departamentos/departamento_state.dart';
 import '../../../data/models/departamento/departamento_model.dart';
 import '../../../config/theme.dart';
-import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
-import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'departamento_form_screen.dart';
 
@@ -252,6 +250,7 @@ class _DepartamentosListScreenState extends State<DepartamentosListScreen> {
                 child: displayList.isEmpty
                     ? const EmptyState(
                         icon: Icons.business,
+                        title: 'Sin departamentos',
                         message: 'No se encontraron departamentos',
                       )
                     : RefreshIndicator(

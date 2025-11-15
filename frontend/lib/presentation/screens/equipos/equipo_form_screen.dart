@@ -7,7 +7,6 @@ import '../../../logic/equipos/equipo_state.dart';
 import '../../../data/models/equipo/equipo_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
-import '../../widgets/condition_badge.dart';
 import '../../../core/utils/responsive.dart';
 
 class EquipoFormScreen extends StatefulWidget {
