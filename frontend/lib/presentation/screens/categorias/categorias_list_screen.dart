@@ -5,6 +5,7 @@ import '../../../logic/categorias/categoria_state.dart';
 import '../../../data/models/categoria/categoria_ticket_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'categoria_form_screen.dart';
@@ -230,28 +231,51 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
                 )
               : RefreshIndicator(
                   onRefresh: _onRefresh,
-                  child: ReorderableListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _categorias.length,
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        if (newIndex > oldIndex) {
-                          newIndex -= 1;
-                        }
-                        final item = _categorias.removeAt(oldIndex);
-                        _categorias.insert(newIndex, item);
-                      });
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // En tablet/desktop: Grid, en móvil: ReorderableListView
+                      if (constraints.maxWidth >= Breakpoints.tablet) {
+                        final columns = Breakpoints.getGridColumns(context);
+                        return GridView.builder(
+                          padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                          ),
+                          itemCount: _categorias.length,
+                          itemBuilder: (context, index) {
+                            final categoria = _categorias[index];
+                            return _buildCategoriaCard(categoria, index);
+                          },
+                        );
+                      } else {
+                        return ReorderableListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: _categorias.length,
+                          onReorder: (oldIndex, newIndex) {
+                            setState(() {
+                              if (newIndex > oldIndex) {
+                                newIndex -= 1;
+                              }
+                              final item = _categorias.removeAt(oldIndex);
+                              _categorias.insert(newIndex, item);
+                            });
 
-                      // Actualizar orden en el backend
-                      final ordenMap = <int, int>{};
-                      for (var i = 0; i < _categorias.length; i++) {
-                        ordenMap[_categorias[i].id] = i;
+                            // Actualizar orden en el backend
+                            final ordenMap = <int, int>{};
+                            for (var i = 0; i < _categorias.length; i++) {
+                              ordenMap[_categorias[i].id] = i;
+                            }
+                            context.read<CategoriaCubit>().reorderCategorias(ordenMap);
+                          },
+                          itemBuilder: (context, index) {
+                            final categoria = _categorias[index];
+                            return _buildCategoriaCard(categoria, index);
+                          },
+                        );
                       }
-                      context.read<CategoriaCubit>().reorderCategorias(ordenMap);
-                    },
-                    itemBuilder: (context, index) {
-                      final categoria = _categorias[index];
-                      return _buildCategoriaCard(categoria, index);
                     },
                   ),
                 );

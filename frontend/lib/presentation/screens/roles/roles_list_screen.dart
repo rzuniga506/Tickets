@@ -5,6 +5,7 @@ import '../../../logic/roles/rol_state.dart';
 import '../../../data/models/rol/rol_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'rol_form_screen.dart';
@@ -184,12 +185,35 @@ class _RolesListScreenState extends State<RolesListScreen> {
                       )
                     : RefreshIndicator(
                         onRefresh: _onRefresh,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: displayList.length,
-                          itemBuilder: (context, index) {
-                            final rol = displayList[index];
-                            return _buildRolCard(rol);
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            // En desktop/tablet: Grid, en móvil: Lista
+                            if (constraints.maxWidth >= Breakpoints.tablet) {
+                              final columns = Breakpoints.getGridColumns(context);
+                              return GridView.builder(
+                                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: columns,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                                ),
+                                itemCount: displayList.length,
+                                itemBuilder: (context, index) {
+                                  final rol = displayList[index];
+                                  return _buildRolCard(rol);
+                                },
+                              );
+                            } else {
+                              return ListView.builder(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: displayList.length,
+                                itemBuilder: (context, index) {
+                                  final rol = displayList[index];
+                                  return _buildRolCard(rol);
+                                },
+                              );
+                            }
                           },
                         ),
                       ),

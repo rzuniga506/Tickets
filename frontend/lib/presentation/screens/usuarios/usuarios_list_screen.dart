@@ -7,6 +7,7 @@ import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/usuario_card.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
@@ -356,38 +357,87 @@ class _UsuariosListScreenState extends State<UsuariosListScreen> {
 
       return RefreshIndicator(
         onRefresh: _onRefresh,
-        child: ListView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.only(bottom: 80),
-          itemCount: state.usuarios.items.length +
-              (state.isLoadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == state.usuarios.items.length) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // En desktop/tablet: Grid, en móvil: Lista
+            if (constraints.maxWidth >= Breakpoints.tablet) {
+              final columns = Breakpoints.getGridColumns(context);
+              return GridView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
                 ),
+                itemCount: state.usuarios.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.usuarios.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final usuario = state.usuarios.items[index];
+                  return UsuarioCard(
+                    usuario: usuario,
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => getIt<UsuarioCubit>(),
+                            child: UsuarioDetailScreen(usuarioId: usuario.id),
+                          ),
+                        ),
+                      );
+                      _loadUsuarios(refresh: true);
+                    },
+                    onToggleActivo: () => _handleToggleActivo(usuario),
+                  );
+                },
+              );
+            } else {
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.only(bottom: 80),
+                itemCount: state.usuarios.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.usuarios.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final usuario = state.usuarios.items[index];
+                  return UsuarioCard(
+                    usuario: usuario,
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => getIt<UsuarioCubit>(),
+                            child: UsuarioDetailScreen(usuarioId: usuario.id),
+                          ),
+                        ),
+                      );
+                      _loadUsuarios(refresh: true);
+                    },
+                    onToggleActivo: () => _handleToggleActivo(usuario),
+                  );
+                },
               );
             }
-
-            final usuario = state.usuarios.items[index];
-            return UsuarioCard(
-              usuario: usuario,
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) => getIt<UsuarioCubit>(),
-                      child: UsuarioDetailScreen(usuarioId: usuario.id),
-                    ),
-                  ),
-                );
-                _loadUsuarios(refresh: true);
-              },
-              onToggleActivo: () => _handleToggleActivo(usuario),
-            );
           },
         ),
       );

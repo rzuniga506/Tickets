@@ -5,6 +5,7 @@ import '../../../logic/tickets/ticket_state.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/ticket_card.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
@@ -280,39 +281,90 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
 
       return RefreshIndicator(
         onRefresh: _onRefresh,
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: state.tickets.items.length +
-              (state.isLoadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == state.tickets.items.length) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // En desktop/tablet: Grid, en móvil: Lista
+            if (constraints.maxWidth >= Breakpoints.tablet) {
+              final columns = Breakpoints.getGridColumns(context);
+              return GridView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
                 ),
+                itemCount: state.tickets.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.tickets.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final ticket = state.tickets.items[index];
+                  return TicketCard(
+                    ticket: ticket,
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => getIt<TicketCubit>(),
+                            child: TicketDetailScreen(ticketId: ticket.id),
+                          ),
+                        ),
+                      );
+
+                      if (result == true) {
+                        _loadTickets(refresh: true);
+                      }
+                    },
+                  );
+                },
+              );
+            } else {
+              return ListView.builder(
+                controller: _scrollController,
+                itemCount: state.tickets.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.tickets.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final ticket = state.tickets.items[index];
+                  return TicketCard(
+                    ticket: ticket,
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => getIt<TicketCubit>(),
+                            child: TicketDetailScreen(ticketId: ticket.id),
+                          ),
+                        ),
+                      );
+
+                      if (result == true) {
+                        _loadTickets(refresh: true);
+                      }
+                    },
+                  );
+                },
               );
             }
-
-            final ticket = state.tickets.items[index];
-            return TicketCard(
-              ticket: ticket,
-              onTap: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) => getIt<TicketCubit>(),
-                      child: TicketDetailScreen(ticketId: ticket.id),
-                    ),
-                  ),
-                );
-
-                if (result == true) {
-                  _loadTickets(refresh: true);
-                }
-              },
-            );
           },
         ),
       );

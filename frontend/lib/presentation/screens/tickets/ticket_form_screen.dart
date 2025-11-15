@@ -6,6 +6,7 @@ import '../../../data/models/ticket_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../widgets/priority_badge.dart';
+import '../../../core/utils/responsive.dart';
 
 class TicketFormScreen extends StatefulWidget {
   final TicketModel? ticket; // Para edición (opcional)
@@ -101,12 +102,14 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
           final isLoading = state is TicketActionLoading;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Información
                   Card(
                     child: Padding(
@@ -328,6 +331,7 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

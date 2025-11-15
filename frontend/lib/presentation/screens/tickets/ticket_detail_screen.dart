@@ -8,6 +8,7 @@ import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/ticket_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/priority_badge.dart';
 import '../../widgets/loading_card.dart';
@@ -113,10 +114,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
   Widget _buildTicketDetail(TicketModel ticket) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+      child: CenteredContent(
+        maxWidth: 800,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Header Card
           Card(
             child: Padding(
@@ -342,7 +345,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               return const SizedBox.shrink();
             },
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

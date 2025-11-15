@@ -10,6 +10,7 @@ import '../../../logic/dashboard/dashboard_cubit.dart';
 import '../../../logic/dashboard/dashboard_state.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../tickets/tickets_list_screen.dart';
 import '../tickets/ticket_form_screen.dart';
 import '../equipos/equipos_list_screen.dart';
@@ -170,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -227,14 +228,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     final isAdmin = authState is Authenticated &&
                         authState.user.rol == RolUsuario.administrador;
 
-                    return GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.1,
-                      children: [
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final columns = Breakpoints.getQuickActionColumns(context);
+
+                        return GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: columns,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.3 : 1.1,
+                          children: [
                         _buildQuickActionCard(
                           title: 'Nuevo Ticket',
                           icon: Icons.add_circle_outline,
@@ -375,6 +380,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                       ],
+                        );
+                      },
                     );
                   },
                 ),
@@ -392,52 +399,102 @@ class _HomeScreenState extends State<HomeScreen> {
     final resueltos = stats?.ticketsResueltos ?? 0;
     final misEquipos = stats?.misEquipos ?? 0;
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                title: 'Mis Tickets',
-                value: '$misTickets',
-                icon: Icons.confirmation_number,
-                color: AppTheme.primaryColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // En desktop: 4 columnas horizontales
+        // En tablet: 2x2 grid
+        // En móvil: 2x2 grid
+        if (constraints.maxWidth >= Breakpoints.desktop) {
+          return Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  title: 'Mis Tickets',
+                  value: '$misTickets',
+                  icon: Icons.confirmation_number,
+                  color: AppTheme.primaryColor,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                title: 'Pendientes',
-                value: '$pendientes',
-                icon: Icons.pending_actions,
-                color: AppTheme.warningColor,
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildStatCard(
+                  title: 'Pendientes',
+                  value: '$pendientes',
+                  icon: Icons.pending_actions,
+                  color: AppTheme.warningColor,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                title: 'Resueltos',
-                value: '$resueltos',
-                icon: Icons.check_circle,
-                color: AppTheme.successColor,
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildStatCard(
+                  title: 'Resueltos',
+                  value: '$resueltos',
+                  icon: Icons.check_circle,
+                  color: AppTheme.successColor,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                title: 'Mis Equipos',
-                value: '$misEquipos',
-                icon: Icons.devices,
-                color: AppTheme.infoColor,
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildStatCard(
+                  title: 'Mis Equipos',
+                  value: '$misEquipos',
+                  icon: Icons.devices,
+                  color: AppTheme.infoColor,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          );
+        } else {
+          // Tablet y móvil: 2x2 grid
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      title: 'Mis Tickets',
+                      value: '$misTickets',
+                      icon: Icons.confirmation_number,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatCard(
+                      title: 'Pendientes',
+                      value: '$pendientes',
+                      icon: Icons.pending_actions,
+                      color: AppTheme.warningColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      title: 'Resueltos',
+                      value: '$resueltos',
+                      icon: Icons.check_circle,
+                      color: AppTheme.successColor,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatCard(
+                      title: 'Mis Equipos',
+                      value: '$misEquipos',
+                      icon: Icons.devices,
+                      color: AppTheme.infoColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 

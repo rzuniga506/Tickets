@@ -7,6 +7,7 @@ import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/rol_badge.dart';
 import '../../widgets/usuario_status_chip.dart';
 import 'usuario_form_screen.dart';
@@ -173,10 +174,12 @@ class _UsuarioDetailScreenState extends State<UsuarioDetailScreen> {
 
   Widget _buildUsuarioDetail(UserModel usuario) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+      child: CenteredContent(
+        maxWidth: 800,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Header con avatar y nombre
           Center(
             child: Column(
@@ -328,7 +331,8 @@ class _UsuarioDetailScreenState extends State<UsuarioDetailScreen> {
           ),
 
           const SizedBox(height: 16),
-        ],
+          ],
+        ),
       ),
     );
   }

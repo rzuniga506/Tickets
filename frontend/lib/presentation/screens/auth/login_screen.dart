@@ -4,6 +4,7 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,13 +59,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
               return Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
+                  padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 450),
+                    child: Card(
+                      elevation: Breakpoints.isDesktop(context) ? 4 : 0,
+                      child: Padding(
+                        padding: EdgeInsets.all(Breakpoints.isDesktop(context) ? 48.0 : 24.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
                         // Logo
                         const Icon(
                           Icons.support_agent,
@@ -172,6 +179,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           textAlign: TextAlign.center,
                         ),
                       ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

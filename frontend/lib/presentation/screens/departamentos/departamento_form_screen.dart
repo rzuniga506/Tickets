@@ -4,6 +4,7 @@ import '../../../logic/departamentos/departamento_cubit.dart';
 import '../../../logic/departamentos/departamento_state.dart';
 import '../../../data/models/departamento/departamento_model.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 
 class DepartamentoFormScreen extends StatefulWidget {
   final DepartamentoModel? departamento;
@@ -127,12 +128,14 @@ class _DepartamentoFormScreenState extends State<DepartamentoFormScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Nombre
                   TextFormField(
                     controller: _nombreController,
@@ -223,6 +226,7 @@ class _DepartamentoFormScreenState extends State<DepartamentoFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

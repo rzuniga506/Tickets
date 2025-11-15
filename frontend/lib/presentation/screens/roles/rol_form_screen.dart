@@ -8,6 +8,7 @@ import '../../../data/models/rol/rol_model.dart';
 import '../../../data/models/permiso/permiso_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 
 class RolFormScreen extends StatefulWidget {
   final RolModel? rol;
@@ -151,12 +152,14 @@ class _RolFormScreenState extends State<RolFormScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Nombre
                   TextFormField(
                     controller: _nombreController,
@@ -355,6 +358,7 @@ class _RolFormScreenState extends State<RolFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

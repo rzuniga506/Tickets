@@ -8,6 +8,7 @@ import '../../../data/models/equipo/equipo_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../widgets/condition_badge.dart';
+import '../../../core/utils/responsive.dart';
 
 class EquipoFormScreen extends StatefulWidget {
   final EquipoModel? equipo; // Para edición (opcional)
@@ -205,12 +206,14 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
           final isLoading = state is EquipoActionLoading;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Información básica
                   Card(
                     child: Padding(
@@ -600,6 +603,7 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

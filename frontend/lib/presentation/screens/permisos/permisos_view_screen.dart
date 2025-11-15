@@ -4,6 +4,7 @@ import '../../../logic/permisos/permiso_cubit.dart';
 import '../../../logic/permisos/permiso_state.dart';
 import '../../../data/models/permiso/permiso_model.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/empty_state.dart';
 
 class PermisosViewScreen extends StatefulWidget {
@@ -159,62 +160,135 @@ class _PermisosViewScreenState extends State<PermisosViewScreen> {
                       )
                     : RefreshIndicator(
                         onRefresh: _onRefresh,
-                        child: ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          children: groupedPermisos.entries.map((entry) {
-                            final modulo = entry.key;
-                            final permisos = entry.value;
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            // En desktop/tablet: Grid, en móvil: Lista
+                            if (constraints.maxWidth >= Breakpoints.tablet) {
+                              final columns = Breakpoints.getGridColumns(context);
+                              return GridView.builder(
+                                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: columns,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                                ),
+                                itemCount: groupedPermisos.entries.length,
+                                itemBuilder: (context, index) {
+                                  final entry = groupedPermisos.entries.elementAt(index);
+                                  final modulo = entry.key;
+                                  final permisos = entry.value;
 
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: ExpansionTile(
-                                title: Text(
-                                  modulo,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                subtitle: Text('${permisos.length} permisos'),
-                                leading: CircleAvatar(
-                                  backgroundColor: AppTheme.primaryColor,
-                                  child: Text(
-                                    '${permisos.length}',
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                                children: permisos.map((permiso) {
-                                  return ListTile(
-                                    leading: const Icon(
-                                      Icons.vpn_key,
-                                      color: AppTheme.accentColor,
-                                    ),
-                                    title: Text(permiso.nombre),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Código: ${permiso.codigo}',
-                                          style: Theme.of(context).textTheme.bodySmall,
+                                  return Card(
+                                    child: ExpansionTile(
+                                      title: Text(
+                                        modulo,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
-                                        if (permiso.descripcion != null &&
-                                            permiso.descripcion!.isNotEmpty)
-                                          Text(
-                                            permiso.descripcion!,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  fontStyle: FontStyle.italic,
-                                                ),
+                                      ),
+                                      subtitle: Text('${permisos.length} permisos'),
+                                      leading: CircleAvatar(
+                                        backgroundColor: AppTheme.primaryColor,
+                                        child: Text(
+                                          '${permisos.length}',
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      children: permisos.map((permiso) {
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.vpn_key,
+                                            color: AppTheme.accentColor,
                                           ),
-                                      ],
+                                          title: Text(permiso.nombre),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Código: ${permiso.codigo}',
+                                                style: Theme.of(context).textTheme.bodySmall,
+                                              ),
+                                              if (permiso.descripcion != null &&
+                                                  permiso.descripcion!.isNotEmpty)
+                                                Text(
+                                                  permiso.descripcion!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall
+                                                      ?.copyWith(
+                                                        fontStyle: FontStyle.italic,
+                                                      ),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else {
+                              return ListView(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                children: groupedPermisos.entries.map((entry) {
+                                  final modulo = entry.key;
+                                  final permisos = entry.value;
+
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    child: ExpansionTile(
+                                      title: Text(
+                                        modulo,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      subtitle: Text('${permisos.length} permisos'),
+                                      leading: CircleAvatar(
+                                        backgroundColor: AppTheme.primaryColor,
+                                        child: Text(
+                                          '${permisos.length}',
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      children: permisos.map((permiso) {
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.vpn_key,
+                                            color: AppTheme.accentColor,
+                                          ),
+                                          title: Text(permiso.nombre),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Código: ${permiso.codigo}',
+                                                style: Theme.of(context).textTheme.bodySmall,
+                                              ),
+                                              if (permiso.descripcion != null &&
+                                                  permiso.descripcion!.isNotEmpty)
+                                                Text(
+                                                  permiso.descripcion!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall
+                                                      ?.copyWith(
+                                                        fontStyle: FontStyle.italic,
+                                                      ),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
                                     ),
                                   );
                                 }).toList(),
-                              ),
-                            );
-                          }).toList(),
+                              );
+                            }
+                          },
                         ),
                       ),
               ),

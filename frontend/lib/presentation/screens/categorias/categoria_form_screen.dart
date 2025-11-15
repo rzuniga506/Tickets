@@ -4,6 +4,7 @@ import '../../../logic/categorias/categoria_cubit.dart';
 import '../../../logic/categorias/categoria_state.dart';
 import '../../../data/models/categoria/categoria_ticket_model.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 
 class CategoriaFormScreen extends StatefulWidget {
   final CategoriaTicketModel? categoria;
@@ -147,12 +148,14 @@ class _CategoriaFormScreenState extends State<CategoriaFormScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Vista previa
                   Center(
                     child: Container(
@@ -344,6 +347,7 @@ class _CategoriaFormScreenState extends State<CategoriaFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

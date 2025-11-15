@@ -5,6 +5,7 @@ import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../logic/equipos/equipo_state.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import 'equipo_detail_screen.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -148,21 +149,26 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 top: MediaQuery.of(context).padding.top + 80,
                 left: 0,
                 right: 0,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 32),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Apunta la cámara al código QR del equipo',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: Breakpoints.getHorizontalPadding(context)),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'Apunta la cámara al código QR del equipo',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -229,35 +235,40 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Ingresar Código QR'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Código QR',
-            hintText: 'Ingrese el código del equipo',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
+      builder: (dialogContext) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: Breakpoints.getDialogMaxWidth(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancelar'),
+        child: AlertDialog(
+          title: const Text('Ingresar Código QR'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'Código QR',
+              hintText: 'Ingrese el código del equipo',
+              border: OutlineInputBorder(),
+            ),
+            autofocus: true,
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (controller.text.isNotEmpty) {
-                Navigator.pop(dialogContext);
-                setState(() {
-                  _isProcessing = true;
-                });
-                context.read<EquipoCubit>().getEquipoByQR(controller.text);
-              }
-            },
-            child: const Text('Buscar'),
-          ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.isNotEmpty) {
+                  Navigator.pop(dialogContext);
+                  setState(() {
+                    _isProcessing = true;
+                  });
+                  context.read<EquipoCubit>().getEquipoByQR(controller.text);
+                }
+              },
+              child: const Text('Buscar'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -270,7 +281,9 @@ class ScannerOverlayPainter extends CustomPainter {
     final backgroundPath = Path()
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    final cutoutSize = size.width * 0.7;
+    // Ajustar tamaño del cutout: más pequeño en desktop, más grande en móvil
+    final cutoutRatio = size.width > 900 ? 0.4 : (size.width > 600 ? 0.6 : 0.7);
+    final cutoutSize = size.width * cutoutRatio;
     final cutoutLeft = (size.width - cutoutSize) / 2;
     final cutoutTop = (size.height - cutoutSize) / 2;
 

@@ -4,6 +4,7 @@ import '../../../logic/usuarios/usuario_cubit.dart';
 import '../../../logic/usuarios/usuario_state.dart';
 import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 
 class UsuarioFormScreen extends StatefulWidget {
   final UserModel? usuario;
@@ -132,12 +133,14 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+            child: CenteredContent(
+              maxWidth: 600,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Nombre completo
                   TextFormField(
                     controller: _nombreController,
@@ -339,6 +342,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                 ],
               ),
             ),
+          ),
           );
         },
       ),

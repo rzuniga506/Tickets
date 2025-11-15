@@ -9,6 +9,7 @@ import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/equipo/equipo_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/equipment_status_chip.dart';
 import '../../widgets/condition_badge.dart';
 import '../../widgets/qr_display_widget.dart';
@@ -131,10 +132,12 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
 
   Widget _buildEquipoDetail(EquipoModel equipo) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+      child: CenteredContent(
+        maxWidth: 800,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Header Card
           Card(
             child: Padding(
@@ -468,7 +471,8 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
               return const SizedBox.shrink();
             },
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

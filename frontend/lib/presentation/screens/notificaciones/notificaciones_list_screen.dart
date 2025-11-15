@@ -6,6 +6,7 @@ import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/equipos/equipo_cubit.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/utils/responsive.dart';
 import '../../widgets/notificacion_card.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
@@ -274,31 +275,73 @@ class _NotificacionesListScreenState extends State<NotificacionesListScreen> {
 
       return RefreshIndicator(
         onRefresh: _onRefresh,
-        child: ListView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: state.notificaciones.items.length +
-              (state.isLoadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == state.notificaciones.items.length) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // En desktop/tablet: Grid, en móvil: Lista
+            if (constraints.maxWidth >= Breakpoints.tablet) {
+              final columns = Breakpoints.getGridColumns(context);
+              return GridView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
                 ),
+                itemCount: state.notificaciones.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.notificaciones.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final notificacion = state.notificaciones.items[index];
+                  return NotificacionCard(
+                    notificacion: notificacion,
+                    onTap: () => _handleNotificacionTap(notificacion),
+                    onDismiss: () {
+                      context
+                          .read<NotificacionCubit>()
+                          .deleteNotificacion(notificacion.id);
+                    },
+                  );
+                },
+              );
+            } else {
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: state.notificaciones.items.length +
+                    (state.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.notificaciones.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final notificacion = state.notificaciones.items[index];
+                  return NotificacionCard(
+                    notificacion: notificacion,
+                    onTap: () => _handleNotificacionTap(notificacion),
+                    onDismiss: () {
+                      context
+                          .read<NotificacionCubit>()
+                          .deleteNotificacion(notificacion.id);
+                    },
+                  );
+                },
               );
             }
-
-            final notificacion = state.notificaciones.items[index];
-            return NotificacionCard(
-              notificacion: notificacion,
-              onTap: () => _handleNotificacionTap(notificacion),
-              onDismiss: () {
-                context
-                    .read<NotificacionCubit>()
-                    .deleteNotificacion(notificacion.id);
-              },
-            );
           },
         ),
       );
