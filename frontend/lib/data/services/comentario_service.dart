@@ -2,7 +2,6 @@ import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
 import '../models/comentario/comentario_ticket_model.dart';
-import '../models/paged_result.dart';
 
 class ComentarioService {
   final ApiClient _apiClient;

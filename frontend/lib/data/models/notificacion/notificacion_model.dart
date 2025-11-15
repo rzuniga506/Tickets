@@ -101,4 +101,20 @@ class NotificacionModel {
       return 'Hace ${diferencia.inDays} d';
     }
   }
+
+  /// Obtiene el ID del ticket si la notificación está relacionada con un ticket
+  int? get ticketId {
+    if (entidadTipo?.toLowerCase() == 'ticket') {
+      return entidadId;
+    }
+    return null;
+  }
+
+  /// Obtiene el ID del equipo si la notificación está relacionada con un equipo
+  int? get equipoId {
+    if (entidadTipo?.toLowerCase() == 'equipo') {
+      return entidadId;
+    }
+    return null;
+  }
 }

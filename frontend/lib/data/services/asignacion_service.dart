@@ -24,7 +24,7 @@ class AsignacionService {
               .map((json) => AsignacionTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener historial de asignaciones');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener historial de asignaciones');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

@@ -115,7 +115,7 @@ class RolService {
           response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ??
+        throw ServerException(apiResponse.error?.toString() ??
             'Error al actualizar rol: ${response.statusCode}');
       }
     } catch (e) {
