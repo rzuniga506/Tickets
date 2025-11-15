@@ -16,7 +16,7 @@ class RolService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -42,7 +42,7 @@ class RolService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -64,12 +64,12 @@ class RolService {
     try {
       final response = await _apiClient.post(
         '/roles',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -80,7 +80,7 @@ class RolService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(
@@ -96,12 +96,12 @@ class RolService {
     try {
       final response = await _apiClient.put(
         '/roles/$id',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -113,7 +113,7 @@ class RolService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ??
@@ -131,7 +131,7 @@ class RolService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(
@@ -147,12 +147,12 @@ class RolService {
     try {
       final response = await _apiClient.post(
         '/roles/$id/permisos',
-        body: json.encode(permisosIds),
+        data: permisosIds,
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 

@@ -16,7 +16,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -42,7 +42,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -68,7 +68,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -90,12 +90,12 @@ class DepartamentoService {
     try {
       final response = await _apiClient.post(
         '/departamentos',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -106,7 +106,7 @@ class DepartamentoService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al crear departamento: ${response.statusCode}');
@@ -121,12 +121,12 @@ class DepartamentoService {
     try {
       final response = await _apiClient.put(
         '/departamentos/$id',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -137,7 +137,7 @@ class DepartamentoService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al actualizar departamento: ${response.statusCode}');
@@ -154,7 +154,7 @@ class DepartamentoService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al eliminar departamento');
@@ -171,7 +171,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -195,7 +195,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 

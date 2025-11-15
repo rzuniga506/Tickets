@@ -18,7 +18,7 @@ class AdjuntoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -44,7 +44,7 @@ class AdjuntoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -64,7 +64,7 @@ class AdjuntoService {
   /// Subir un archivo
   Future<AdjuntoTicketModel> upload(File file, int ticketId) async {
     try {
-      final token = await _apiClient.storage.getToken();
+      final token = await _apiClient.storage.getAccessToken();
       if (token == null) {
         throw ServerException('No hay token de autenticación');
       }
@@ -90,7 +90,7 @@ class AdjuntoService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -101,7 +101,7 @@ class AdjuntoService {
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al subir archivo: ${response.statusCode}');
@@ -114,7 +114,7 @@ class AdjuntoService {
   /// Descargar un archivo
   Future<List<int>> download(int id) async {
     try {
-      final token = await _apiClient.storage.getToken();
+      final token = await _apiClient.storage.getAccessToken();
       if (token == null) {
         throw ServerException('No hay token de autenticación');
       }
@@ -142,7 +142,7 @@ class AdjuntoService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al eliminar adjunto');

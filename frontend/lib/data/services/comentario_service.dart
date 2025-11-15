@@ -27,7 +27,7 @@ class ComentarioService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -54,7 +54,7 @@ class ComentarioService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -76,12 +76,12 @@ class ComentarioService {
     try {
       final response = await _apiClient.post(
         '/comentariosticket',
-        body: data,
+        data: data,
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -103,12 +103,12 @@ class ComentarioService {
     try {
       final response = await _apiClient.put(
         '/comentariosticket/$id',
-        body: data,
+        data: data,
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -132,7 +132,7 @@ class ComentarioService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(apiResponse.error ?? 'Error al eliminar comentario');

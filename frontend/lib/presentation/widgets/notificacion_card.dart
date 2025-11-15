@@ -29,44 +29,53 @@ class NotificacionCard extends StatelessWidget {
 
   Color _getColorForTipo(TipoNotificacion tipo) {
     switch (tipo) {
-      case TipoNotificacion.info:
-        return AppTheme.infoColor;
-      case TipoNotificacion.exito:
-        return AppTheme.successColor;
-      case TipoNotificacion.advertencia:
-        return AppTheme.warningColor;
-      case TipoNotificacion.error:
-        return AppTheme.errorColor;
+      case TipoNotificacion.ticketNuevo:
       case TipoNotificacion.ticketAsignado:
+      case TipoNotificacion.ticketEnProceso:
       case TipoNotificacion.ticketActualizado:
-      case TipoNotificacion.ticketResuelto:
         return AppTheme.primaryColor;
+      case TipoNotificacion.ticketResuelto:
+      case TipoNotificacion.ticketCerrado:
+      case TipoNotificacion.slaCumplido:
+        return AppTheme.successColor;
+      case TipoNotificacion.slaProximoVencer:
+        return AppTheme.warningColor;
+      case TipoNotificacion.slaIncumplido:
+        return AppTheme.errorColor;
       case TipoNotificacion.equipoAsignado:
-      case TipoNotificacion.equipoMantenimiento:
+      case TipoNotificacion.equipoDesasignado:
         return AppTheme.accentColor;
+      case TipoNotificacion.general:
+        return AppTheme.greyDark;
     }
   }
 
   IconData _getIconForTipo(TipoNotificacion tipo) {
     switch (tipo) {
-      case TipoNotificacion.info:
-        return Icons.info_outline;
-      case TipoNotificacion.exito:
-        return Icons.check_circle_outline;
-      case TipoNotificacion.advertencia:
-        return Icons.warning_amber_outlined;
-      case TipoNotificacion.error:
-        return Icons.error_outline;
+      case TipoNotificacion.ticketNuevo:
+        return Icons.add_circle_outline;
       case TipoNotificacion.ticketAsignado:
         return Icons.assignment_ind_outlined;
-      case TipoNotificacion.ticketActualizado:
-        return Icons.update_outlined;
+      case TipoNotificacion.ticketEnProceso:
+        return Icons.pending_actions_outlined;
       case TipoNotificacion.ticketResuelto:
         return Icons.check_circle_outline;
+      case TipoNotificacion.ticketCerrado:
+        return Icons.done_all_outlined;
+      case TipoNotificacion.ticketActualizado:
+        return Icons.update_outlined;
       case TipoNotificacion.equipoAsignado:
         return Icons.devices_outlined;
-      case TipoNotificacion.equipoMantenimiento:
-        return Icons.build_outlined;
+      case TipoNotificacion.equipoDesasignado:
+        return Icons.devices_other_outlined;
+      case TipoNotificacion.slaProximoVencer:
+        return Icons.warning_amber_outlined;
+      case TipoNotificacion.slaCumplido:
+        return Icons.check_circle_outline;
+      case TipoNotificacion.slaIncumplido:
+        return Icons.error_outline;
+      case TipoNotificacion.general:
+        return Icons.info_outline;
     }
   }
 

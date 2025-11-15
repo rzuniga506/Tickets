@@ -207,6 +207,53 @@ extension CondicionEquipoExtension on CondicionEquipo {
   }
 }
 
+extension TipoEquipoExtension on TipoEquipo {
+  String get displayName {
+    switch (this) {
+      case TipoEquipo.computadora:
+        return 'Computadora';
+      case TipoEquipo.laptop:
+        return 'Laptop';
+      case TipoEquipo.servidor:
+        return 'Servidor';
+      case TipoEquipo.impresora:
+        return 'Impresora';
+      case TipoEquipo.scanner:
+        return 'Scanner';
+      case TipoEquipo.router:
+        return 'Router';
+      case TipoEquipo.switch_:
+        return 'Switch';
+      case TipoEquipo.firewall:
+        return 'Firewall';
+      case TipoEquipo.monitor:
+        return 'Monitor';
+      case TipoEquipo.teclado:
+        return 'Teclado';
+      case TipoEquipo.mouse:
+        return 'Mouse';
+      case TipoEquipo.telefono:
+        return 'Teléfono';
+      case TipoEquipo.tablet:
+        return 'Tablet';
+      case TipoEquipo.otro:
+        return 'Otro';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend
+  int toJson() {
+    if (this == TipoEquipo.otro) return 99;
+    return index;
+  }
+
+  /// Crea un TipoEquipo desde valor entero del backend
+  static TipoEquipo fromJson(int value) {
+    if (value == 99) return TipoEquipo.otro;
+    return TipoEquipo.values[value];
+  }
+}
+
 extension EstadoTicketExtension on EstadoTicket {
   String get displayName {
     switch (this) {

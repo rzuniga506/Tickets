@@ -144,6 +144,11 @@ class TicketModel {
     return TipoSolucionExtension.fromJson(tipo);
   }
 
+  bool get slaVencido {
+    if (minutosRestantesSLA == null) return false;
+    return minutosRestantesSLA! < 0; // SLA vencido si los minutos restantes son negativos
+  }
+
   bool get slaProximoVencer {
     if (minutosRestantesSLA == null || minutosRestantesSLA! <= 0) return false;
     return minutosRestantesSLA! <= 60; // Menos de 1 hora

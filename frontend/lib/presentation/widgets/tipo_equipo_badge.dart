@@ -19,22 +19,28 @@ class TipoEquipoBadge extends StatelessWidget {
         return Icons.computer;
       case TipoEquipo.laptop:
         return Icons.laptop;
-      case TipoEquipo.monitor:
-        return Icons.monitor;
-      case TipoEquipo.impresora:
-        return Icons.print;
-      case TipoEquipo.escaner:
-        return Icons.scanner;
-      case TipoEquipo.telefono:
-        return Icons.phone;
-      case TipoEquipo.tablet:
-        return Icons.tablet;
       case TipoEquipo.servidor:
         return Icons.dns;
+      case TipoEquipo.impresora:
+        return Icons.print;
+      case TipoEquipo.scanner:
+        return Icons.scanner;
       case TipoEquipo.router:
         return Icons.router;
       case TipoEquipo.switch_:
         return Icons.device_hub;
+      case TipoEquipo.firewall:
+        return Icons.security;
+      case TipoEquipo.monitor:
+        return Icons.monitor;
+      case TipoEquipo.teclado:
+        return Icons.keyboard;
+      case TipoEquipo.mouse:
+        return Icons.mouse;
+      case TipoEquipo.telefono:
+        return Icons.phone;
+      case TipoEquipo.tablet:
+        return Icons.tablet;
       case TipoEquipo.otro:
         return Icons.devices_other;
     }
