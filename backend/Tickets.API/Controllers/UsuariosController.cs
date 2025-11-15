@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Tickets.API.Attributes;
 using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.Usuarios;
 using Tickets.Application.Services.Interfaces;
@@ -52,6 +53,7 @@ namespace Tickets.API.Controllers
         /// Crea un nuevo usuario
         /// </summary>
         [HttpPost]
+        [AuthorizePermission("usuarios.create")]
         public async Task<ActionResult<ApiResponse<UsuarioDto>>> Create([FromBody] UsuarioCreateDto createDto)
         {
             var createdBy = User.FindFirst(ClaimTypes.Email)?.Value ?? "System";

@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IO;
 using System.Text;
 using Tickets.API.Middleware;
+using Tickets.Application.DTOs.Common;
 using Tickets.Application.Mappings;
 using Tickets.Application.Services.Implementation;
 using Tickets.Application.Services.Interfaces;
@@ -79,6 +82,9 @@ builder.Services.AddCors(options =>
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+// Configuración de JwtSettings para DI
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 // Repositorios
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -191,6 +197,24 @@ if (!app.Environment.IsDevelopment())
 // CORS
 var corsPolicy = app.Environment.IsDevelopment() ? "AllowAll" : "Production";
 app.UseCors(corsPolicy);
+
+// Configuración de Archivos Estáticos (uploads)
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads",
+    OnPrepareResponse = ctx =>
+    {
+        // Agregar headers de cache para archivos estáticos
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
+    }
+});
 
 // Autenticación y Autorización
 app.UseAuthentication();
