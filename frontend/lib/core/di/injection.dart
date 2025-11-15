@@ -12,6 +12,7 @@ import '../../data/services/adjunto_service.dart';
 import '../../data/services/categoria_service.dart';
 import '../../data/services/historial_estado_service.dart';
 import '../../data/services/asignacion_service.dart';
+import '../../data/services/departamento_service.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/ticket_repository.dart';
 import '../../data/repositories/equipo_repository.dart';
@@ -23,6 +24,7 @@ import '../../data/repositories/adjunto_repository.dart';
 import '../../data/repositories/categoria_repository.dart';
 import '../../data/repositories/historial_estado_repository.dart';
 import '../../data/repositories/asignacion_repository.dart';
+import '../../data/repositories/departamento_repository.dart';
 import '../../logic/auth/auth_cubit.dart';
 import '../../logic/tickets/ticket_cubit.dart';
 import '../../logic/equipos/equipo_cubit.dart';
@@ -34,6 +36,7 @@ import '../../logic/adjuntos/adjunto_cubit.dart';
 import '../../logic/categorias/categoria_cubit.dart';
 import '../../logic/historial_estados/historial_estado_cubit.dart';
 import '../../logic/asignaciones/asignacion_cubit.dart';
+import '../../logic/departamentos/departamento_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -57,6 +60,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton(() => CategoriaService(getIt()));
   getIt.registerLazySingleton(() => HistorialEstadoService(getIt()));
   getIt.registerLazySingleton(() => AsignacionService(getIt()));
+  getIt.registerLazySingleton(() => DepartamentoService(getIt()));
 
   // Repositories
   getIt.registerLazySingleton(() => AuthRepository(getIt(), getIt()));
@@ -70,6 +74,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton(() => CategoriaRepository(getIt()));
   getIt.registerLazySingleton(() => HistorialEstadoRepository(getIt()));
   getIt.registerLazySingleton(() => AsignacionRepository(getIt()));
+  getIt.registerLazySingleton(() => DepartamentoRepository(getIt()));
 
   // Cubits
   getIt.registerFactory(() => AuthCubit(getIt()));
@@ -83,4 +88,5 @@ Future<void> setupDependencies() async {
   getIt.registerFactory(() => CategoriaCubit(getIt()));
   getIt.registerFactory(() => HistorialEstadoCubit(getIt()));
   getIt.registerFactory(() => AsignacionCubit(getIt()));
+  getIt.registerFactory(() => DepartamentoCubit(getIt()));
 }
