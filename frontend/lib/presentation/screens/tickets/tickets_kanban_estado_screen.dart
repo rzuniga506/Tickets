@@ -40,15 +40,15 @@ class _TicketsKanbanEstadoScreenState extends State<TicketsKanbanEstadoScreen> {
       ),
       body: BlocBuilder<TicketCubit, TicketState>(
         builder: (context, state) {
-          if (state is TicketsLoading) {
+          if (state is TicketLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is TicketsError) {
+          if (state is TicketError) {
             return EmptyState(
               icon: Icons.error_outline,
               title: 'Error al cargar tickets',
-              description: state.message,
+              message: state.message,
               actionLabel: 'Reintentar',
               onAction: () {
                 context.read<TicketCubit>().getTickets(pageSize: 100);
@@ -63,7 +63,7 @@ class _TicketsKanbanEstadoScreenState extends State<TicketsKanbanEstadoScreen> {
               return const EmptyState(
                 icon: Icons.confirmation_number_outlined,
                 title: 'No hay tickets',
-                description: 'Aún no se han creado tickets en el sistema',
+                message: 'Aún no se han creado tickets en el sistema',
               );
             }
 
