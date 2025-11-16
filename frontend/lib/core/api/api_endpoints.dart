@@ -56,6 +56,11 @@ class ApiEndpoints {
   static const String ticketsSLA = '/tickets/sla-proximo-vencer';
   static const String ticketsEstadisticas = '/tickets/estadisticas';
 
+  // Comentarios de Tickets
+  static const String comentariosTicket = '/comentariosticket';
+  static String comentarioById(int id) => '/comentariosticket/$id';
+  static String comentariosByTicket(int ticketId) => '/comentariosticket/ticket/$ticketId';
+
   // Notificaciones
   static const String notificaciones = '/notificaciones';
   static String notificacionById(int id) => '/notificaciones/$id';
