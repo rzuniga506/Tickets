@@ -47,6 +47,24 @@ class DashboardStatsModel extends Equatable {
   });
 
   factory DashboardStatsModel.fromJson(Map<String, dynamic> json) {
+    // Función auxiliar para parsear double de forma segura
+    double parseDoubleOrZero(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is num) {
+        final doubleValue = value.toDouble();
+        // Validar que no sea NaN o Infinity
+        if (doubleValue.isNaN || doubleValue.isInfinite) return 0.0;
+        return doubleValue;
+      }
+      try {
+        final parsed = double.parse(value.toString());
+        if (parsed.isNaN || parsed.isInfinite) return 0.0;
+        return parsed;
+      } catch (e) {
+        return 0.0;
+      }
+    }
+
     return DashboardStatsModel(
       totalTickets: json['totalTickets'] ?? 0,
       ticketsAbiertos: json['ticketsAbiertos'] ?? 0,
@@ -63,8 +81,7 @@ class DashboardStatsModel extends Equatable {
       equiposEnMantenimiento: json['equiposEnMantenimiento'] ?? 0,
       misEquipos: json['misEquipos'] ?? 0,
       notificacionesNoLeidas: json['notificacionesNoLeidas'] ?? 0,
-      promedioCalificacion:
-          (json['promedioCalificacion'] ?? 0.0).toDouble(),
+      promedioCalificacion: parseDoubleOrZero(json['promedioCalificacion']),
       ticketsAltaPrioridad: json['ticketsAltaPrioridad'] ?? 0,
       ticketsPorCategoria: json['ticketsPorCategoria'] != null
           ? (json['ticketsPorCategoria'] as List)

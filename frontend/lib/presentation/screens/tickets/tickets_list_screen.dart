@@ -197,7 +197,10 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
             children: [
               // Barra de búsqueda
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Breakpoints.getHorizontalPadding(context),
+                  vertical: 16,
+                ),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(

@@ -119,8 +119,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> asignarTecnico(int ticketId, int tecnicoId) async {
     try {
       emit(TicketActionLoading('Asignando técnico...'));
-      final ticket = await _ticketRepository.asignarTecnico(ticketId, tecnicoId);
-      emit(TicketActionSuccess('Técnico asignado correctamente', ticket));
+      await _ticketRepository.asignarTecnico(ticketId, tecnicoId);
+      emit(TicketActionSuccess('Técnico asignado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }
@@ -130,8 +130,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> iniciarProceso(int ticketId) async {
     try {
       emit(TicketActionLoading('Iniciando proceso...'));
-      final ticket = await _ticketRepository.iniciarProceso(ticketId);
-      emit(TicketActionSuccess('Proceso iniciado correctamente', ticket));
+      await _ticketRepository.iniciarProceso(ticketId);
+      emit(TicketActionSuccess('Proceso iniciado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }
@@ -163,8 +163,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> cerrarTicket(int ticketId) async {
     try {
       emit(TicketActionLoading('Cerrando ticket...'));
-      final ticket = await _ticketRepository.cerrarTicket(ticketId);
-      emit(TicketActionSuccess('Ticket cerrado correctamente', ticket));
+      await _ticketRepository.cerrarTicket(ticketId);
+      emit(TicketActionSuccess('Ticket cerrado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }
@@ -174,8 +174,8 @@ class TicketCubit extends Cubit<TicketState> {
   Future<void> reabrirTicket(int ticketId, String motivo) async {
     try {
       emit(TicketActionLoading('Reabriendo ticket...'));
-      final ticket = await _ticketRepository.reabrirTicket(ticketId, motivo);
-      emit(TicketActionSuccess('Ticket reabierto correctamente', ticket));
+      await _ticketRepository.reabrirTicket(ticketId, motivo);
+      emit(TicketActionSuccess('Ticket reabierto correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }
@@ -189,12 +189,12 @@ class TicketCubit extends Cubit<TicketState> {
   ) async {
     try {
       emit(TicketActionLoading('Evaluando ticket...'));
-      final ticket = await _ticketRepository.evaluarTicket(
-        ticketId,
-        calificacion,
-        comentario,
+      await _ticketRepository.evaluarTicket(
+        ticketId: ticketId,
+        calificacion: calificacion,
+        comentario: comentario,
       );
-      emit(TicketActionSuccess('Ticket evaluado correctamente', ticket));
+      emit(TicketActionSuccess('Ticket evaluado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }

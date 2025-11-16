@@ -259,7 +259,10 @@ class EquipoCubit extends Cubit<EquipoState> {
       );
       emit(EquiposLoaded(result));
     } catch (e) {
-      emit(EquipoError(e.toString()));
+      final errorMessage = e.toString().contains('Exception:')
+          ? e.toString().replaceAll('Exception:', '').trim()
+          : 'Error al cargar los equipos: ${e.toString()}';
+      emit(EquipoError(errorMessage));
     }
   }
 

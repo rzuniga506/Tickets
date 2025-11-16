@@ -73,12 +73,12 @@ class EquipoModel {
       estadoNombre: json['estadoNombre'] ?? '',
       condicion: _parseCondicion(json['condicion']),
       condicionNombre: json['condicionNombre'] ?? '',
-      costoAdquisicion: json['costoAdquisicion']?.toDouble(),
+      costoAdquisicion: _parseDoubleOrNull(json['costoAdquisicion']),
       fechaAdquisicion: json['fechaAdquisicion'] != null
           ? DateTime.parse(json['fechaAdquisicion'])
           : null,
       vidaUtilMeses: json['vidaUtilMeses'] ?? 36,
-      valorResidual: json['valorResidual']?.toDouble(),
+      valorResidual: _parseDoubleOrNull(json['valorResidual']),
       fechaInicioGarantia: json['fechaInicioGarantia'] != null
           ? DateTime.parse(json['fechaInicioGarantia'])
           : null,
@@ -99,6 +99,23 @@ class EquipoModel {
           ? DateTime.parse(json['fechaModificacion'])
           : null,
     );
+  }
+
+  static double? _parseDoubleOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is num) {
+      final doubleValue = value.toDouble();
+      // Validar que no sea NaN o Infinity
+      if (doubleValue.isNaN || doubleValue.isInfinite) return null;
+      return doubleValue;
+    }
+    try {
+      final parsed = double.parse(value.toString());
+      if (parsed.isNaN || parsed.isInfinite) return null;
+      return parsed;
+    } catch (e) {
+      return null;
+    }
   }
 
   static EstadoEquipo _parseEstado(int estado) {
