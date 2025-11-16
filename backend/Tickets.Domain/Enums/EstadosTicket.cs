@@ -115,4 +115,30 @@ namespace Tickets.Domain.Enums
         Solucion = 4,
         Seguimiento = 5
     }
+
+    /// <summary>
+    /// Tipo de soporte solicitado en un ticket
+    /// </summary>
+    public enum TipoSoporte
+    {
+        /// <summary>
+        /// Soporte técnico general (hardware, software, redes)
+        /// </summary>
+        SoporteTecnico = 0,
+
+        /// <summary>
+        /// Soporte específico para sistema Softland
+        /// </summary>
+        Softland = 1,
+
+        /// <summary>
+        /// Soporte específico para sistema Dodi
+        /// </summary>
+        Dodi = 2,
+
+        /// <summary>
+        /// Otros tipos de soporte no clasificados
+        /// </summary>
+        Otro = 3
+    }
 }

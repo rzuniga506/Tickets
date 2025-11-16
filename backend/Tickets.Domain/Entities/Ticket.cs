@@ -36,6 +36,11 @@ namespace Tickets.Domain.Entities
         public EstadoTicket Estado { get; set; }
 
         /// <summary>
+        /// Tipo de soporte solicitado
+        /// </summary>
+        public TipoSoporte TipoSoporte { get; set; }
+
+        /// <summary>
         /// Fecha de apertura del ticket
         /// </summary>
         public DateTime FechaApertura { get; set; }
