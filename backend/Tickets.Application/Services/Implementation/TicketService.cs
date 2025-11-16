@@ -603,6 +603,146 @@ namespace Tickets.Application.Services.Implementation
             return _mapper.Map<List<TicketDto>>(ticketsFiltrados);
         }
 
+        public async Task<List<TicketDto>> GetTicketsMencionadosAsync(int usuarioId)
+        {
+            // Obtener IDs de tickets donde el usuario ha sido mencionado
+            var ticketIds = await _unitOfWork.Repository<MencionComentario>()
+                .GetQueryable()
+                .Include(m => m.ComentarioTicket)
+                .Where(m => m.UsuarioMencionadoId == usuarioId)
+                .Select(m => m.ComentarioTicket.TicketId)
+                .Distinct()
+                .ToListAsync();
+
+            if (!ticketIds.Any())
+            {
+                return new List<TicketDto>();
+            }
+
+            // Obtener los tickets completos
+            var tickets = await _unitOfWork.Repository<Ticket>()
+                .GetQueryable()
+                .Include(t => t.Solicitante)
+                .Include(t => t.TecnicoAsignado)
+                .Include(t => t.Equipo)
+                .Where(t => ticketIds.Contains(t.Id))
+                .OrderByDescending(t => t.FechaCreacion)
+                .ToListAsync();
+
+            foreach (var ticket in tickets)
+            {
+                ActualizarMinutosRestantesSLA(ticket);
+            }
+
+            return _mapper.Map<List<TicketDto>>(tickets);
+        }
+
+        public async Task<PagedResult<TicketDto>> GetTicketsAccesiblesAsync(
+            int usuarioId,
+            int pageNumber = 1,
+            int pageSize = 10,
+            string? searchTerm = null,
+            EstadoTicket? estado = null,
+            PrioridadTicket? prioridad = null)
+        {
+            // Obtener IDs de tickets donde el usuario ha sido mencionado
+            var ticketIdsMencionados = await _unitOfWork.Repository<MencionComentario>()
+                .GetQueryable()
+                .Include(m => m.ComentarioTicket)
+                .Where(m => m.UsuarioMencionadoId == usuarioId)
+                .Select(m => m.ComentarioTicket.TicketId)
+                .Distinct()
+                .ToListAsync();
+
+            // Query base: tickets creados por el usuario, asignados a él, o donde ha sido mencionado
+            var query = _unitOfWork.Repository<Ticket>()
+                .GetQueryable()
+                .Include(t => t.Solicitante)
+                .Include(t => t.TecnicoAsignado)
+                .Include(t => t.Equipo)
+                .Where(t => t.SolicitanteId == usuarioId ||
+                           t.TecnicoAsignadoId == usuarioId ||
+                           ticketIdsMencionados.Contains(t.Id));
+
+            // Aplicar filtros
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(t =>
+                    t.NumeroTicket.ToLower().Contains(searchTerm) ||
+                    t.Asunto.ToLower().Contains(searchTerm) ||
+                    t.Descripcion.ToLower().Contains(searchTerm));
+            }
+
+            if (estado.HasValue)
+            {
+                query = query.Where(t => t.Estado == estado.Value);
+            }
+
+            if (prioridad.HasValue)
+            {
+                query = query.Where(t => t.Prioridad == prioridad.Value);
+            }
+
+            // Total de registros
+            var totalRecords = await query.CountAsync();
+
+            // Aplicar paginación
+            var tickets = await query
+                .OrderByDescending(t => t.FechaCreacion)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Actualizar minutos restantes de SLA
+            foreach (var ticket in tickets)
+            {
+                ActualizarMinutosRestantesSLA(ticket);
+            }
+
+            var ticketsDto = _mapper.Map<List<TicketDto>>(tickets);
+
+            return new PagedResult<TicketDto>
+            {
+                Items = ticketsDto,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<bool> TieneAccesoAsync(int ticketId, int usuarioId, bool esAdmin = false)
+        {
+            // Los administradores tienen acceso a todos los tickets
+            if (esAdmin)
+            {
+                return true;
+            }
+
+            var ticket = await _unitOfWork.Repository<Ticket>()
+                .GetQueryable()
+                .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket == null)
+            {
+                return false;
+            }
+
+            // Verificar si el usuario es el solicitante o el técnico asignado
+            if (ticket.SolicitanteId == usuarioId || ticket.TecnicoAsignadoId == usuarioId)
+            {
+                return true;
+            }
+
+            // Verificar si el usuario ha sido mencionado en algún comentario del ticket
+            var mencionado = await _unitOfWork.Repository<MencionComentario>()
+                .GetQueryable()
+                .Include(m => m.ComentarioTicket)
+                .AnyAsync(m => m.ComentarioTicket.TicketId == ticketId && m.UsuarioMencionadoId == usuarioId);
+
+            return mencionado;
+        }
+
         public async Task<TicketEstadisticasDto> GetEstadisticasAsync()
         {
             var tickets = await _unitOfWork.Repository<Ticket>()
