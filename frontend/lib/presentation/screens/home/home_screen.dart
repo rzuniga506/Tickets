@@ -28,6 +28,7 @@ import '../../../logic/usuarios/usuario_cubit.dart';
 import '../../../logic/departamentos/departamento_cubit.dart';
 import '../../../logic/categorias/categoria_cubit.dart';
 import '../../../logic/roles/rol_cubit.dart';
+import '../../../data/models/user/user_model.dart';
 import '../../../logic/permisos/permiso_cubit.dart';
 import '../usuarios/profile_screen.dart';
 

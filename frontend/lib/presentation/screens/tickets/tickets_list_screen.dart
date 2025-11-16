@@ -92,7 +92,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<TicketCubit>().state;
       if (state is TicketsLoaded && !state.isLoadingMore) {
-        if (state.tickets.hasMore) {
+        if (state.tickets.hasNextPage) {
           _currentPage++;
           context.read<TicketCubit>().getTickets(
                 pageNumber: _currentPage,

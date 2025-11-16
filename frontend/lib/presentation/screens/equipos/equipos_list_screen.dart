@@ -79,7 +79,7 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<EquipoCubit>().state;
       if (state is EquiposLoaded && !state.isLoadingMore) {
-        if (state.equipos.hasMore) {
+        if (state.equipos.hasNextPage) {
           _currentPage++;
           context.read<EquipoCubit>().getEquipos(
                 pageNumber: _currentPage,

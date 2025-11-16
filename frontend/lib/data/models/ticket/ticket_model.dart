@@ -1,4 +1,5 @@
 import '../../../config/constants.dart';
+import '../categoria/categoria_ticket_model.dart';
 
 class TicketModel {
   final int id;
@@ -9,6 +10,8 @@ class TicketModel {
   final String prioridadNombre;
   final EstadoTicket estado;
   final String estadoNombre;
+  final int? categoriaId;
+  final CategoriaTicketModel? categoria;
   final DateTime fechaApertura;
   final DateTime? fechaAsignacion;
   final DateTime? fechaInicioProceso;
@@ -46,6 +49,8 @@ class TicketModel {
     required this.prioridadNombre,
     required this.estado,
     required this.estadoNombre,
+    this.categoriaId,
+    this.categoria,
     required this.fechaApertura,
     this.fechaAsignacion,
     this.fechaInicioProceso,
@@ -85,6 +90,10 @@ class TicketModel {
       prioridadNombre: json['prioridadNombre'] ?? '',
       estado: _parseEstado(json['estado']),
       estadoNombre: json['estadoNombre'] ?? '',
+      categoriaId: json['categoriaTicketId'] ?? json['categoriaId'],
+      categoria: json['categoriaTicket'] != null || json['categoria'] != null
+          ? CategoriaTicketModel.fromJson(json['categoriaTicket'] ?? json['categoria'])
+          : null,
       fechaApertura: DateTime.parse(json['fechaApertura']),
       fechaAsignacion: json['fechaAsignacion'] != null
           ? DateTime.parse(json['fechaAsignacion'])

@@ -61,7 +61,7 @@ class _UsuariosListScreenState extends State<UsuariosListScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<UsuarioCubit>().state;
       if (state is UsuariosLoaded && !state.isLoadingMore) {
-        if (state.usuarios.hasMore) {
+        if (state.usuarios.hasNextPage) {
           _currentPage++;
           context.read<UsuarioCubit>().getUsuarios(
                 pageNumber: _currentPage,

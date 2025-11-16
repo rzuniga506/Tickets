@@ -38,7 +38,7 @@ class ComentarioCubit extends Cubit<ComentarioState> {
         ];
         final updatedResult = PagedResult<ComentarioTicketModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalItems,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );

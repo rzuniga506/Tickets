@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../data/models/equipo_model.dart';
+import '../../data/models/equipo/equipo_model.dart';
 import '../../config/theme.dart';
 import 'equipment_status_chip.dart';
 import 'condition_badge.dart';

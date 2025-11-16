@@ -47,7 +47,7 @@ class TicketCubit extends Cubit<TicketState> {
         final updatedItems = [...currentState.tickets.items, ...result.items];
         final updatedResult = PagedResult<TicketModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalItems,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );

@@ -81,6 +81,9 @@ class CategoriaTicketModel extends Equatable {
     );
   }
 
+  /// Display name para widgets
+  String get displayName => nombre;
+
   @override
   List<Object?> get props => [
         id,

@@ -47,7 +47,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         final updatedItems = [...currentState.equipos.items, ...result.items];
         final updatedResult = PagedResult<EquipoModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalItems,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -235,7 +235,7 @@ class EquipoCubit extends Cubit<EquipoState> {
       // Convertir List a PagedResult para mantener consistencia
       final result = PagedResult<EquipoModel>(
         items: equipos,
-        totalItems: equipos.length,
+        totalRecords: equipos.length,
         pageNumber: 1,
         pageSize: equipos.length,
       );
@@ -253,7 +253,7 @@ class EquipoCubit extends Cubit<EquipoState> {
       // Convertir List a PagedResult para mantener consistencia
       final result = PagedResult<EquipoModel>(
         items: equipos,
-        totalItems: equipos.length,
+        totalRecords: equipos.length,
         pageNumber: 1,
         pageSize: equipos.length,
       );

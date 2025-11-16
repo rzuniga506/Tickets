@@ -44,7 +44,7 @@ class NotificacionCubit extends Cubit<NotificacionState> {
         ];
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalItems: result.totalItems,
+          totalRecords: result.totalItems,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -88,7 +88,7 @@ class NotificacionCubit extends Cubit<NotificacionState> {
 
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalItems: currentState.notificaciones.totalItems,
+          totalRecords: currentState.notificaciones.totalItems,
           pageNumber: currentState.notificaciones.pageNumber,
           pageSize: currentState.notificaciones.pageSize,
         );

@@ -57,7 +57,7 @@ class _NotificacionesListScreenState extends State<NotificacionesListScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<NotificacionCubit>().state;
       if (state is NotificacionesLoaded && !state.isLoadingMore) {
-        if (state.notificaciones.hasMore) {
+        if (state.notificaciones.hasNextPage) {
           _currentPage++;
           context.read<NotificacionCubit>().getNotificaciones(
                 pageNumber: _currentPage,
