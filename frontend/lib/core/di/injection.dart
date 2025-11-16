@@ -62,7 +62,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton(() => UsuarioService(getIt()));
   getIt.registerLazySingleton(() => DashboardService(getIt()));
   getIt.registerLazySingleton(() => ComentarioService(getIt()));
-  getIt.registerLazySingleton(() => AdjuntoService(getIt()));
+  getIt.registerLazySingleton(() => AdjuntoService(getIt(), getIt()));
   getIt.registerLazySingleton(() => CategoriaService(getIt()));
   getIt.registerLazySingleton(() => HistorialEstadoService(getIt()));
   getIt.registerLazySingleton(() => AsignacionService(getIt()));

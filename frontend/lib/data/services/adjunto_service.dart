@@ -4,12 +4,15 @@ import 'package:http/http.dart' as http;
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
+import '../../core/storage/secure_storage.dart';
+import '../../config/constants.dart';
 import '../models/adjunto/adjunto_ticket_model.dart';
 
 class AdjuntoService {
   final ApiClient _apiClient;
+  final SecureStorage _storage;
 
-  AdjuntoService(this._apiClient);
+  AdjuntoService(this._apiClient, this._storage);
 
   /// Obtener adjuntos de un ticket
   Future<List<AdjuntoTicketModel>> getByTicketId(int ticketId) async {
@@ -18,7 +21,7 @@ class AdjuntoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -27,7 +30,7 @@ class AdjuntoService {
               .map((json) => AdjuntoTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener adjuntos');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener adjuntos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -44,14 +47,14 @@ class AdjuntoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return AdjuntoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener adjunto');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener adjunto');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -64,12 +67,12 @@ class AdjuntoService {
   /// Subir un archivo
   Future<AdjuntoTicketModel> upload(File file, int ticketId) async {
     try {
-      final token = await _apiClient.storage.getToken();
+      final token = await _storage.getAccessToken();
       if (token == null) {
         throw ServerException('No hay token de autenticación');
       }
 
-      final uri = Uri.parse('${_apiClient.baseUrl}/adjuntosticket/upload');
+      final uri = Uri.parse('${AppConstants.apiBaseUrl}/adjuntosticket/upload');
       final request = http.MultipartRequest('POST', uri);
 
       // Headers
@@ -97,14 +100,14 @@ class AdjuntoService {
         if (apiResponse.success && apiResponse.data != null) {
           return AdjuntoTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al subir archivo');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al subir archivo');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
           json.decode(response.body),
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al subir archivo: ${response.statusCode}');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al subir archivo: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -114,12 +117,12 @@ class AdjuntoService {
   /// Descargar un archivo
   Future<List<int>> download(int id) async {
     try {
-      final token = await _apiClient.storage.getToken();
+      final token = await _storage.getAccessToken();
       if (token == null) {
         throw ServerException('No hay token de autenticación');
       }
 
-      final uri = Uri.parse('${_apiClient.baseUrl}/adjuntosticket/download/$id');
+      final uri = Uri.parse('${AppConstants.apiBaseUrl}/adjuntosticket/download/$id');
       final response = await http.get(
         uri,
         headers: {'Authorization': 'Bearer $token'},
@@ -142,10 +145,10 @@ class AdjuntoService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al eliminar adjunto');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al eliminar adjunto');
       }
     } catch (e) {
       throw ServerException(e.toString());

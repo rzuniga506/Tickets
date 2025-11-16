@@ -16,7 +16,7 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -25,7 +25,7 @@ class CategoriaService {
               .map((json) => CategoriaTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener categorías');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener categorías');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -42,7 +42,7 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -51,7 +51,7 @@ class CategoriaService {
               .map((json) => CategoriaTicketModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener categorías activas');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener categorías activas');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -68,14 +68,14 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return CategoriaTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener categoría');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener categoría');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -90,26 +90,26 @@ class CategoriaService {
     try {
       final response = await _apiClient.post(
         '/categoriasticket',
-        body: json.encode(dto.toJson()),
+        data: json.encode(dto.toJson()),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return CategoriaTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear categoría');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al crear categoría');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al crear categoría: ${response.statusCode}');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al crear categoría: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -121,26 +121,26 @@ class CategoriaService {
     try {
       final response = await _apiClient.put(
         '/categoriasticket/$id',
-        body: json.encode(dto.toJson()),
+        data: json.encode(dto.toJson()),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return CategoriaTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al actualizar categoría');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al actualizar categoría');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al actualizar categoría: ${response.statusCode}');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al actualizar categoría: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -154,10 +154,10 @@ class CategoriaService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al eliminar categoría');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al eliminar categoría');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -171,14 +171,14 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return CategoriaTicketModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al cambiar estado de categoría');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al cambiar estado de categoría');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -193,15 +193,15 @@ class CategoriaService {
     try {
       final response = await _apiClient.put(
         '/categoriasticket/reorder',
-        body: json.encode(ordenPorId),
+        data: json.encode(ordenPorId),
       );
 
       if (response.statusCode != 200) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al reordenar categorías');
+        throw ServerException(apiResponse.error.toString() ?? 'Error al reordenar categorías');
       }
     } catch (e) {
       throw ServerException(e.toString());

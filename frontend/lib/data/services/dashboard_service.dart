@@ -14,11 +14,11 @@ class DashboardService {
       '/Dashboard/estadisticas',
     );
 
-    if (response.success && response.data != null) {
+    if (response.statusCode == 200 && response.data != null) {
       return DashboardStatsModel.fromJson(response.data!);
     }
 
-    throw Exception(response.message ?? 'Error al obtener estadísticas');
+    throw Exception(response.statusMessage ?? 'Error al obtener estadísticas');
   }
 
   /// Obtiene las estadísticas globales del sistema (solo administradores)
@@ -27,10 +27,10 @@ class DashboardService {
       '/Dashboard/estadisticas/globales',
     );
 
-    if (response.success && response.data != null) {
+    if (response.statusCode == 200 && response.data != null) {
       return DashboardStatsModel.fromJson(response.data!);
     }
 
-    throw Exception(response.message ?? 'Error al obtener estadísticas globales');
+    throw Exception(response.statusMessage ?? 'Error al obtener estadísticas globales');
   }
 }

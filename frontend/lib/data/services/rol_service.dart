@@ -16,7 +16,7 @@ class RolService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -25,7 +25,7 @@ class RolService {
               .map((json) => RolModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener roles');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener roles');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -42,14 +42,14 @@ class RolService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return RolModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener rol');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al obtener rol');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -64,27 +64,27 @@ class RolService {
     try {
       final response = await _apiClient.post(
         '/roles',
-        body: json.encode(dto.toJson()),
+        data: json.encode(dto.toJson()),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return RolModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear rol');
+          throw ServerException(apiResponse.error.toString() ?? 'Error al crear rol');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(
-            apiResponse.error ?? 'Error al crear rol: ${response.statusCode}');
+            apiResponse.error.toString() ?? 'Error al crear rol: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -96,12 +96,12 @@ class RolService {
     try {
       final response = await _apiClient.put(
         '/roles/$id',
-        body: json.encode(dto.toJson()),
+        data: json.encode(dto.toJson()),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -109,14 +109,14 @@ class RolService {
           return RolModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al actualizar rol');
+              apiResponse.error.toString() ?? 'Error al actualizar rol');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ??
+        throw ServerException(apiResponse.error.toString() ??
             'Error al actualizar rol: ${response.statusCode}');
       }
     } catch (e) {
@@ -131,11 +131,11 @@ class RolService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
         throw ServerException(
-            apiResponse.error ?? 'Error al eliminar rol');
+            apiResponse.error.toString() ?? 'Error al eliminar rol');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -147,12 +147,12 @@ class RolService {
     try {
       final response = await _apiClient.post(
         '/roles/$id/permisos',
-        body: json.encode(permisosIds),
+        data: json.encode(permisosIds),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -160,7 +160,7 @@ class RolService {
           return RolModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al asignar permisos');
+              apiResponse.error.toString() ?? 'Error al asignar permisos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
