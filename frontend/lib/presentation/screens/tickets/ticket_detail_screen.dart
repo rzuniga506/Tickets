@@ -145,7 +145,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    ticket.titulo,
+                    ticket.asunto,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -202,22 +202,24 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         ),
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(
-                    icon: Icons.category,
-                    label: 'Categoría',
-                    value: ticket.categoria.displayName,
-                  ),
+                  if (ticket.categoriaTicketNombre != null)
+                    _buildInfoRow(
+                      icon: Icons.category,
+                      label: 'Tipo de Soporte',
+                      value: ticket.categoriaTicketNombre!,
+                      valueColor: AppTheme.primaryColor,
+                    ),
                   _buildInfoRow(
                     icon: Icons.person,
                     label: 'Creado por',
-                    value: ticket.usuario.nombreCompleto,
+                    value: ticket.solicitanteNombre,
                   ),
-                  if (ticket.tecnico != null)
+                  if (ticket.tecnicoAsignadoNombre != null)
                     _buildInfoRow(
                       icon: Icons.engineering,
                       label: 'Técnico asignado',
-                      value: ticket.tecnico!.nombreCompleto,
-                      valueColor: AppTheme.primaryColor,
+                      value: ticket.tecnicoAsignadoNombre!,
+                      valueColor: AppTheme.accentColor,
                     ),
                   _buildInfoRow(
                     icon: Icons.access_time,
@@ -248,12 +250,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       label: 'Fecha de cierre',
                       value: _formatDate(ticket.fechaCierre!),
                     ),
-                  if (ticket.fechaLimite != null)
+                  if (ticket.fechaLimiteSLA != null)
                     _buildInfoRow(
                       icon: Icons.event,
                       label: 'Fecha límite (SLA)',
-                      value: _formatDate(ticket.fechaLimite!),
-                      valueColor: ticket.slaVencido ? AppTheme.errorColor : null,
+                      value: _formatDate(ticket.fechaLimiteSLA!),
+                      valueColor: !ticket.slaCumplido ? AppTheme.errorColor : AppTheme.successColor,
                     ),
                 ],
               ),
@@ -294,7 +296,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ],
 
           // Evaluación (si existe)
-          if (ticket.calificacion != null) ...[
+          if (ticket.calificacionServicio != null) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -317,7 +319,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     Row(
                       children: List.generate(5, (index) {
                         return Icon(
-                          index < ticket.calificacion!
+                          index < ticket.calificacionServicio!
                               ? Icons.star
                               : Icons.star_border,
                           color: AppTheme.warningColor,
@@ -397,8 +399,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   Widget _buildActionButtons(TicketModel ticket, dynamic user) {
     final isAdmin = user.rol == RolUsuario.administrador;
     final isTecnico = user.rol == RolUsuario.tecnico;
-    final isCreador = ticket.usuario.id == user.id;
-    final isAsignado = ticket.tecnico?.id == user.id;
+    final isCreador = ticket.solicitanteId == user.id;
+    final isAsignado = ticket.tecnicoAsignadoId == user.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -460,7 +462,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ),
 
         // Evaluar ticket (creador)
-        if (isCreador && ticket.estado == EstadoTicket.cerrado && ticket.calificacion == null)
+        if (isCreador && ticket.estado == EstadoTicket.cerrado && ticket.calificacionServicio == null)
           ElevatedButton.icon(
             onPressed: () => _showEvaluarDialog(ticket),
             icon: const Icon(Icons.star),
