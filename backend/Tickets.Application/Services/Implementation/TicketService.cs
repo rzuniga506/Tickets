@@ -58,6 +58,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .AsQueryable();
 
             // Aplicar filtros
@@ -129,6 +130,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (ticket == null)
@@ -148,6 +150,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .FirstOrDefaultAsync(t => t.NumeroTicket == numeroTicket);
 
             if (ticket == null)
@@ -525,6 +528,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .Where(t => t.SolicitanteId == usuarioId)
                 .OrderByDescending(t => t.FechaCreacion)
                 .ToListAsync();
@@ -544,6 +548,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .Where(t => t.TecnicoAsignadoId == tecnicoId &&
                            t.Estado != EstadoTicket.Cerrado)
                 .OrderBy(t => t.FechaLimiteSLA)
@@ -563,6 +568,7 @@ namespace Tickets.Application.Services.Implementation
                 .GetQueryable()
                 .Include(t => t.Solicitante)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .Where(t => t.Estado == EstadoTicket.Nuevo)
                 .OrderBy(t => t.Prioridad)
                 .ThenBy(t => t.FechaCreacion)
@@ -583,6 +589,7 @@ namespace Tickets.Application.Services.Implementation
                 .Include(t => t.Solicitante)
                 .Include(t => t.TecnicoAsignado)
                 .Include(t => t.Equipo)
+                .Include(t => t.CategoriaTicket)
                 .Where(t => t.FechaLimiteSLA.HasValue &&
                            t.Estado != EstadoTicket.Cerrado &&
                            t.Estado != EstadoTicket.Resuelto)

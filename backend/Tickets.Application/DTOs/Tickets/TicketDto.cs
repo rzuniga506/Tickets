@@ -43,6 +43,8 @@ namespace Tickets.Application.DTOs.Tickets
         public int? EquipoId { get; set; }
         public string? EquipoNombre { get; set; }
         public string? EquipoCodigoInterno { get; set; }
+        public int? CategoriaTicketId { get; set; }
+        public string? CategoriaTicketNombre { get; set; }
 
         // Auditoria
         public DateTime FechaCreacion { get; set; }

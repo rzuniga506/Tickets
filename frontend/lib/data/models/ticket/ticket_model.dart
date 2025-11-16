@@ -34,6 +34,8 @@ class TicketModel {
   final int? equipoId;
   final String? equipoNombre;
   final String? equipoCodigoInterno;
+  final int? categoriaTicketId;
+  final String? categoriaTicketNombre;
   final DateTime fechaCreacion;
   final DateTime? fechaModificacion;
 
@@ -71,6 +73,8 @@ class TicketModel {
     this.equipoId,
     this.equipoNombre,
     this.equipoCodigoInterno,
+    this.categoriaTicketId,
+    this.categoriaTicketNombre,
     required this.fechaCreacion,
     this.fechaModificacion,
   });
@@ -124,6 +128,8 @@ class TicketModel {
       equipoId: json['equipoId'],
       equipoNombre: json['equipoNombre'],
       equipoCodigoInterno: json['equipoCodigoInterno'],
+      categoriaTicketId: json['categoriaTicketId'],
+      categoriaTicketNombre: json['categoriaTicketNombre'],
       fechaCreacion: DateTime.parse(json['fechaCreacion']),
       fechaModificacion: json['fechaModificacion'] != null
           ? DateTime.parse(json['fechaModificacion'])

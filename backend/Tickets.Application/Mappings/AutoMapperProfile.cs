@@ -153,7 +153,9 @@ namespace Tickets.Application.Mappings
                 .ForMember(dest => dest.EquipoNombre,
                     opt => opt.MapFrom(src => src.Equipo != null ? src.Equipo.Nombre : null))
                 .ForMember(dest => dest.EquipoCodigoInterno,
-                    opt => opt.MapFrom(src => src.Equipo != null ? src.Equipo.CodigoInterno : null));
+                    opt => opt.MapFrom(src => src.Equipo != null ? src.Equipo.CodigoInterno : null))
+                .ForMember(dest => dest.CategoriaTicketNombre,
+                    opt => opt.MapFrom(src => src.CategoriaTicket != null ? src.CategoriaTicket.Nombre : null));
 
             CreateMap<TicketCreateDto, Ticket>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
