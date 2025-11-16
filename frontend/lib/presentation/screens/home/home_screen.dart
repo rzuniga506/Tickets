@@ -242,7 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: columns,
                           mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
-                          childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.3 : 1.1,
+                          childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                              ? 1.0
+                              : (constraints.maxWidth >= Breakpoints.desktop ? 1.3 : 1.1),
                           children: [
                         _buildQuickActionCard(
                           title: 'Nuevo Ticket',
@@ -293,6 +295,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         if (isAdmin) ...[
+                          _buildQuickActionCard(
+                            title: 'Inventario',
+                            icon: Icons.inventory_2,
+                            color: const Color(0xFF06B6D4),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => getIt<EquipoCubit>(),
+                                    child: const EquiposListScreen(mode: EquipoListMode.all),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                           _buildQuickActionCard(
                             title: 'Usuarios',
                             icon: Icons.people,

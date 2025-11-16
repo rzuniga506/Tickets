@@ -66,7 +66,6 @@ class AppTheme {
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          fontFamily: 'Poppins',
         ),
       ),
 
@@ -121,7 +120,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -133,7 +131,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -153,7 +150,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -187,52 +183,43 @@ class AppTheme {
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         displayMedium: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         displaySmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         headlineMedium: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodySmall: TextStyle(
           fontSize: 12,
           color: greyText,
-          fontFamily: 'Poppins',
         ),
       ),
 
@@ -249,7 +236,6 @@ class AppTheme {
         deleteIconColor: greyDark,
         labelStyle: const TextStyle(
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 12,

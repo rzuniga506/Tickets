@@ -24,7 +24,9 @@ class _DepartamentosListScreenState extends State<DepartamentosListScreen> {
   @override
   void initState() {
     super.initState();
-    _loadDepartamentos();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDepartamentos();
+    });
   }
 
   @override
@@ -266,7 +268,9 @@ class _DepartamentosListScreenState extends State<DepartamentosListScreen> {
                                   crossAxisCount: columns,
                                   mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                                      ? 1.0
+                                      : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                                 ),
                                 itemCount: displayList.length,
                                 itemBuilder: (context, index) {
@@ -293,12 +297,14 @@ class _DepartamentosListScreenState extends State<DepartamentosListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'departamentos_fab',
         onPressed: () async {
+          final cubit = context.read<DepartamentoCubit>();
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BlocProvider.value(
-                value: context.read<DepartamentoCubit>(),
+              builder: (_) => BlocProvider.value(
+                value: cubit,
                 child: const DepartamentoFormScreen(),
               ),
             ),

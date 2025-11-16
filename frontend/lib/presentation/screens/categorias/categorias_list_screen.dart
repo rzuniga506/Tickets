@@ -241,7 +241,9 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
                             crossAxisCount: columns,
                             mainAxisSpacing: 16,
                             crossAxisSpacing: 16,
-                            childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                            childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                                ? 1.0
+                                : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                           ),
                           itemCount: _categorias.length,
                           itemBuilder: (context, index) {
@@ -281,6 +283,7 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'categorias_fab',
         onPressed: () async {
           await Navigator.push(
             context,
@@ -320,7 +323,9 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
             if (categoria.descripcion != null && categoria.descripcion!.isNotEmpty)
               Text(categoria.descripcion!),
             const SizedBox(height: 4),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -333,12 +338,10 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
                     style: TextStyle(fontSize: 11, color: color),
                   ),
                 ),
-                const SizedBox(width: 8),
                 Text(
                   'Orden: ${categoria.orden}',
                   style: const TextStyle(fontSize: 12),
                 ),
-                const SizedBox(width: 8),
                 if (!categoria.activo)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

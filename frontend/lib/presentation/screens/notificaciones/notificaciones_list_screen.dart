@@ -287,7 +287,9 @@ class _NotificacionesListScreenState extends State<NotificacionesListScreen> {
                   crossAxisCount: columns,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                      ? 1.0
+                      : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                 ),
                 itemCount: state.notificaciones.items.length +
                     (state.isLoadingMore ? 1 : 0),

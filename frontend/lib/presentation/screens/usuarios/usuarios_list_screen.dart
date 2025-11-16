@@ -8,7 +8,6 @@ import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
-import '../../widgets/usuario_card.dart';
 import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'usuario_detail_screen.dart';
@@ -315,6 +314,7 @@ class _UsuariosListScreenState extends State<UsuariosListScreen> {
           if (authState is Authenticated &&
               authState.user.rol == RolUsuario.administrador) {
             return FloatingActionButton.extended(
+              heroTag: 'usuarios_fab',
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -357,88 +357,143 @@ class _UsuariosListScreenState extends State<UsuariosListScreen> {
 
       return RefreshIndicator(
         onRefresh: _onRefresh,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // En desktop/tablet: Grid, en móvil: Lista
-            if (constraints.maxWidth >= Breakpoints.tablet) {
-              final columns = Breakpoints.getGridColumns(context);
-              return GridView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          padding: EdgeInsets.all(Breakpoints.getHorizontalPadding(context)),
+          child: Card(
+            child: Column(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    headingRowColor: WidgetStateProperty.all(
+                      AppTheme.greyLight,
+                    ),
+                    columns: const [
+                      DataColumn(label: Text('Usuario')),
+                      DataColumn(label: Text('Email')),
+                      DataColumn(label: Text('Rol')),
+                      DataColumn(label: Text('Departamento')),
+                      DataColumn(label: Text('Estado')),
+                      DataColumn(label: Text('Acciones')),
+                    ],
+                    rows: state.usuarios.items.map((usuario) {
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: AppTheme.primaryColor,
+                                  child: Text(
+                                    usuario.nombreCompleto.substring(0, 1).toUpperCase(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(usuario.nombreCompleto),
+                              ],
+                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => getIt<UsuarioCubit>(),
+                                    child: UsuarioDetailScreen(usuarioId: usuario.id),
+                                  ),
+                                ),
+                              );
+                              _loadUsuarios(refresh: true);
+                            },
+                          ),
+                          DataCell(Text(usuario.email)),
+                          DataCell(
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.errorColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                usuario.rol.toString().split('.').last,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppTheme.errorColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          DataCell(Text(usuario.departamentoNombre ?? 'Sin departamento')),
+                          DataCell(
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: usuario.activo
+                                    ? AppTheme.successColor.withOpacity(0.1)
+                                    : AppTheme.greyMedium,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                usuario.activo ? 'Activo' : 'Inactivo',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: usuario.activo
+                                      ? AppTheme.successColor
+                                      : AppTheme.greyDark,
+                                ),
+                              ),
+                            ),
+                          ),
+                          DataCell(
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.visibility),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BlocProvider(
+                                          create: (context) => getIt<UsuarioCubit>(),
+                                          child: UsuarioDetailScreen(usuarioId: usuario.id),
+                                        ),
+                                      ),
+                                    );
+                                    _loadUsuarios(refresh: true);
+                                  },
+                                  tooltip: 'Ver detalles',
+                                ),
+                                Switch(
+                                  value: usuario.activo,
+                                  onChanged: (value) => _handleToggleActivo(usuario),
+                                  activeTrackColor: AppTheme.successColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
-                itemCount: state.usuarios.items.length +
-                    (state.isLoadingMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == state.usuarios.items.length) {
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-
-                  final usuario = state.usuarios.items[index];
-                  return UsuarioCard(
-                    usuario: usuario,
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlocProvider(
-                            create: (context) => getIt<UsuarioCubit>(),
-                            child: UsuarioDetailScreen(usuarioId: usuario.id),
-                          ),
-                        ),
-                      );
-                      _loadUsuarios(refresh: true);
-                    },
-                    onToggleActivo: () => _handleToggleActivo(usuario),
-                  );
-                },
-              );
-            } else {
-              return ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 80),
-                itemCount: state.usuarios.items.length +
-                    (state.isLoadingMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == state.usuarios.items.length) {
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-
-                  final usuario = state.usuarios.items[index];
-                  return UsuarioCard(
-                    usuario: usuario,
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlocProvider(
-                            create: (context) => getIt<UsuarioCubit>(),
-                            child: UsuarioDetailScreen(usuarioId: usuario.id),
-                          ),
-                        ),
-                      );
-                      _loadUsuarios(refresh: true);
-                    },
-                    onToggleActivo: () => _handleToggleActivo(usuario),
-                  );
-                },
-              );
-            }
-          },
+                if (state.isLoadingMore)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       );
     }
