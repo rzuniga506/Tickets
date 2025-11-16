@@ -50,6 +50,97 @@ namespace Tickets.Domain.Entities
         /// </summary>
         public TipoEquipo Tipo { get; set; }
 
+        // =============================================
+        // CAMPOS COMUNES - Información del Fabricante
+        // =============================================
+
+        /// <summary>
+        /// Marca o fabricante del equipo (Dell, HP, Lenovo, etc.)
+        /// </summary>
+        public string? Marca { get; set; }
+
+        /// <summary>
+        /// Proveedor que suministró el equipo
+        /// </summary>
+        public string? Proveedor { get; set; }
+
+        /// <summary>
+        /// Stock Keeping Unit - Código SKU del producto
+        /// </summary>
+        public string? SKU { get; set; }
+
+        /// <summary>
+        /// Número de orden de compra
+        /// </summary>
+        public string? NumeroOrdenCompra { get; set; }
+
+        /// <summary>
+        /// Ubicación física (Edificio, Piso, Área)
+        /// </summary>
+        public string? UbicacionFisica { get; set; }
+
+        // =============================================
+        // COMPUTADORAS/LAPTOPS - Hardware
+        // =============================================
+
+        /// <summary>
+        /// Procesador/CPU (ej: Intel Core i7-12700K)
+        /// </summary>
+        public string? Procesador { get; set; }
+
+        /// <summary>
+        /// Memoria RAM en GB
+        /// </summary>
+        public int? RamGB { get; set; }
+
+        /// <summary>
+        /// Capacidad del disco duro/SSD en GB
+        /// </summary>
+        public int? DiscoDuroCapacidadGB { get; set; }
+
+        /// <summary>
+        /// Tipo de almacenamiento (SSD, HDD, NVMe)
+        /// </summary>
+        public string? TipoAlmacenamiento { get; set; }
+
+        // =============================================
+        // COMPUTADORAS/LAPTOPS/DISPOSITIVOS RED - Red
+        // =============================================
+
+        /// <summary>
+        /// Dirección MAC de la tarjeta de red
+        /// </summary>
+        public string? MacAddress { get; set; }
+
+        /// <summary>
+        /// Dirección IP asignada (IPv4 o IPv6)
+        /// </summary>
+        public string? DireccionIP { get; set; }
+
+        /// <summary>
+        /// Nombre del host en la red
+        /// </summary>
+        public string? Hostname { get; set; }
+
+        // =============================================
+        // COMPUTADORAS/LAPTOPS - Sistema Operativo
+        // =============================================
+
+        /// <summary>
+        /// Sistema operativo instalado
+        /// </summary>
+        public string? SistemaOperativo { get; set; }
+
+        /// <summary>
+        /// Versión del sistema operativo
+        /// </summary>
+        public string? VersionSO { get; set; }
+
+        /// <summary>
+        /// Clave de licencia del sistema operativo
+        /// </summary>
+        public string? LicenciaSO { get; set; }
+
         /// <summary>
         /// Estado actual del equipo
         /// </summary>
