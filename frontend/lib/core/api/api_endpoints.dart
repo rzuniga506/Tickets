@@ -54,6 +54,9 @@ class ApiEndpoints {
   static const String ticketsAsignados = '/tickets/asignados';
   static const String ticketsPendientes = '/tickets/pendientes-asignacion';
   static const String ticketsSLA = '/tickets/sla-proximo-vencer';
+  static const String ticketsMencionados = '/tickets/mencionados';
+  static const String ticketsAccesibles = '/tickets/accesibles';
+  static String ticketTieneAcceso(int id) => '/tickets/$id/tiene-acceso';
   static const String ticketsEstadisticas = '/tickets/estadisticas';
 
   // Comentarios de Tickets
