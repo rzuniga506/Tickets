@@ -50,14 +50,18 @@ class TicketRepository {
     required String asunto,
     required String descripcion,
     required int prioridad,
+    required int tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     try {
       return await _ticketService.createTicket(
         asunto: asunto,
         descripcion: descripcion,
         prioridad: prioridad,
+        tipoSoporte: tipoSoporte,
         equipoId: equipoId,
+        categoriaTicketId: categoriaTicketId,
       );
     } catch (e) {
       throw ServerException(e.toString());
@@ -70,7 +74,9 @@ class TicketRepository {
     required String asunto,
     required String descripcion,
     required int prioridad,
+    required int tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     try {
       return await _ticketService.updateTicket(
@@ -78,7 +84,9 @@ class TicketRepository {
         asunto: asunto,
         descripcion: descripcion,
         prioridad: prioridad,
+        tipoSoporte: tipoSoporte,
         equipoId: equipoId,
+        categoriaTicketId: categoriaTicketId,
       );
     } catch (e) {
       throw ServerException(e.toString());

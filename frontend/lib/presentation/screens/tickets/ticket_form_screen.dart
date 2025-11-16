@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../logic/tickets/ticket_cubit.dart';
 import '../../../logic/tickets/ticket_state.dart';
 import '../../../data/models/ticket/ticket_model.dart';
@@ -26,6 +27,8 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
   final _descripcionController = TextEditingController();
 
   PrioridadTicket _prioridad = PrioridadTicket.media;
+  TipoSoporte _tipoSoporte = TipoSoporte.soporteTecnico;
+  List<PlatformFile> _archivosAdjuntos = [];
 
   bool get _isEditing => widget.ticket != null;
 
@@ -36,6 +39,7 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
       _tituloController.text = widget.ticket!.asunto;
       _descripcionController.text = widget.ticket!.descripcion;
       _prioridad = widget.ticket!.prioridad;
+      _tipoSoporte = widget.ticket!.tipoSoporte;
     }
   }
 
@@ -55,17 +59,103 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
               asunto: _tituloController.text.trim(),
               descripcion: _descripcionController.text.trim(),
               prioridad: _prioridad,
+              tipoSoporte: _tipoSoporte,
               equipoId: null, // TODO: Agregar selector de equipo si es necesario
             );
       } else {
         // Crear nuevo ticket
+        // TODO: Enviar archivos adjuntos al backend cuando se implemente la API
         context.read<TicketCubit>().createTicket(
               asunto: _tituloController.text.trim(),
               descripcion: _descripcionController.text.trim(),
               prioridad: _prioridad,
+              tipoSoporte: _tipoSoporte,
               equipoId: null, // TODO: Agregar selector de equipo si es necesario
             );
       }
+    }
+  }
+
+  Future<void> _seleccionarArchivos() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'txt'],
+        withData: true, // Necesario para obtener los bytes
+      );
+
+      if (result != null) {
+        // Validar tamaño (máximo 10MB por archivo)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        final archivosValidos = result.files.where((file) {
+          if (file.size > maxSize) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${file.name} excede el tamaño máximo de 10MB'),
+                backgroundColor: AppTheme.warningColor,
+              ),
+            );
+            return false;
+          }
+          return true;
+        }).toList();
+
+        // Validar cantidad total (máximo 5 archivos)
+        if (_archivosAdjuntos.length + archivosValidos.length > 5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Máximo 5 archivos permitidos'),
+              backgroundColor: AppTheme.warningColor,
+            ),
+          );
+          return;
+        }
+
+        setState(() {
+          _archivosAdjuntos.addAll(archivosValidos);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al seleccionar archivos: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _eliminarArchivo(int index) {
+    setState(() {
+      _archivosAdjuntos.removeAt(index);
+    });
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  IconData _getFileIcon(String? extension) {
+    switch (extension?.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return Icons.image;
+      case 'txt':
+        return Icons.text_snippet;
+      default:
+        return Icons.insert_drive_file;
     }
   }
 
@@ -197,6 +287,39 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
                   ),
                   const SizedBox(height: 24),
 
+                  // Tipo de Soporte
+                  DropdownButtonFormField<TipoSoporte>(
+                    decoration: const InputDecoration(
+                      labelText: 'Tipo de Soporte *',
+                      hintText: 'Seleccione el tipo de soporte',
+                      prefixIcon: Icon(Icons.support_agent),
+                      border: OutlineInputBorder(),
+                    ),
+                    value: _tipoSoporte,
+                    items: TipoSoporte.values.map((tipo) {
+                      return DropdownMenuItem(
+                        value: tipo,
+                        child: Text(tipo.displayName),
+                      );
+                    }).toList(),
+                    onChanged: isLoading
+                        ? null
+                        : (value) {
+                            if (value != null) {
+                              setState(() {
+                                _tipoSoporte = value;
+                              });
+                            }
+                          },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'El tipo de soporte es requerido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
                   // Prioridad
                   Text(
                     'Prioridad *',
@@ -235,6 +358,77 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
                       );
                     }).toList(),
                   ),
+                  const SizedBox(height: 32),
+
+                  // Archivos Adjuntos
+                  Text(
+                    'Archivos Adjuntos (Opcional)',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Máximo 5 archivos, 10MB cada uno. Formatos: PDF, DOC, XLS, JPG, PNG, TXT',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppTheme.greyDark,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Botón para adjuntar archivos
+                  OutlinedButton.icon(
+                    onPressed: isLoading ? null : _seleccionarArchivos,
+                    icon: const Icon(Icons.attach_file),
+                    label: const Text('Adjuntar Archivos'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    ),
+                  ),
+
+                  // Lista de archivos adjuntos
+                  if (_archivosAdjuntos.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppTheme.greyLight),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _archivosAdjuntos.length,
+                        separatorBuilder: (context, index) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final archivo = _archivosAdjuntos[index];
+                          return ListTile(
+                            leading: Icon(
+                              _getFileIcon(archivo.extension),
+                              color: AppTheme.primaryColor,
+                            ),
+                            title: Text(
+                              archivo.name,
+                              style: const TextStyle(fontSize: 14),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              _formatFileSize(archivo.size),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppTheme.greyDark,
+                                  ),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              color: AppTheme.errorColor,
+                              onPressed: isLoading ? null : () => _eliminarArchivo(index),
+                              tooltip: 'Eliminar archivo',
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 32),
 
                   // Botones

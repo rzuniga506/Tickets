@@ -76,7 +76,9 @@ class TicketCubit extends Cubit<TicketState> {
     required String asunto,
     required String descripcion,
     required PrioridadTicket prioridad,
+    required TipoSoporte tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     try {
       emit(TicketActionLoading('Creando ticket...'));
@@ -84,7 +86,9 @@ class TicketCubit extends Cubit<TicketState> {
         asunto: asunto,
         descripcion: descripcion,
         prioridad: prioridad.toJson(), // Convierte enum a int (1-4)
+        tipoSoporte: tipoSoporte.toJson(), // Convierte enum a int (0-3)
         equipoId: equipoId,
+        categoriaTicketId: categoriaTicketId,
       );
       emit(TicketCreated(ticket));
     } catch (e) {
@@ -98,7 +102,9 @@ class TicketCubit extends Cubit<TicketState> {
     required String asunto,
     required String descripcion,
     required PrioridadTicket prioridad,
+    required TipoSoporte tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     try {
       emit(TicketActionLoading('Actualizando ticket...'));
@@ -107,7 +113,9 @@ class TicketCubit extends Cubit<TicketState> {
         asunto: asunto,
         descripcion: descripcion,
         prioridad: prioridad.toJson(), // Convierte enum a int (1-4)
+        tipoSoporte: tipoSoporte.toJson(), // Convierte enum a int (0-3)
         equipoId: equipoId,
+        categoriaTicketId: categoriaTicketId,
       );
       emit(TicketUpdated(ticket));
     } catch (e) {

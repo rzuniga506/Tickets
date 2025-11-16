@@ -70,7 +70,9 @@ class TicketService {
     required String asunto,
     required String descripcion,
     required int prioridad,
+    required int tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     final response = await _apiClient.post(
       ApiEndpoints.tickets,
@@ -78,7 +80,9 @@ class TicketService {
         'asunto': asunto,
         'descripcion': descripcion,
         'prioridad': prioridad,
+        'tipoSoporte': tipoSoporte,
         if (equipoId != null) 'equipoId': equipoId,
+        if (categoriaTicketId != null) 'categoriaTicketId': categoriaTicketId,
       },
     );
 
@@ -100,7 +104,9 @@ class TicketService {
     required String asunto,
     required String descripcion,
     required int prioridad,
+    required int tipoSoporte,
     int? equipoId,
+    int? categoriaTicketId,
   }) async {
     final response = await _apiClient.put(
       ApiEndpoints.ticketById(id),
@@ -108,7 +114,9 @@ class TicketService {
         'asunto': asunto,
         'descripcion': descripcion,
         'prioridad': prioridad,
+        'tipoSoporte': tipoSoporte,
         if (equipoId != null) 'equipoId': equipoId,
+        if (categoriaTicketId != null) 'categoriaTicketId': categoriaTicketId,
       },
     );
 
