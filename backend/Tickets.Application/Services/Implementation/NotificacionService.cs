@@ -21,11 +21,16 @@ namespace Tickets.Application.Services.Implementation
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-        public NotificacionService(IUnitOfWork unitOfWork, IMapper mapper)
+        public NotificacionService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         public async Task<PagedResult<NotificacionDto>> GetByUsuarioAsync(
@@ -405,9 +410,204 @@ namespace Tickets.Application.Services.Implementation
 
         private async Task EnviarEmailNotificationAsync(Notificacion notificacion)
         {
-            // TODO: Implementar integración con servicio de email (SendGrid, SMTP, etc.)
-            // Por ahora solo marcamos como enviada
-            await Task.CompletedTask;
+            try
+            {
+                // Obtener datos del usuario destinatario
+                var usuario = await _unitOfWork.Repository<Usuario>()
+                    .GetByIdAsync(notificacion.UsuarioId);
+
+                if (usuario == null || string.IsNullOrEmpty(usuario.Email))
+                {
+                    return; // No se puede enviar email sin usuario o email
+                }
+
+                bool emailSent = false;
+
+                // Enviar email según el tipo de notificación
+                switch (notificacion.Tipo)
+                {
+                    case TipoNotificacion.Mencion:
+                        // Para menciones, obtener información del ticket
+                        if (notificacion.EntidadId.HasValue)
+                        {
+                            var ticket = await _unitOfWork.Repository<Ticket>()
+                                .GetByIdAsync(notificacion.EntidadId.Value);
+
+                            if (ticket != null)
+                            {
+                                emailSent = await _emailService.SendMentionNotificationAsync(
+                                    toEmail: usuario.Email,
+                                    toName: usuario.NombreCompleto,
+                                    ticketNumber: ticket.NumeroTicket,
+                                    ticketSubject: ticket.Asunto,
+                                    ticketId: ticket.Id
+                                );
+                            }
+                        }
+                        break;
+
+                    case TipoNotificacion.TicketAsignado:
+                    case TipoNotificacion.TicketNuevo:
+                    case TipoNotificacion.TicketActualizado:
+                    case TipoNotificacion.TicketResuelto:
+                    case TipoNotificacion.TicketComentario:
+                    case TipoNotificacion.SLAProximoVencer:
+                        // Para otros tipos de notificaciones de tickets
+                        var subject = notificacion.Titulo;
+                        var body = GenerarEmailGenerico(
+                            usuario.NombreCompleto,
+                            notificacion.Titulo,
+                            notificacion.Mensaje,
+                            notificacion.UrlAccion
+                        );
+
+                        emailSent = await _emailService.SendEmailAsync(
+                            to: usuario.Email,
+                            subject: subject,
+                            body: body,
+                            isHtml: true
+                        );
+                        break;
+
+                    default:
+                        // Para otros tipos, solo enviar si es de alta prioridad
+                        if (notificacion.Prioridad == PrioridadNotificacion.Alta ||
+                            notificacion.Prioridad == PrioridadNotificacion.Urgente)
+                        {
+                            var subjectDefault = notificacion.Titulo;
+                            var bodyDefault = GenerarEmailGenerico(
+                                usuario.NombreCompleto,
+                                notificacion.Titulo,
+                                notificacion.Mensaje,
+                                notificacion.UrlAccion
+                            );
+
+                            emailSent = await _emailService.SendEmailAsync(
+                                to: usuario.Email,
+                                subject: subjectDefault,
+                                body: bodyDefault,
+                                isHtml: true
+                            );
+                        }
+                        break;
+                }
+
+                // Marcar como enviada si fue exitoso
+                if (emailSent)
+                {
+                    notificacion.Enviada = true;
+                    notificacion.FechaEnvio = DateTime.UtcNow;
+                }
+            }
+            catch (Exception)
+            {
+                // Log del error pero no fallar el proceso de notificación
+                // El error ya está logueado en EmailService
+                await Task.CompletedTask;
+            }
+        }
+
+        private string GenerarEmailGenerico(string userName, string titulo, string mensaje, string? urlAccion)
+        {
+            var actionButton = string.IsNullOrEmpty(urlAccion)
+                ? string.Empty
+                : $@"
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='{urlAccion}' class='button'>Ver Detalles</a>
+                    </div>";
+
+            return $@"
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>{titulo}</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }}
+        .container {{
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: #ffffff;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            margin: -30px -30px 30px -30px;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 24px;
+            fontweight: 600;
+        }}
+        .content {{
+            margin: 20px 0;
+        }}
+        .message-box {{
+            background-color: #f8f9fa;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }}
+        .button {{
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #2196F3;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: 600;
+        }}
+        .button:hover {{
+            background-color: #1976D2;
+        }}
+        .footer {{
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #757575;
+            font-size: 12px;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>{titulo}</h1>
+        </div>
+
+        <div class='content'>
+            <p>Hola <strong>{userName}</strong>,</p>
+
+            <div class='message-box'>
+                <p>{mensaje}</p>
+            </div>
+
+            {actionButton}
+        </div>
+
+        <div class='footer'>
+            <p>Este es un correo automático del Sistema de Tickets TI.</p>
+            <p>Por favor, no respondas a este correo.</p>
+        </div>
+    </div>
+</body>
+</html>";
         }
     }
 }

@@ -129,6 +129,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 // Servicios de Infraestructura
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Servicios de Aplicación
 builder.Services.AddScoped<IAuthService, AuthService>();

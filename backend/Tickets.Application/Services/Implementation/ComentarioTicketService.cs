@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.Comentarios;
+using Tickets.Application.DTOs.Notificaciones;
 using Tickets.Application.Services.Interfaces;
 using Tickets.Domain.Entities;
+using Tickets.Domain.Enums;
 using Tickets.Domain.Exceptions;
 using Tickets.Infrastructure.Repositories.Interfaces;
 
@@ -20,13 +22,16 @@ namespace Tickets.Application.Services.Implementation
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificacionService _notificacionService;
 
         public ComentarioTicketService(
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper,
+            INotificacionService notificacionService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notificacionService = notificacionService;
         }
 
         public async Task<PagedResult<ComentarioTicketDto>> GetByTicketIdAsync(
@@ -115,7 +120,9 @@ namespace Tickets.Application.Services.Implementation
         {
             // Verificar que el ticket existe
             var ticket = await _unitOfWork.Repository<Ticket>()
-                .GetByIdAsync(createDto.TicketId);
+                .GetQueryable()
+                .Include(t => t.Solicitante)
+                .FirstOrDefaultAsync(t => t.Id == createDto.TicketId);
 
             if (ticket == null)
             {
@@ -143,6 +150,12 @@ namespace Tickets.Application.Services.Implementation
 
             await _unitOfWork.Repository<ComentarioTicket>().AddAsync(comentario);
             await _unitOfWork.SaveChangesAsync();
+
+            // Procesar menciones si hay usuarios mencionados
+            if (createDto.UsuariosIdMencionados != null && createDto.UsuariosIdMencionados.Any())
+            {
+                await ProcesarMencionesAsync(comentario.Id, createDto.UsuariosIdMencionados, ticket);
+            }
 
             return await GetByIdAsync(comentario.Id);
         }
@@ -245,6 +258,53 @@ namespace Tickets.Application.Services.Implementation
             await _unitOfWork.SaveChangesAsync();
 
             return await GetByIdAsync(comentario.Id);
+        }
+
+        /// <summary>
+        /// Procesa las menciones de usuarios en un comentario
+        /// </summary>
+        private async Task ProcesarMencionesAsync(int comentarioId, List<int> usuariosIdMencionados, Ticket ticket)
+        {
+            // Eliminar duplicados
+            var usuariosUnicos = usuariosIdMencionados.Distinct().ToList();
+
+            // Obtener usuarios que existen
+            var usuarios = await _unitOfWork.Repository<Usuario>()
+                .GetQueryable()
+                .Where(u => usuariosUnicos.Contains(u.Id) && u.Activo)
+                .ToListAsync();
+
+            foreach (var usuarioMencionado in usuarios)
+            {
+                // Crear registro de mención
+                var mencion = new MencionComentario
+                {
+                    ComentarioTicketId = comentarioId,
+                    UsuarioMencionadoId = usuarioMencionado.Id,
+                    Leida = false
+                };
+
+                await _unitOfWork.Repository<MencionComentario>().AddAsync(mencion);
+
+                // Crear notificación con envío de email
+                await _notificacionService.CreateAsync(new NotificacionCreateDto
+                {
+                    UsuarioId = usuarioMencionado.Id,
+                    Titulo = "Te mencionaron en un comentario",
+                    Mensaje = $"Fuiste mencionado en un comentario del ticket #{ticket.NumeroTicket}: {ticket.Asunto}",
+                    Tipo = TipoNotificacion.Mencion,
+                    Prioridad = PrioridadNotificacion.Normal,
+                    EntidadTipo = "Ticket",
+                    EntidadId = ticket.Id,
+                    UrlAccion = $"/tickets/{ticket.Id}",
+                    Accion = "Ver ticket",
+                    EnviarEmail = true,  // IMPORTANTE: Activar envío de email
+                    EnviarPush = false,
+                    MostrarInApp = true
+                });
+            }
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
