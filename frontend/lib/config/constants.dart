@@ -124,6 +124,14 @@ enum TipoSolucion {
   derivado     // 3 - Derivado a otra área
 }
 
+/// Tipos de soporte (alineado con TipoSoporte.cs del backend)
+enum TipoSoporte {
+  soporteTecnico,  // 0 - Soporte técnico general (hardware, software, redes)
+  softland,        // 1 - Soporte específico para sistema Softland
+  dodi,            // 2 - Soporte específico para sistema Dodi
+  otro             // 3 - Otros tipos de soporte no clasificados
+}
+
 /// Tipos de notificación
 enum TipoNotificacion {
   ticketNuevo,
@@ -328,6 +336,29 @@ extension TipoSolucionExtension on TipoSolucion {
   /// Crea un TipoSolucion desde valor entero del backend
   static TipoSolucion fromJson(int value) {
     return TipoSolucion.values[value];
+  }
+}
+
+extension TipoSoporteExtension on TipoSoporte {
+  String get displayName {
+    switch (this) {
+      case TipoSoporte.soporteTecnico:
+        return 'Soporte Técnico';
+      case TipoSoporte.softland:
+        return 'Softland';
+      case TipoSoporte.dodi:
+        return 'Dodi';
+      case TipoSoporte.otro:
+        return 'Otro';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend (0-3)
+  int toJson() => index;
+
+  /// Crea un TipoSoporte desde valor entero del backend
+  static TipoSoporte fromJson(int value) {
+    return TipoSoporte.values[value];
   }
 }
 

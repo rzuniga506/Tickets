@@ -9,6 +9,8 @@ class TicketModel {
   final String prioridadNombre;
   final EstadoTicket estado;
   final String estadoNombre;
+  final TipoSoporte tipoSoporte;
+  final String tipoSoporteNombre;
   final DateTime fechaApertura;
   final DateTime? fechaAsignacion;
   final DateTime? fechaInicioProceso;
@@ -34,6 +36,8 @@ class TicketModel {
   final int? equipoId;
   final String? equipoNombre;
   final String? equipoCodigoInterno;
+  final int? categoriaTicketId;
+  final String? categoriaTicketNombre;
   final DateTime fechaCreacion;
   final DateTime? fechaModificacion;
 
@@ -46,6 +50,8 @@ class TicketModel {
     required this.prioridadNombre,
     required this.estado,
     required this.estadoNombre,
+    required this.tipoSoporte,
+    required this.tipoSoporteNombre,
     required this.fechaApertura,
     this.fechaAsignacion,
     this.fechaInicioProceso,
@@ -71,6 +77,8 @@ class TicketModel {
     this.equipoId,
     this.equipoNombre,
     this.equipoCodigoInterno,
+    this.categoriaTicketId,
+    this.categoriaTicketNombre,
     required this.fechaCreacion,
     this.fechaModificacion,
   });
@@ -85,6 +93,8 @@ class TicketModel {
       prioridadNombre: json['prioridadNombre'] ?? '',
       estado: _parseEstado(json['estado']),
       estadoNombre: json['estadoNombre'] ?? '',
+      tipoSoporte: _parseTipoSoporte(json['tipoSoporte']),
+      tipoSoporteNombre: json['tipoSoporteNombre'] ?? '',
       fechaApertura: DateTime.parse(json['fechaApertura']),
       fechaAsignacion: json['fechaAsignacion'] != null
           ? DateTime.parse(json['fechaAsignacion'])
@@ -124,6 +134,8 @@ class TicketModel {
       equipoId: json['equipoId'],
       equipoNombre: json['equipoNombre'],
       equipoCodigoInterno: json['equipoCodigoInterno'],
+      categoriaTicketId: json['categoriaTicketId'],
+      categoriaTicketNombre: json['categoriaTicketNombre'],
       fechaCreacion: DateTime.parse(json['fechaCreacion']),
       fechaModificacion: json['fechaModificacion'] != null
           ? DateTime.parse(json['fechaModificacion'])
@@ -142,6 +154,13 @@ class TicketModel {
 
   static TipoSolucion _parseTipoSolucion(int tipo) {
     return TipoSolucionExtension.fromJson(tipo);
+  }
+
+  static TipoSoporte _parseTipoSoporte(dynamic value) {
+    if (value is int) {
+      return TipoSoporteExtension.fromJson(value);
+    }
+    return TipoSoporte.soporteTecnico; // default
   }
 
   bool get slaVencido {
