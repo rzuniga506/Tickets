@@ -61,6 +61,14 @@ class ApiEndpoints {
   static String comentarioById(int id) => '/comentariosticket/$id';
   static String comentariosByTicket(int ticketId) => '/comentariosticket/ticket/$ticketId';
 
+  // Adjuntos de Tickets
+  static const String adjuntosTicket = '/adjuntosticket';
+  static String adjuntoById(int id) => '/adjuntosticket/$id';
+  static String adjuntosByTicket(int ticketId) => '/adjuntosticket/ticket/$ticketId';
+  static const String uploadAdjunto = '/adjuntosticket/upload';
+  static const String uploadMultipleAdjuntos = '/adjuntosticket/upload-multiple';
+  static String downloadAdjunto(int id) => '/adjuntosticket/download/$id';
+
   // Notificaciones
   static const String notificaciones = '/notificaciones';
   static String notificacionById(int id) => '/notificaciones/$id';

@@ -111,6 +111,60 @@ class AdjuntoService {
     }
   }
 
+  /// Subir múltiples archivos
+  Future<List<AdjuntoTicketModel>> uploadMultiple(List<File> files, int ticketId) async {
+    try {
+      final token = await _apiClient.storage.getAccessToken();
+      if (token == null) {
+        throw ServerException('No hay token de autenticación');
+      }
+
+      final uri = Uri.parse('${_apiClient.baseUrl}/adjuntosticket/upload-multiple');
+      final request = http.MultipartRequest('POST', uri);
+
+      // Headers
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Archivos
+      for (var file in files) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'files',
+          file.path,
+        ));
+      }
+
+      // Datos
+      request.fields['ticketId'] = ticketId.toString();
+
+      // Enviar
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final apiResponse = ApiResponse<List<dynamic>>.fromJson(
+          json.decode(response.body),
+          (json) => json as List<dynamic>,
+        );
+
+        if (apiResponse.success && apiResponse.data != null) {
+          return apiResponse.data!
+              .map((json) => AdjuntoTicketModel.fromJson(json as Map<String, dynamic>))
+              .toList();
+        } else {
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al subir archivos');
+        }
+      } else {
+        final apiResponse = ApiResponse<dynamic>.fromJson(
+          json.decode(response.body),
+          (json) => json,
+        );
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al subir archivos: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
   /// Descargar un archivo
   Future<List<int>> download(int id) async {
     try {

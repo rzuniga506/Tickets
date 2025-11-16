@@ -26,6 +26,11 @@ namespace Tickets.Application.Services.Interfaces
         Task<AdjuntoTicketDto> UploadAsync(IFormFile file, int ticketId, int usuarioId);
 
         /// <summary>
+        /// Subir múltiples archivos adjuntos
+        /// </summary>
+        Task<List<AdjuntoTicketDto>> UploadMultipleAsync(List<IFormFile> files, int ticketId, int usuarioId);
+
+        /// <summary>
         /// Descargar un adjunto
         /// </summary>
         Task<(byte[] contenido, string nombreArchivo, string tipoMime)> DownloadAsync(int id);
