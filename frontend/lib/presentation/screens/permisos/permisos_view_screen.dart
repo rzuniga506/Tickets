@@ -154,7 +154,7 @@ class _PermisosViewScreenState extends State<PermisosViewScreen> {
               // Lista de permisos agrupados
               Expanded(
                 child: _filteredPermisos.isEmpty
-                    ? const EmptyState(
+                    ? const EmptyState(title: "No hay elementos",
                         icon: Icons.security,
                         message: 'No se encontraron permisos',
                       )

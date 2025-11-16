@@ -29,44 +29,51 @@ class NotificacionCard extends StatelessWidget {
 
   Color _getColorForTipo(TipoNotificacion tipo) {
     switch (tipo) {
-      case TipoNotificacion.info:
-        return AppTheme.infoColor;
-      case TipoNotificacion.exito:
-        return AppTheme.successColor;
-      case TipoNotificacion.advertencia:
-        return AppTheme.warningColor;
-      case TipoNotificacion.error:
-        return AppTheme.errorColor;
+      case TipoNotificacion.ticketNuevo:
       case TipoNotificacion.ticketAsignado:
+      case TipoNotificacion.ticketEnProceso:
       case TipoNotificacion.ticketActualizado:
+        return AppTheme.infoColor;
       case TipoNotificacion.ticketResuelto:
-        return AppTheme.primaryColor;
+      case TipoNotificacion.ticketCerrado:
+      case TipoNotificacion.slaCumplido:
+        return AppTheme.successColor;
+      case TipoNotificacion.slaProximoVencer:
+        return AppTheme.warningColor;
+      case TipoNotificacion.slaIncumplido:
+        return AppTheme.errorColor;
       case TipoNotificacion.equipoAsignado:
-      case TipoNotificacion.equipoMantenimiento:
+      case TipoNotificacion.equipoDesasignado:
         return AppTheme.accentColor;
+      case TipoNotificacion.general:
+        return AppTheme.greyDark;
     }
   }
 
   IconData _getIconForTipo(TipoNotificacion tipo) {
     switch (tipo) {
-      case TipoNotificacion.info:
-        return Icons.info_outline;
-      case TipoNotificacion.exito:
-        return Icons.check_circle_outline;
-      case TipoNotificacion.advertencia:
-        return Icons.warning_amber_outlined;
-      case TipoNotificacion.error:
-        return Icons.error_outline;
+      case TipoNotificacion.ticketNuevo:
+        return Icons.add_circle_outline;
       case TipoNotificacion.ticketAsignado:
         return Icons.assignment_ind_outlined;
+      case TipoNotificacion.ticketEnProceso:
+        return Icons.pending_actions_outlined;
       case TipoNotificacion.ticketActualizado:
         return Icons.update_outlined;
       case TipoNotificacion.ticketResuelto:
+      case TipoNotificacion.ticketCerrado:
         return Icons.check_circle_outline;
+      case TipoNotificacion.slaProximoVencer:
+        return Icons.warning_amber_outlined;
+      case TipoNotificacion.slaCumplido:
+        return Icons.check;
+      case TipoNotificacion.slaIncumplido:
+        return Icons.error_outline;
       case TipoNotificacion.equipoAsignado:
+      case TipoNotificacion.equipoDesasignado:
         return Icons.devices_outlined;
-      case TipoNotificacion.equipoMantenimiento:
-        return Icons.build_outlined;
+      case TipoNotificacion.general:
+        return Icons.info_outline;
     }
   }
 
@@ -168,7 +175,7 @@ class NotificacionCard extends StatelessWidget {
                         ),
 
                         // Referencias a ticket o equipo
-                        if (notificacion.ticketId != null) ...[
+                        if (notificacion.entidadId != null) ...[
                           const SizedBox(width: 12),
                           Icon(
                             Icons.confirmation_number,
@@ -177,7 +184,7 @@ class NotificacionCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Ticket #${notificacion.ticketId}',
+                            'Ticket #${notificacion.entidadId}',
                             style: TextStyle(
                               fontSize: 12,
                               color: AppTheme.primaryColor.withOpacity(0.7),
@@ -186,7 +193,7 @@ class NotificacionCard extends StatelessWidget {
                           ),
                         ],
 
-                        if (notificacion.equipoId != null) ...[
+                        if (notificacion.entidadId != null) ...[
                           const SizedBox(width: 12),
                           Icon(
                             Icons.devices,
@@ -195,7 +202,7 @@ class NotificacionCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Equipo #${notificacion.equipoId}',
+                            'Equipo #${notificacion.entidadId}',
                             style: TextStyle(
                               fontSize: 12,
                               color: AppTheme.accentColor.withOpacity(0.7),

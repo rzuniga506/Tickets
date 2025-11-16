@@ -89,7 +89,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
           // Mantener el ticket visible durante acciones
           if (state is TicketActionSuccess && state.ticket != null) {
-            return _buildTicketDetail(state.ticket);
+            return _buildTicketDetail(state.ticket!);
           }
 
           return Center(
@@ -217,7 +217,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     _buildInfoRow(
                       icon: Icons.engineering,
                       label: 'Técnico asignado',
-                      value: ticket.tecnicoAsignadoNombre!.nombreCompleto,
+                      value: ticket.tecnicoAsignadoNombre!,
                       valueColor: AppTheme.primaryColor,
                     ),
                   _buildInfoRow(
@@ -399,7 +399,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     final isAdmin = user.rol == RolUsuario.administrador;
     final isTecnico = user.rol == RolUsuario.tecnico;
     final isCreador = ticket.solicitanteId == user.id;
-    final isAsignado = ticket.tecnicoAsignadoNombre?.id == user.id;
+    final isAsignado = ticket.tecnicoAsignadoId == user.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -562,7 +562,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     itemCount: tecnicos.length,
                     itemBuilder: (context, index) {
                       final tecnico = tecnicos[index];
-                      final isAssigned = ticket.tecnicoAsignadoNombreAsignadoId == tecnico.id;
+                      final isAssigned = ticket.tecnicoAsignadoId == tecnico.id;
 
                       return ListTile(
                         leading: CircleAvatar(

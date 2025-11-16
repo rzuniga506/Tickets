@@ -250,7 +250,7 @@ class _DepartamentosListScreenState extends State<DepartamentosListScreen> {
               // Lista de departamentos
               Expanded(
                 child: displayList.isEmpty
-                    ? const EmptyState(
+                    ? const EmptyState(title: "No hay elementos",
                         icon: Icons.business,
                         message: 'No se encontraron departamentos',
                       )

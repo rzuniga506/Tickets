@@ -225,7 +225,7 @@ class _CategoriasListScreenState extends State<CategoriasListScreen> {
           }
 
           return _categorias.isEmpty
-              ? const EmptyState(
+              ? const EmptyState(title: "No hay elementos",
                   icon: Icons.category,
                   message: 'No se encontraron categorías',
                 )

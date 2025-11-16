@@ -179,7 +179,7 @@ class _RolesListScreenState extends State<RolesListScreen> {
               // Lista de roles
               Expanded(
                 child: displayList.isEmpty
-                    ? const EmptyState(
+                    ? const EmptyState(title: "No hay elementos",
                         icon: Icons.admin_panel_settings,
                         message: 'No se encontraron roles',
                       )

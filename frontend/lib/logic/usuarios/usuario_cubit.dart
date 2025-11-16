@@ -35,7 +35,12 @@ class UsuarioCubit extends Cubit<UsuarioState> {
         final currentState = state as UsuariosLoaded;
         final updatedItems = [...currentState.usuarios.items, ...result.items];
 
-        final updatedResult = result.copyWith(items: updatedItems);
+        final updatedResult = PagedResult<UserModel>(
+          items: updatedItems,
+          totalRecords: result.totalRecords,
+          pageNumber: result.pageNumber,
+          pageSize: result.pageSize,
+        );
         emit(UsuariosLoaded(updatedResult));
       } else {
         emit(UsuariosLoaded(result));

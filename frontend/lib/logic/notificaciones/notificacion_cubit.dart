@@ -29,7 +29,6 @@ class NotificacionCubit extends Cubit<NotificacionState> {
       final result = await _notificacionRepository.getNotificaciones(
         pageNumber: pageNumber,
         pageSize: pageSize,
-        soloNoLeidas: soloNoLeidas,
       );
 
       // Obtener conteo de no leídas
@@ -38,13 +37,13 @@ class NotificacionCubit extends Cubit<NotificacionState> {
       if (loadMore && state is NotificacionesLoaded) {
         // Combinar resultados existentes con nuevos
         final currentState = state as NotificacionesLoaded;
-        final updatedItems = [
+        final updatedItems = <NotificacionModel>[
           ...currentState.notificaciones.items,
           ...result.items
         ];
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalRecords: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -68,27 +67,40 @@ class NotificacionCubit extends Cubit<NotificacionState> {
       // Recargar notificaciones para actualizar el estado
       if (state is NotificacionesLoaded) {
         final currentState = state as NotificacionesLoaded;
-        final updatedItems = currentState.notificaciones.items.map((notif) {
-          if (notif.id == notificacionId) {
-            return NotificacionModel(
-              id: notif.id,
-              tipo: notif.tipo,
-              titulo: notif.titulo,
-              mensaje: notif.mensaje,
-              leida: true,
-              fechaCreacion: notif.fechaCreacion,
-              fechaLeida: DateTime.now(),
-              usuarioId: notif.usuarioId,
-              ticketId: notif.ticketId,
-              equipoId: notif.equipoId,
-            );
-          }
-          return notif;
-        }).toList();
+        final updatedItems = <NotificacionModel>[
+          for (var notif in currentState.notificaciones.items)
+            if (notif.id == notificacionId)
+              NotificacionModel(
+                id: notif.id,
+                titulo: notif.titulo,
+                mensaje: notif.mensaje,
+                tipo: notif.tipo,
+                tipoNombre: notif.tipoNombre,
+                prioridad: notif.prioridad,
+                prioridadNombre: notif.prioridadNombre,
+                leida: true,
+                fechaLeida: DateTime.now(),
+                enviada: notif.enviada,
+                fechaEnvio: notif.fechaEnvio,
+                entidadTipo: notif.entidadTipo,
+                entidadId: notif.entidadId,
+                accion: notif.accion,
+                datosJson: notif.datosJson,
+                urlAccion: notif.urlAccion,
+                iconoUrl: notif.iconoUrl,
+                enviarPush: notif.enviarPush,
+                enviarEmail: notif.enviarEmail,
+                mostrarInApp: notif.mostrarInApp,
+                usuarioId: notif.usuarioId,
+                fechaCreacion: notif.fechaCreacion,
+              )
+            else
+              notif
+        ];
 
         final updatedResult = PagedResult<NotificacionModel>(
           items: updatedItems,
-          totalRecords: currentState.notificaciones.totalItems,
+          totalRecords: currentState.notificaciones.totalRecords,
           pageNumber: currentState.notificaciones.pageNumber,
           pageSize: currentState.notificaciones.pageSize,
         );
