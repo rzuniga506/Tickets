@@ -13,6 +13,7 @@ import '../../../config/theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
 import '../tickets/tickets_list_screen.dart';
+import '../tickets/tickets_kanban_screen.dart';
 import '../tickets/ticket_form_screen.dart';
 import '../equipos/equipos_list_screen.dart';
 import '../equipos/qr_scanner_screen.dart';
@@ -289,6 +290,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => BlocProvider(
                                   create: (context) => getIt<EquipoCubit>(),
                                   child: const EquiposListScreen(mode: EquipoListMode.myEquipos),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildQuickActionCard(
+                          title: 'Vista Kanban',
+                          icon: Icons.view_kanban,
+                          color: const Color(0xFF9C27B0), // Purple
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => getIt<TicketCubit>(),
+                                  child: const TicketsKanbanScreen(),
                                 ),
                               ),
                             );

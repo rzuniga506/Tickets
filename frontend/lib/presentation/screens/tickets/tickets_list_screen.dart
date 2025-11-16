@@ -11,6 +11,7 @@ import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'ticket_detail_screen.dart';
 import 'ticket_form_screen.dart';
+import 'tickets_kanban_screen.dart';
 
 class TicketsListScreen extends StatefulWidget {
   final TicketListMode mode;
@@ -147,6 +148,21 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
       appBar: AppBar(
         title: Text(_getTitle()),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.view_kanban),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                    create: (context) => getIt<TicketCubit>(),
+                    child: const TicketsKanbanScreen(),
+                  ),
+                ),
+              );
+            },
+            tooltip: 'Vista Kanban',
+          ),
           IconButton(
             icon: Stack(
               children: [
