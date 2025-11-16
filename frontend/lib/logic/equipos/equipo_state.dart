@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/equipo_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../data/models/equipo/equipo_model.dart';
+import '../../core/api/api_response.dart';
 
 /// Estados para la gestión de equipos/inventario
 abstract class EquipoState extends Equatable {

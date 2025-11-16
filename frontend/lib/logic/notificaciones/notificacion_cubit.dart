@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/notificacion_repository.dart';
-import '../../data/models/notificacion_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../data/models/notificacion/notificacion_model.dart';
+import '../../core/api/api_response.dart';
 import 'notificacion_state.dart';
 
 /// Cubit para gestionar notificaciones

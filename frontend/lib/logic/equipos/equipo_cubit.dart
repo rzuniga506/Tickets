@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/equipo_repository.dart';
-import '../../data/models/equipo_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../data/models/equipo/equipo_model.dart';
+import '../../core/api/api_response.dart';
 import '../../config/constants.dart';
 import 'equipo_state.dart';
 
