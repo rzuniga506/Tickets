@@ -33,6 +33,7 @@ class _ComentariosSectionState extends State<ComentariosSection> {
   int _selectedUserIndex = 0;
   String _currentMention = '';
   int _mentionStartPosition = 0;
+  bool _isSelectingFromOverlay = false;
 
   @override
   void initState() {
@@ -86,8 +87,13 @@ class _ComentariosSectionState extends State<ComentariosSection> {
   }
 
   void _onFocusChanged() {
-    if (!_comentarioFocusNode.hasFocus) {
-      _removeOverlay();
+    if (!_comentarioFocusNode.hasFocus && !_isSelectingFromOverlay) {
+      // Delay para permitir que el onTap se ejecute antes de remover el overlay
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (!_isSelectingFromOverlay) {
+          _removeOverlay();
+        }
+      });
     }
   }
 
@@ -180,12 +186,14 @@ class _ComentariosSectionState extends State<ComentariosSection> {
   }
 
   void _selectUser(UserModel user) {
+    _isSelectingFromOverlay = true;
+
     final text = _comentarioController.text;
     final beforeMention = text.substring(0, _mentionStartPosition);
     final afterMention = text.substring(_comentarioController.selection.baseOffset);
-    
+
     final newText = '$beforeMention@${user.nombreCompleto.replaceAll(' ', '')} $afterMention';
-    
+
     _comentarioController.value = TextEditingValue(
       text: newText,
       selection: TextSelection.collapsed(
@@ -194,6 +202,14 @@ class _ComentariosSectionState extends State<ComentariosSection> {
     );
 
     _removeOverlay();
+
+    // Devolver el foco al campo de texto
+    _comentarioFocusNode.requestFocus();
+
+    // Reset flag después de un delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _isSelectingFromOverlay = false;
+    });
   }
 
   void _handleSubmit() {

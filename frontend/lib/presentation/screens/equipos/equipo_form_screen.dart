@@ -634,7 +634,7 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
                       _tipo == TipoEquipo.switch_ ||
                       _tipo == TipoEquipo.router ||
                       _tipo == TipoEquipo.firewall ||
-                      _tipo == TipoEquipo.telefonoIP)
+                      _tipo == TipoEquipo.telefono)
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -706,7 +706,7 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
                       _tipo == TipoEquipo.switch_ ||
                       _tipo == TipoEquipo.router ||
                       _tipo == TipoEquipo.firewall ||
-                      _tipo == TipoEquipo.telefonoIP)
+                      _tipo == TipoEquipo.telefono)
                     const SizedBox(height: 16),
 
                   // Estado y Condición

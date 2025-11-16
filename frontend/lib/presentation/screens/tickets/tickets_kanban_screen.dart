@@ -87,7 +87,10 @@ class _TicketsKanbanScreenState extends State<TicketsKanbanScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TicketDetailScreen(ticketId: ticket.id),
+        builder: (context) => BlocProvider(
+          create: (context) => getIt<TicketCubit>(),
+          child: TicketDetailScreen(ticketId: ticket.id),
+        ),
       ),
     ).then((_) => _loadTickets());
   }

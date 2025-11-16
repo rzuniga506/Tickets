@@ -7,7 +7,7 @@ using Tickets.Application.Common.Responses;
 using Tickets.Application.DTOs.Comentarios;
 using Tickets.Application.Services.Interfaces;
 using Tickets.Domain.Entities;
-using Tickets.Infrastructure.Persistence;
+using Tickets.Infrastructure.Data;
 
 namespace Tickets.Application.Services
 {
@@ -261,8 +261,7 @@ namespace Tickets.Application.Services
                         UsuarioId = usuarioId,
                         Titulo = "Te mencionaron en un ticket",
                         Mensaje = $"Fuiste mencionado en un comentario del ticket #{numeroTicket}",
-                        Tipo = Domain.Enums.TipoNotificacion.Mencion,
-                        TicketId = null // Se puede agregar si es necesario
+                        Tipo = Domain.Enums.TipoNotificacion.Mencion
                     });
                 }
                 catch

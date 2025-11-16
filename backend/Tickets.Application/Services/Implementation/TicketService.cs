@@ -24,13 +24,13 @@ namespace Tickets.Application.Services.Implementation
         private readonly INotificacionService _notificacionService;
 
         // SLA en minutos por prioridad
+        // Nota: Urgente y Critica tienen el mismo valor (4) en el enum, así que solo incluimos Critica
         private readonly Dictionary<PrioridadTicket, int> _slaMinutosPorPrioridad = new()
         {
             { PrioridadTicket.Baja, 480 },      // 8 horas
             { PrioridadTicket.Media, 240 },     // 4 horas
             { PrioridadTicket.Alta, 120 },      // 2 horas
-            { PrioridadTicket.Urgente, 60 },    // 1 hora
-            { PrioridadTicket.Critica, 30 }     // 30 minutos
+            { PrioridadTicket.Critica, 30 }     // 30 minutos (también aplica a Urgente ya que son el mismo valor)
         };
 
         public TicketService(

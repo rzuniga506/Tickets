@@ -136,7 +136,7 @@ class TicketService {
   Future<void> asignarTecnico(int ticketId, int tecnicoId) async {
     await _apiClient.post(
       ApiEndpoints.asignarTicket(ticketId),
-      data: {'tecnicoId': tecnicoId},
+      data: {'TecnicoId': tecnicoId},
     );
   }
 

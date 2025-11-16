@@ -40,6 +40,10 @@ class AppTheme {
   static const Color greyDark = Color(0xFF757575);
   static const Color greyText = Color(0xFF616161);
 
+  // Background colors
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color backgroundDark = Color(0xFF121212);
+
   // Tema claro
   static ThemeData get lightTheme {
     return ThemeData(

@@ -558,6 +558,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
     if (!mounted) return;
 
+    // Capturar el TicketCubit antes de abrir el diálogo
+    final ticketCubit = context.read<TicketCubit>();
+
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -613,7 +616,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         selected: isAssigned,
                         onTap: () {
                           Navigator.pop(dialogContext);
-                          context.read<TicketCubit>().asignarTecnico(ticket.id, tecnico.id);
+                          ticketCubit.asignarTecnico(ticket.id, tecnico.id);
                         },
                       );
                     },
