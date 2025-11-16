@@ -47,7 +47,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         final updatedItems = [...currentState.equipos.items, ...result.items];
         final updatedResult = PagedResult<EquipoModel>(
           items: updatedItems,
-          totalRecords: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );

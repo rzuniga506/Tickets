@@ -158,6 +158,12 @@ class TicketModel {
     return minutosRestantesSLA! <= 60; // Menos de 1 hora
   }
 
+  bool get slaVencido {
+    if (fechaLimiteSLA == null) return false;
+    if (estado == EstadoTicket.cerrado) return !slaCumplido;
+    return DateTime.now().isAfter(fechaLimiteSLA!);
+  }
+
   bool get puedeEvaluar {
     return estado == EstadoTicket.resuelto && calificacionServicio == null;
   }

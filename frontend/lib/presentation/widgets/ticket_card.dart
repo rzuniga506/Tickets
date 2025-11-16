@@ -55,7 +55,7 @@ class TicketCard extends StatelessWidget {
 
               // Título
               Text(
-                ticket.titulo,
+                ticket.asunto,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -92,7 +92,7 @@ class TicketCard extends StatelessWidget {
                         const Icon(Icons.category, size: 14, color: AppTheme.greyDark),
                         const SizedBox(width: 4),
                         Text(
-                          ticket.categoria.displayName,
+                          ticket.categoria?.displayName ?? 'Sin categoría',
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppTheme.greyDark,
@@ -116,7 +116,7 @@ class TicketCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            ticket.usuario.nombreCompleto,
+                            ticket.solicitanteNombre,
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppTheme.greyDark,
@@ -131,7 +131,7 @@ class TicketCard extends StatelessWidget {
                   const SizedBox(width: 8),
 
                   // Técnico asignado (si existe)
-                  if (ticket.tecnico != null)
+                  if (ticket.tecnicoAsignadoNombre != null)
                     Expanded(
                       child: Row(
                         children: [
@@ -139,7 +139,7 @@ class TicketCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              ticket.tecnico!.nombreCompleto,
+                              ticket.tecnicoAsignadoNombre!,
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: AppTheme.primaryColor,
@@ -221,10 +221,10 @@ class TicketCard extends StatelessWidget {
   }
 
   bool _isSlaNearExpiry(TicketModel ticket) {
-    if (ticket.fechaLimite == null || ticket.slaVencido) return false;
+    if (ticket.fechaLimiteSLA == null || ticket.slaVencido) return false;
 
     final now = DateTime.now();
-    final difference = ticket.fechaLimite!.difference(now);
+    final difference = ticket.fechaLimiteSLA!.difference(now);
 
     // Considerar "próximo a vencer" si faltan menos de 24 horas
     return difference.inHours < 24 && difference.inHours > 0;

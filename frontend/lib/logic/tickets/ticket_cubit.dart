@@ -47,7 +47,7 @@ class TicketCubit extends Cubit<TicketState> {
         final updatedItems = [...currentState.tickets.items, ...result.items];
         final updatedResult = PagedResult<TicketModel>(
           items: updatedItems,
-          totalRecords: result.totalItems,
+          totalRecords: result.totalRecords,
           pageNumber: result.pageNumber,
           pageSize: result.pageSize,
         );
@@ -208,10 +208,12 @@ class TicketCubit extends Cubit<TicketState> {
   }) async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getMisTickets(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        estado: estado,
+      final items = await _ticketRepository.getMisTickets();
+      final result = PagedResult<TicketModel>(
+        items: items,
+        totalRecords: items.length,
+        pageNumber: 1,
+        pageSize: items.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -227,10 +229,12 @@ class TicketCubit extends Cubit<TicketState> {
   }) async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getTicketsAsignados(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        estado: estado,
+      final items = await _ticketRepository.getTicketsAsignados();
+      final result = PagedResult<TicketModel>(
+        items: items,
+        totalRecords: items.length,
+        pageNumber: 1,
+        pageSize: items.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -245,9 +249,12 @@ class TicketCubit extends Cubit<TicketState> {
   }) async {
     try {
       emit(TicketLoading());
-      final result = await _ticketRepository.getTicketsPendientes(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
+      final items = await _ticketRepository.getTicketsPendientes();
+      final result = PagedResult<TicketModel>(
+        items: items,
+        totalRecords: items.length,
+        pageNumber: 1,
+        pageSize: items.length,
       );
       emit(TicketsLoaded(result));
     } catch (e) {
@@ -260,7 +267,7 @@ class TicketCubit extends Cubit<TicketState> {
     try {
       emit(TicketActionLoading('Eliminando ticket...'));
       await _ticketRepository.deleteTicket(id);
-      emit(const TicketActionSuccess('Ticket eliminado correctamente', null as TicketModel));
+      emit(const TicketActionSuccess('Ticket eliminado correctamente', null));
     } catch (e) {
       emit(TicketError(e.toString()));
     }
