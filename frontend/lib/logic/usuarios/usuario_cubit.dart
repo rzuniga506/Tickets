@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/api/api_response.dart';
+import '../../data/models/user/user_model.dart';
 import '../../data/repositories/usuario_repository.dart';
 import 'usuario_state.dart';
 

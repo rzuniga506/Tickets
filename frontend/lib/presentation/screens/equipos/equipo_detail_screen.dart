@@ -100,7 +100,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           }
 
           if (state is EquipoActionSuccess && state.equipo != null) {
-            return _buildEquipoDetail(state.equipo);
+            return _buildEquipoDetail(state.equipo!);
           }
 
           if (state is QRGenerated) {
