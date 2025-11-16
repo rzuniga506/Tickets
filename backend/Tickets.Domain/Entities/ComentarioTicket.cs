@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Tickets.Domain.Common;
 
 namespace Tickets.Domain.Entities
@@ -37,12 +38,18 @@ namespace Tickets.Domain.Entities
         public virtual Usuario Usuario { get; set; } = null!;
 
         /// <summary>
+        /// Menciones de usuarios en este comentario
+        /// </summary>
+        public virtual ICollection<MencionComentario> Menciones { get; set; } = new List<MencionComentario>();
+
+        /// <summary>
         /// Constructor por defecto
         /// </summary>
         public ComentarioTicket()
         {
             EsInterno = false;
             EsSistema = false;
+            Menciones = new List<MencionComentario>();
         }
     }
 }
