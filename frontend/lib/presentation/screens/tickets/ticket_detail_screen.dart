@@ -7,6 +7,7 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../logic/usuarios/usuario_cubit.dart';
 import '../../../logic/usuarios/usuario_state.dart';
+import '../../../logic/comentarios/comentario_cubit.dart';
 import '../../../data/models/ticket/ticket_model.dart';
 import '../../../data/models/user/user_model.dart';
 import '../../../config/constants.dart';
@@ -15,6 +16,7 @@ import '../../../core/utils/responsive.dart';
 import '../../../core/di/injection.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/priority_badge.dart';
+import '../../widgets/comentarios_section.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int ticketId;
@@ -333,6 +335,43 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             ),
             const SizedBox(height: 16),
           ],
+
+          // Sección de comentarios
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, authState) {
+                  if (authState is! Authenticated) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return BlocProvider(
+                    create: (context) => getIt<ComentarioCubit>(),
+                    child: BlocProvider(
+                      create: (context) => getIt<UsuarioCubit>()..getUsuarios(pageSize: 100),
+                      child: BlocBuilder<UsuarioCubit, UsuarioState>(
+                        builder: (context, usuarioState) {
+                          // Obtener lista de usuarios disponibles para menciones
+                          List<UserModel> availableUsers = [];
+                          if (usuarioState is UsuariosLoaded) {
+                            availableUsers = usuarioState.usuarios.items;
+                          }
+
+                          return ComentariosSection(
+                            ticketId: ticket.id,
+                            currentUserId: authState.user.id,
+                            availableUsers: availableUsers,
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // Botones de acción
           BlocBuilder<AuthCubit, AuthState>(
