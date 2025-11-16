@@ -89,6 +89,7 @@ class EquipoCubit extends Cubit<EquipoState> {
     required String nombre,
     required EstadoEquipo estado,
     required CondicionEquipo condicion,
+    TipoEquipo? tipo,
     String? numeroSerie,
     String? descripcion,
     String? modelo,
@@ -102,6 +103,22 @@ class EquipoCubit extends Cubit<EquipoState> {
     String? observaciones,
     int? usuarioAsignadoId,
     int? departamentoAsignadoId,
+    // Campos de inventario
+    String? marca,
+    String? proveedor,
+    String? sku,
+    String? numeroOrdenCompra,
+    String? ubicacionFisica,
+    String? procesador,
+    int? ramGB,
+    int? discoDuroCapacidadGB,
+    String? tipoAlmacenamiento,
+    String? macAddress,
+    String? direccionIP,
+    String? hostname,
+    String? sistemaOperativo,
+    String? versionSO,
+    String? licenciaSO,
   }) async {
     try {
       emit(EquipoActionLoading('Creando equipo...'));
@@ -111,6 +128,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         'nombre': nombre,
         'estado': estado.toJson(), // Convierte enum a int (0-6)
         'condicion': condicion.toJson(), // Convierte enum a int (0-5)
+        if (tipo != null) 'tipo': tipo.toJson(),
         if (numeroSerie != null) 'numeroSerie': numeroSerie,
         if (descripcion != null) 'descripcion': descripcion,
         if (modelo != null) 'modelo': modelo,
@@ -129,6 +147,22 @@ class EquipoCubit extends Cubit<EquipoState> {
         if (usuarioAsignadoId != null) 'usuarioAsignadoId': usuarioAsignadoId,
         if (departamentoAsignadoId != null)
           'departamentoAsignadoId': departamentoAsignadoId,
+        // Campos de inventario
+        if (marca != null) 'marca': marca,
+        if (proveedor != null) 'proveedor': proveedor,
+        if (sku != null) 'sku': sku,
+        if (numeroOrdenCompra != null) 'numeroOrdenCompra': numeroOrdenCompra,
+        if (ubicacionFisica != null) 'ubicacionFisica': ubicacionFisica,
+        if (procesador != null) 'procesador': procesador,
+        if (ramGB != null) 'ramGB': ramGB,
+        if (discoDuroCapacidadGB != null) 'discoDuroCapacidadGB': discoDuroCapacidadGB,
+        if (tipoAlmacenamiento != null) 'tipoAlmacenamiento': tipoAlmacenamiento,
+        if (macAddress != null) 'macAddress': macAddress,
+        if (direccionIP != null) 'direccionIP': direccionIP,
+        if (hostname != null) 'hostname': hostname,
+        if (sistemaOperativo != null) 'sistemaOperativo': sistemaOperativo,
+        if (versionSO != null) 'versionSO': versionSO,
+        if (licenciaSO != null) 'licenciaSO': licenciaSO,
       };
 
       final equipo = await _equipoRepository.createEquipo(data);
@@ -145,6 +179,7 @@ class EquipoCubit extends Cubit<EquipoState> {
     required String nombre,
     required EstadoEquipo estado,
     required CondicionEquipo condicion,
+    TipoEquipo? tipo,
     String? numeroSerie,
     String? descripcion,
     String? modelo,
@@ -156,6 +191,22 @@ class EquipoCubit extends Cubit<EquipoState> {
     DateTime? fechaInicioGarantia,
     DateTime? fechaFinGarantia,
     String? observaciones,
+    // Campos de inventario
+    String? marca,
+    String? proveedor,
+    String? sku,
+    String? numeroOrdenCompra,
+    String? ubicacionFisica,
+    String? procesador,
+    int? ramGB,
+    int? discoDuroCapacidadGB,
+    String? tipoAlmacenamiento,
+    String? macAddress,
+    String? direccionIP,
+    String? hostname,
+    String? sistemaOperativo,
+    String? versionSO,
+    String? licenciaSO,
   }) async {
     try {
       emit(EquipoActionLoading('Actualizando equipo...'));
@@ -165,6 +216,7 @@ class EquipoCubit extends Cubit<EquipoState> {
         'estado': estado.toJson(), // Convierte enum a int
         'condicion': condicion.toJson(), // Convierte enum a int
         'vidaUtilMeses': vidaUtilMeses, // Campo requerido por backend
+        if (tipo != null) 'tipo': tipo.toJson(),
         if (numeroSerie != null) 'numeroSerie': numeroSerie,
         if (descripcion != null) 'descripcion': descripcion,
         if (modelo != null) 'modelo': modelo,
@@ -179,6 +231,22 @@ class EquipoCubit extends Cubit<EquipoState> {
         if (fechaFinGarantia != null)
           'fechaFinGarantia': fechaFinGarantia.toIso8601String(),
         if (observaciones != null) 'observaciones': observaciones,
+        // Campos de inventario
+        if (marca != null) 'marca': marca,
+        if (proveedor != null) 'proveedor': proveedor,
+        if (sku != null) 'sku': sku,
+        if (numeroOrdenCompra != null) 'numeroOrdenCompra': numeroOrdenCompra,
+        if (ubicacionFisica != null) 'ubicacionFisica': ubicacionFisica,
+        if (procesador != null) 'procesador': procesador,
+        if (ramGB != null) 'ramGB': ramGB,
+        if (discoDuroCapacidadGB != null) 'discoDuroCapacidadGB': discoDuroCapacidadGB,
+        if (tipoAlmacenamiento != null) 'tipoAlmacenamiento': tipoAlmacenamiento,
+        if (macAddress != null) 'macAddress': macAddress,
+        if (direccionIP != null) 'direccionIP': direccionIP,
+        if (hostname != null) 'hostname': hostname,
+        if (sistemaOperativo != null) 'sistemaOperativo': sistemaOperativo,
+        if (versionSO != null) 'versionSO': versionSO,
+        if (licenciaSO != null) 'licenciaSO': licenciaSO,
       };
 
       final equipo = await _equipoRepository.updateEquipo(id, data);

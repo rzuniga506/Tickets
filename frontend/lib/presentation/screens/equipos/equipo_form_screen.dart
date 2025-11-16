@@ -37,6 +37,24 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
   final _valorResidualController = TextEditingController();
   final _observacionesController = TextEditingController();
 
+  // Campos de inventario
+  final _marcaController = TextEditingController();
+  final _proveedorController = TextEditingController();
+  final _skuController = TextEditingController();
+  final _numeroOrdenCompraController = TextEditingController();
+  final _ubicacionFisicaController = TextEditingController();
+  final _procesadorController = TextEditingController();
+  final _ramGBController = TextEditingController();
+  final _discoDuroCapacidadGBController = TextEditingController();
+  final _tipoAlmacenamientoController = TextEditingController();
+  final _macAddressController = TextEditingController();
+  final _direccionIPController = TextEditingController();
+  final _hostnameController = TextEditingController();
+  final _sistemaOperativoController = TextEditingController();
+  final _versionSOController = TextEditingController();
+  final _licenciaSOController = TextEditingController();
+
+  TipoEquipo _tipo = TipoEquipo.computadora;
   EstadoEquipo _estado = EstadoEquipo.disponible;
   CondicionEquipo _condicion = CondicionEquipo.nuevo;
   DateTime? _fechaAdquisicion;
@@ -64,6 +82,24 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
     _valorResidualController.text = equipo.valorResidual?.toString() ?? '';
     _observacionesController.text = equipo.observaciones ?? '';
 
+    // Campos de inventario
+    _marcaController.text = equipo.marca ?? '';
+    _proveedorController.text = equipo.proveedor ?? '';
+    _skuController.text = equipo.sku ?? '';
+    _numeroOrdenCompraController.text = equipo.numeroOrdenCompra ?? '';
+    _ubicacionFisicaController.text = equipo.ubicacionFisica ?? '';
+    _procesadorController.text = equipo.procesador ?? '';
+    _ramGBController.text = equipo.ramGB?.toString() ?? '';
+    _discoDuroCapacidadGBController.text = equipo.discoDuroCapacidadGB?.toString() ?? '';
+    _tipoAlmacenamientoController.text = equipo.tipoAlmacenamiento ?? '';
+    _macAddressController.text = equipo.macAddress ?? '';
+    _direccionIPController.text = equipo.direccionIP ?? '';
+    _hostnameController.text = equipo.hostname ?? '';
+    _sistemaOperativoController.text = equipo.sistemaOperativo ?? '';
+    _versionSOController.text = equipo.versionSO ?? '';
+    _licenciaSOController.text = equipo.licenciaSO ?? '';
+
+    _tipo = equipo.tipo;
     _estado = equipo.estado;
     _condicion = equipo.condicion;
     _fechaAdquisicion = equipo.fechaAdquisicion;
@@ -82,6 +118,22 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
     _vidaUtilMesesController.dispose();
     _valorResidualController.dispose();
     _observacionesController.dispose();
+    // Inventario
+    _marcaController.dispose();
+    _proveedorController.dispose();
+    _skuController.dispose();
+    _numeroOrdenCompraController.dispose();
+    _ubicacionFisicaController.dispose();
+    _procesadorController.dispose();
+    _ramGBController.dispose();
+    _discoDuroCapacidadGBController.dispose();
+    _tipoAlmacenamientoController.dispose();
+    _macAddressController.dispose();
+    _direccionIPController.dispose();
+    _hostnameController.dispose();
+    _sistemaOperativoController.dispose();
+    _versionSOController.dispose();
+    _licenciaSOController.dispose();
     super.dispose();
   }
 
@@ -99,6 +151,15 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
           ? double.tryParse(_valorResidualController.text)
           : null;
 
+      // Campos de inventario
+      final ramGB = _ramGBController.text.trim().isNotEmpty
+          ? int.tryParse(_ramGBController.text)
+          : null;
+
+      final discoDuroCapacidadGB = _discoDuroCapacidadGBController.text.trim().isNotEmpty
+          ? int.tryParse(_discoDuroCapacidadGBController.text)
+          : null;
+
       if (_isEditing) {
         // Actualizar equipo existente
         context.read<EquipoCubit>().updateEquipo(
@@ -106,6 +167,7 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
               nombre: _nombreController.text.trim(),
               estado: _estado,
               condicion: _condicion,
+              tipo: _tipo,
               numeroSerie: _numeroSerieController.text.trim().isNotEmpty
                   ? _numeroSerieController.text.trim()
                   : null,
@@ -124,6 +186,22 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
               observaciones: _observacionesController.text.trim().isNotEmpty
                   ? _observacionesController.text.trim()
                   : null,
+              // Campos de inventario
+              marca: _marcaController.text.trim().isNotEmpty ? _marcaController.text.trim() : null,
+              proveedor: _proveedorController.text.trim().isNotEmpty ? _proveedorController.text.trim() : null,
+              sku: _skuController.text.trim().isNotEmpty ? _skuController.text.trim() : null,
+              numeroOrdenCompra: _numeroOrdenCompraController.text.trim().isNotEmpty ? _numeroOrdenCompraController.text.trim() : null,
+              ubicacionFisica: _ubicacionFisicaController.text.trim().isNotEmpty ? _ubicacionFisicaController.text.trim() : null,
+              procesador: _procesadorController.text.trim().isNotEmpty ? _procesadorController.text.trim() : null,
+              ramGB: ramGB,
+              discoDuroCapacidadGB: discoDuroCapacidadGB,
+              tipoAlmacenamiento: _tipoAlmacenamientoController.text.trim().isNotEmpty ? _tipoAlmacenamientoController.text.trim() : null,
+              macAddress: _macAddressController.text.trim().isNotEmpty ? _macAddressController.text.trim() : null,
+              direccionIP: _direccionIPController.text.trim().isNotEmpty ? _direccionIPController.text.trim() : null,
+              hostname: _hostnameController.text.trim().isNotEmpty ? _hostnameController.text.trim() : null,
+              sistemaOperativo: _sistemaOperativoController.text.trim().isNotEmpty ? _sistemaOperativoController.text.trim() : null,
+              versionSO: _versionSOController.text.trim().isNotEmpty ? _versionSOController.text.trim() : null,
+              licenciaSO: _licenciaSOController.text.trim().isNotEmpty ? _licenciaSOController.text.trim() : null,
             );
       } else {
         // Crear nuevo equipo
@@ -132,6 +210,7 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
               nombre: _nombreController.text.trim(),
               estado: _estado,
               condicion: _condicion,
+              tipo: _tipo,
               numeroSerie: _numeroSerieController.text.trim().isNotEmpty
                   ? _numeroSerieController.text.trim()
                   : null,
@@ -150,6 +229,22 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
               observaciones: _observacionesController.text.trim().isNotEmpty
                   ? _observacionesController.text.trim()
                   : null,
+              // Campos de inventario
+              marca: _marcaController.text.trim().isNotEmpty ? _marcaController.text.trim() : null,
+              proveedor: _proveedorController.text.trim().isNotEmpty ? _proveedorController.text.trim() : null,
+              sku: _skuController.text.trim().isNotEmpty ? _skuController.text.trim() : null,
+              numeroOrdenCompra: _numeroOrdenCompraController.text.trim().isNotEmpty ? _numeroOrdenCompraController.text.trim() : null,
+              ubicacionFisica: _ubicacionFisicaController.text.trim().isNotEmpty ? _ubicacionFisicaController.text.trim() : null,
+              procesador: _procesadorController.text.trim().isNotEmpty ? _procesadorController.text.trim() : null,
+              ramGB: ramGB,
+              discoDuroCapacidadGB: discoDuroCapacidadGB,
+              tipoAlmacenamiento: _tipoAlmacenamientoController.text.trim().isNotEmpty ? _tipoAlmacenamientoController.text.trim() : null,
+              macAddress: _macAddressController.text.trim().isNotEmpty ? _macAddressController.text.trim() : null,
+              direccionIP: _direccionIPController.text.trim().isNotEmpty ? _direccionIPController.text.trim() : null,
+              hostname: _hostnameController.text.trim().isNotEmpty ? _hostnameController.text.trim() : null,
+              sistemaOperativo: _sistemaOperativoController.text.trim().isNotEmpty ? _sistemaOperativoController.text.trim() : null,
+              versionSO: _versionSOController.text.trim().isNotEmpty ? _versionSOController.text.trim() : null,
+              licenciaSO: _licenciaSOController.text.trim().isNotEmpty ? _licenciaSOController.text.trim() : null,
             );
       }
     }
@@ -301,12 +396,318 @@ class _EquipoFormScreenState extends State<EquipoFormScreen> {
                             ),
                             maxLines: 3,
                           ),
+                          const SizedBox(height: 16),
+
+                          // Tipo de Equipo
+                          DropdownButtonFormField<TipoEquipo>(
+                            value: _tipo,
+                            decoration: const InputDecoration(
+                              labelText: 'Tipo de Equipo *',
+                              prefixIcon: Icon(Icons.category),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: TipoEquipo.values.map((tipo) {
+                              return DropdownMenuItem(
+                                value: tipo,
+                                child: Text(tipo.displayName),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _tipo = value;
+                                });
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
+
+                  // Información de Inventario
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Información de Inventario',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Marca
+                          TextFormField(
+                            controller: _marcaController,
+                            decoration: const InputDecoration(
+                              labelText: 'Marca',
+                              hintText: 'Ej: Dell, HP, Cisco',
+                              prefixIcon: Icon(Icons.business),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Proveedor
+                          TextFormField(
+                            controller: _proveedorController,
+                            decoration: const InputDecoration(
+                              labelText: 'Proveedor',
+                              hintText: 'Nombre del proveedor',
+                              prefixIcon: Icon(Icons.store),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // SKU
+                          TextFormField(
+                            controller: _skuController,
+                            decoration: const InputDecoration(
+                              labelText: 'SKU',
+                              hintText: 'Código SKU del producto',
+                              prefixIcon: Icon(Icons.inventory_2),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Número de Orden de Compra
+                          TextFormField(
+                            controller: _numeroOrdenCompraController,
+                            decoration: const InputDecoration(
+                              labelText: 'Orden de Compra',
+                              hintText: 'Número de orden',
+                              prefixIcon: Icon(Icons.receipt_long),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Ubicación Física
+                          TextFormField(
+                            controller: _ubicacionFisicaController,
+                            decoration: const InputDecoration(
+                              labelText: 'Ubicación Física',
+                              hintText: 'Edificio, Piso, Sala',
+                              prefixIcon: Icon(Icons.location_on),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Hardware - Solo para computadoras, laptops, servidores
+                  if (_tipo == TipoEquipo.computadora ||
+                      _tipo == TipoEquipo.laptop ||
+                      _tipo == TipoEquipo.servidor)
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Especificaciones de Hardware',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Procesador
+                            TextFormField(
+                              controller: _procesadorController,
+                              decoration: const InputDecoration(
+                                labelText: 'Procesador',
+                                hintText: 'Ej: Intel Core i7-11370H',
+                                prefixIcon: Icon(Icons.memory),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // RAM GB
+                            TextFormField(
+                              controller: _ramGBController,
+                              decoration: const InputDecoration(
+                                labelText: 'RAM (GB)',
+                                hintText: 'Ej: 16',
+                                prefixIcon: Icon(Icons.developer_board),
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Disco Duro Capacidad
+                            TextFormField(
+                              controller: _discoDuroCapacidadGBController,
+                              decoration: const InputDecoration(
+                                labelText: 'Capacidad Disco (GB)',
+                                hintText: 'Ej: 512',
+                                prefixIcon: Icon(Icons.storage),
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Tipo de Almacenamiento
+                            TextFormField(
+                              controller: _tipoAlmacenamientoController,
+                              decoration: const InputDecoration(
+                                labelText: 'Tipo de Almacenamiento',
+                                hintText: 'Ej: SSD NVMe, HDD',
+                                prefixIcon: Icon(Icons.save),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Sistema Operativo
+                            TextFormField(
+                              controller: _sistemaOperativoController,
+                              decoration: const InputDecoration(
+                                labelText: 'Sistema Operativo',
+                                hintText: 'Ej: Windows 11 Pro',
+                                prefixIcon: Icon(Icons.computer),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Versión SO
+                            TextFormField(
+                              controller: _versionSOController,
+                              decoration: const InputDecoration(
+                                labelText: 'Versión SO',
+                                hintText: 'Ej: 22H2',
+                                prefixIcon: Icon(Icons.numbers),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Licencia SO
+                            TextFormField(
+                              controller: _licenciaSOController,
+                              decoration: const InputDecoration(
+                                labelText: 'Licencia SO',
+                                hintText: 'Ej: XXXXX-XXXXX-XXXXX',
+                                prefixIcon: Icon(Icons.key),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  if (_tipo == TipoEquipo.computadora ||
+                      _tipo == TipoEquipo.laptop ||
+                      _tipo == TipoEquipo.servidor)
+                    const SizedBox(height: 16),
+
+                  // Red - Para equipos con conectividad de red
+                  if (_tipo == TipoEquipo.computadora ||
+                      _tipo == TipoEquipo.laptop ||
+                      _tipo == TipoEquipo.servidor ||
+                      _tipo == TipoEquipo.switch_ ||
+                      _tipo == TipoEquipo.router ||
+                      _tipo == TipoEquipo.firewall ||
+                      _tipo == TipoEquipo.telefonoIP)
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Información de Red',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // MAC Address
+                            TextFormField(
+                              controller: _macAddressController,
+                              decoration: const InputDecoration(
+                                labelText: 'Dirección MAC',
+                                hintText: 'Ej: AA:BB:CC:DD:EE:FF',
+                                prefixIcon: Icon(Icons.settings_ethernet),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value != null && value.trim().isNotEmpty) {
+                                  final macRegex = RegExp(
+                                    r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$',
+                                  );
+                                  if (!macRegex.hasMatch(value)) {
+                                    return 'Formato inválido (ej: AA:BB:CC:DD:EE:FF)';
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Dirección IP
+                            TextFormField(
+                              controller: _direccionIPController,
+                              decoration: const InputDecoration(
+                                labelText: 'Dirección IP',
+                                hintText: 'Ej: 192.168.1.100',
+                                prefixIcon: Icon(Icons.network_check),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Hostname
+                            TextFormField(
+                              controller: _hostnameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Hostname',
+                                hintText: 'Ej: WS-IT-001',
+                                prefixIcon: Icon(Icons.dns),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  if (_tipo == TipoEquipo.computadora ||
+                      _tipo == TipoEquipo.laptop ||
+                      _tipo == TipoEquipo.servidor ||
+                      _tipo == TipoEquipo.switch_ ||
+                      _tipo == TipoEquipo.router ||
+                      _tipo == TipoEquipo.firewall ||
+                      _tipo == TipoEquipo.telefonoIP)
+                    const SizedBox(height: 16),
 
                   // Estado y Condición
                   Card(
