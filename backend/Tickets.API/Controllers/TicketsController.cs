@@ -232,6 +232,50 @@ namespace Tickets.API.Controllers
         }
 
         /// <summary>
+        /// Obtiene tickets donde el usuario autenticado ha sido mencionado
+        /// </summary>
+        [HttpGet("mencionados")]
+        public async Task<ActionResult<ApiResponse<List<TicketDto>>>> GetTicketsMencionados()
+        {
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var result = await _ticketService.GetTicketsMencionadosAsync(usuarioId);
+
+            return Ok(ApiResponse<List<TicketDto>>.SuccessResponse(result));
+        }
+
+        /// <summary>
+        /// Obtiene todos los tickets accesibles para el usuario autenticado
+        /// (creados por él, asignados a él, o donde ha sido mencionado)
+        /// </summary>
+        [HttpGet("accesibles")]
+        public async Task<ActionResult<ApiResponse<PagedResult<TicketDto>>>> GetTicketsAccesibles(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] EstadoTicket? estado = null,
+            [FromQuery] PrioridadTicket? prioridad = null)
+        {
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var result = await _ticketService.GetTicketsAccesiblesAsync(
+                usuarioId, pageNumber, pageSize, searchTerm, estado, prioridad);
+
+            return Ok(ApiResponse<PagedResult<TicketDto>>.SuccessResponse(result));
+        }
+
+        /// <summary>
+        /// Verifica si el usuario autenticado tiene acceso a ver un ticket
+        /// </summary>
+        [HttpGet("{id}/tiene-acceso")]
+        public async Task<ActionResult<ApiResponse<bool>>> TieneAcceso(int id)
+        {
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var esAdmin = User.IsInRole("Administrador") || User.IsInRole("SuperAdmin");
+            var result = await _ticketService.TieneAccesoAsync(id, usuarioId, esAdmin);
+
+            return Ok(ApiResponse<bool>.SuccessResponse(result));
+        }
+
+        /// <summary>
         /// Obtiene estadísticas de tickets
         /// </summary>
         [HttpGet("estadisticas")]

@@ -54,7 +54,23 @@ class ApiEndpoints {
   static const String ticketsAsignados = '/tickets/asignados';
   static const String ticketsPendientes = '/tickets/pendientes-asignacion';
   static const String ticketsSLA = '/tickets/sla-proximo-vencer';
+  static const String ticketsMencionados = '/tickets/mencionados';
+  static const String ticketsAccesibles = '/tickets/accesibles';
+  static String ticketTieneAcceso(int id) => '/tickets/$id/tiene-acceso';
   static const String ticketsEstadisticas = '/tickets/estadisticas';
+
+  // Comentarios de Tickets
+  static const String comentariosTicket = '/comentariosticket';
+  static String comentarioById(int id) => '/comentariosticket/$id';
+  static String comentariosByTicket(int ticketId) => '/comentariosticket/ticket/$ticketId';
+
+  // Adjuntos de Tickets
+  static const String adjuntosTicket = '/adjuntosticket';
+  static String adjuntoById(int id) => '/adjuntosticket/$id';
+  static String adjuntosByTicket(int ticketId) => '/adjuntosticket/ticket/$ticketId';
+  static const String uploadAdjunto = '/adjuntosticket/upload';
+  static const String uploadMultipleAdjuntos = '/adjuntosticket/upload-multiple';
+  static String downloadAdjunto(int id) => '/adjuntosticket/download/$id';
 
   // Notificaciones
   static const String notificaciones = '/notificaciones';

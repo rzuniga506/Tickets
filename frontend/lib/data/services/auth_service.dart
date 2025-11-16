@@ -1,9 +1,9 @@
-import '../../../core/api/api_client.dart';
-import '../../../core/api/api_endpoints.dart';
-import '../../../core/api/api_response.dart';
-import '../../models/auth/login_request.dart';
-import '../../models/auth/auth_response.dart';
-import '../../models/user/user_model.dart';
+import '../../core/api/api_client.dart';
+import '../../core/api/api_endpoints.dart';
+import '../../core/api/api_response.dart';
+import '../models/auth/login_request.dart';
+import '../models/auth/auth_response.dart';
+import '../models/user/user_model.dart';
 
 /// Servicio de autenticación
 class AuthService {

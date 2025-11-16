@@ -3,19 +3,20 @@ import '../../core/errors/exceptions.dart';
 import '../services/comentario_service.dart';
 import '../models/comentario/comentario_ticket_model.dart';
 
+/// Repositorio de comentarios de tickets
 class ComentarioRepository {
   final ComentarioService _comentarioService;
 
   ComentarioRepository(this._comentarioService);
 
   /// Obtener comentarios de un ticket
-  Future<PagedResult<ComentarioTicketModel>> getByTicketId({
+  Future<PagedResult<ComentarioTicketModel>> getComentariosByTicketId({
     required int ticketId,
     int pageNumber = 1,
     int pageSize = 50,
   }) async {
     try {
-      return await _comentarioService.getByTicketId(
+      return await _comentarioService.getComentariosByTicketId(
         ticketId: ticketId,
         pageNumber: pageNumber,
         pageSize: pageSize,
@@ -26,55 +27,52 @@ class ComentarioRepository {
   }
 
   /// Obtener comentario por ID
-  Future<ComentarioTicketModel> getById(int id) async {
+  Future<ComentarioTicketModel> getComentarioById(int id) async {
     try {
-      return await _comentarioService.getById(id);
+      return await _comentarioService.getComentarioById(id);
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
   /// Crear comentario
-  Future<ComentarioTicketModel> create({
-    required String contenido,
+  Future<ComentarioTicketModel> createComentario({
     required int ticketId,
+    required String contenido,
+    required List<int> usuariosIdMencionados,
     bool esInterno = false,
   }) async {
     try {
-      final data = {
-        'contenido': contenido,
-        'ticketId': ticketId,
-        'esInterno': esInterno,
-      };
-
-      return await _comentarioService.create(data);
+      return await _comentarioService.createComentario(
+        ticketId: ticketId,
+        contenido: contenido,
+        usuariosIdMencionados: usuariosIdMencionados,
+        esInterno: esInterno,
+      );
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
   /// Actualizar comentario
-  Future<ComentarioTicketModel> update({
+  Future<ComentarioTicketModel> updateComentario({
     required int id,
     required String contenido,
-    required bool esInterno,
   }) async {
     try {
-      final data = {
-        'contenido': contenido,
-        'esInterno': esInterno,
-      };
-
-      return await _comentarioService.update(id, data);
+      return await _comentarioService.updateComentario(
+        id: id,
+        contenido: contenido,
+      );
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
   /// Eliminar comentario
-  Future<void> delete(int id) async {
+  Future<void> deleteComentario(int id) async {
     try {
-      await _comentarioService.delete(id);
+      await _comentarioService.deleteComentario(id);
     } catch (e) {
       throw ServerException(e.toString());
     }

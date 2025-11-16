@@ -4,9 +4,7 @@ import '../../../logic/roles/rol_cubit.dart';
 import '../../../logic/roles/rol_state.dart';
 import '../../../data/models/rol/rol_model.dart';
 import '../../../config/theme.dart';
-import '../../../core/di/injection.dart';
 import '../../../core/utils/responsive.dart';
-import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'rol_form_screen.dart';
 
@@ -181,6 +179,7 @@ class _RolesListScreenState extends State<RolesListScreen> {
                 child: displayList.isEmpty
                     ? const EmptyState(
                         icon: Icons.admin_panel_settings,
+                        title: 'Sin roles',
                         message: 'No se encontraron roles',
                       )
                     : RefreshIndicator(
@@ -196,7 +195,9 @@ class _RolesListScreenState extends State<RolesListScreen> {
                                   crossAxisCount: columns,
                                   mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                                      ? 1.0
+                                      : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                                 ),
                                 itemCount: displayList.length,
                                 itemBuilder: (context, index) {
@@ -223,6 +224,7 @@ class _RolesListScreenState extends State<RolesListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'roles_fab',
         onPressed: () async {
           await Navigator.push(
             context,

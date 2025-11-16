@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -16,7 +15,7 @@ class PermisoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -27,7 +26,7 @@ class PermisoService {
               .toList();
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permisos');
+              apiResponse.error?.toString() ?? 'Error al obtener permisos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -44,7 +43,7 @@ class PermisoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -55,7 +54,7 @@ class PermisoService {
               .toList();
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permisos por módulo');
+              apiResponse.error?.toString() ?? 'Error al obtener permisos por módulo');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -72,7 +71,7 @@ class PermisoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
@@ -80,7 +79,7 @@ class PermisoService {
           return PermisoModel.fromJson(apiResponse.data!);
         } else {
           throw ServerException(
-              apiResponse.error ?? 'Error al obtener permiso');
+              apiResponse.error?.toString() ?? 'Error al obtener permiso');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

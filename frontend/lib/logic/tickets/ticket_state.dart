@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/ticket_model.dart';
-import '../../data/models/paged_result.dart';
+import '../../data/models/ticket/ticket_model.dart';
+import '../../core/api/api_response.dart';
 
 /// Estados para la gestión de tickets
 abstract class TicketState extends Equatable {
@@ -70,7 +70,7 @@ class TicketUpdated extends TicketState {
 /// Acción de ticket ejecutada exitosamente (asignar, resolver, cerrar, etc.)
 class TicketActionSuccess extends TicketState {
   final String message;
-  final TicketModel ticket;
+  final TicketModel? ticket;
 
   const TicketActionSuccess(this.message, this.ticket);
 

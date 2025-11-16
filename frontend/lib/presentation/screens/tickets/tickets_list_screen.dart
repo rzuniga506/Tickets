@@ -11,6 +11,7 @@ import '../../widgets/loading_card.dart';
 import '../../widgets/empty_state.dart';
 import 'ticket_detail_screen.dart';
 import 'ticket_form_screen.dart';
+import 'tickets_kanban_screen.dart';
 
 class TicketsListScreen extends StatefulWidget {
   final TicketListMode mode;
@@ -65,24 +66,13 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
             );
         break;
       case TicketListMode.myTickets:
-        context.read<TicketCubit>().getMisTickets(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              estado: _estadoFilter,
-            );
+        context.read<TicketCubit>().getMisTickets();
         break;
       case TicketListMode.assigned:
-        context.read<TicketCubit>().getTicketsAsignados(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-              estado: _estadoFilter,
-            );
+        context.read<TicketCubit>().getTicketsAsignados();
         break;
       case TicketListMode.pending:
-        context.read<TicketCubit>().getTicketsPendientes(
-              pageNumber: _currentPage,
-              pageSize: _pageSize,
-            );
+        context.read<TicketCubit>().getTicketsPendientes();
         break;
     }
   }
@@ -159,6 +149,21 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
         title: Text(_getTitle()),
         actions: [
           IconButton(
+            icon: const Icon(Icons.view_kanban),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                    create: (context) => getIt<TicketCubit>(),
+                    child: const TicketsKanbanScreen(),
+                  ),
+                ),
+              );
+            },
+            tooltip: 'Vista Kanban',
+          ),
+          IconButton(
             icon: Stack(
               children: [
                 const Icon(Icons.filter_list),
@@ -229,6 +234,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'tickets_fab',
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -293,7 +299,9 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
                   crossAxisCount: columns,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                      ? 1.0
+                      : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                 ),
                 itemCount: state.tickets.items.length +
                     (state.isLoadingMore ? 1 : 0),

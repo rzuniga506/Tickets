@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_response.dart';
 import '../../core/errors/exceptions.dart';
@@ -16,7 +15,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -25,7 +24,7 @@ class DepartamentoService {
               .map((json) => DepartamentoModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener departamentos');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener departamentos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -42,7 +41,7 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<List<dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as List<dynamic>,
         );
 
@@ -51,7 +50,7 @@ class DepartamentoService {
               .map((json) => DepartamentoModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener departamentos activos');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener departamentos activos');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -68,14 +67,14 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return DepartamentoModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener departamento');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener departamento');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -90,26 +89,26 @@ class DepartamentoService {
     try {
       final response = await _apiClient.post(
         '/departamentos',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return DepartamentoModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al crear departamento');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al crear departamento');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al crear departamento: ${response.statusCode}');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al crear departamento: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -121,26 +120,26 @@ class DepartamentoService {
     try {
       final response = await _apiClient.put(
         '/departamentos/$id',
-        body: json.encode(dto.toJson()),
+        data: dto.toJson(),
       );
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return DepartamentoModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al actualizar departamento');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al actualizar departamento');
         }
       } else {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al actualizar departamento: ${response.statusCode}');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al actualizar departamento: ${response.statusCode}');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -154,10 +153,10 @@ class DepartamentoService {
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         final apiResponse = ApiResponse<dynamic>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json,
         );
-        throw ServerException(apiResponse.error ?? 'Error al eliminar departamento');
+        throw ServerException(apiResponse.error?.toString() ?? 'Error al eliminar departamento');
       }
     } catch (e) {
       throw ServerException(e.toString());
@@ -171,14 +170,14 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return DepartamentoModel.fromJson(apiResponse.data!);
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al cambiar estado de departamento');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al cambiar estado de departamento');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');
@@ -195,14 +194,14 @@ class DepartamentoService {
 
       if (response.statusCode == 200) {
         final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
-          json.decode(response.body),
+          response.data,
           (json) => json as Map<String, dynamic>,
         );
 
         if (apiResponse.success && apiResponse.data != null) {
           return apiResponse.data!.map((key, value) => MapEntry(key, value as int));
         } else {
-          throw ServerException(apiResponse.error ?? 'Error al obtener estadísticas');
+          throw ServerException(apiResponse.error?.toString() ?? 'Error al obtener estadísticas');
         }
       } else {
         throw ServerException('Error del servidor: ${response.statusCode}');

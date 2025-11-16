@@ -101,7 +101,8 @@ namespace Tickets.Application.Services.Implementation
 
                 // Distribuciones
                 TicketsPorCategoria = tickets
-                    .GroupBy(t => t.Categoria.ToString())
+                    .Where(t => t.Categoria != null)
+                    .GroupBy(t => t.Categoria!.ToString())
                     .Select(g => new TicketPorCategoriaDto
                     {
                         Categoria = g.Key,
@@ -196,7 +197,8 @@ namespace Tickets.Application.Services.Implementation
 
                 // Distribuciones
                 TicketsPorCategoria = tickets
-                    .GroupBy(t => t.Categoria.ToString())
+                    .Where(t => t.Categoria != null)
+                    .GroupBy(t => t.Categoria!.ToString())
                     .Select(g => new TicketPorCategoriaDto
                     {
                         Categoria = g.Key,

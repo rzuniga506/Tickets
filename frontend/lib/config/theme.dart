@@ -40,6 +40,10 @@ class AppTheme {
   static const Color greyDark = Color(0xFF757575);
   static const Color greyText = Color(0xFF616161);
 
+  // Background colors
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color backgroundDark = Color(0xFF121212);
+
   // Tema claro
   static ThemeData get lightTheme {
     return ThemeData(
@@ -66,12 +70,11 @@ class AppTheme {
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          fontFamily: 'Poppins',
         ),
       ),
 
       // Card
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -121,7 +124,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -133,7 +135,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -153,7 +154,6 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -187,52 +187,43 @@ class AppTheme {
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         displayMedium: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         displaySmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         headlineMedium: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         bodySmall: TextStyle(
           fontSize: 12,
           color: greyText,
-          fontFamily: 'Poppins',
         ),
       ),
 
@@ -249,7 +240,6 @@ class AppTheme {
         deleteIconColor: greyDark,
         labelStyle: const TextStyle(
           color: Colors.black87,
-          fontFamily: 'Poppins',
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 12,

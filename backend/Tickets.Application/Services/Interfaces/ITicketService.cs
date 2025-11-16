@@ -105,6 +105,28 @@ namespace Tickets.Application.Services.Interfaces
         Task<List<TicketDto>> GetSLAProximoVencerAsync(int minutosRestantes = 60);
 
         /// <summary>
+        /// Obtiene tickets donde el usuario ha sido mencionado en comentarios
+        /// </summary>
+        Task<List<TicketDto>> GetTicketsMencionadosAsync(int usuarioId);
+
+        /// <summary>
+        /// Obtiene todos los tickets accesibles para un usuario
+        /// (creados por él, asignados a él, o donde ha sido mencionado)
+        /// </summary>
+        Task<PagedResult<TicketDto>> GetTicketsAccesiblesAsync(
+            int usuarioId,
+            int pageNumber = 1,
+            int pageSize = 10,
+            string? searchTerm = null,
+            EstadoTicket? estado = null,
+            PrioridadTicket? prioridad = null);
+
+        /// <summary>
+        /// Verifica si un usuario tiene acceso para ver un ticket
+        /// </summary>
+        Task<bool> TieneAccesoAsync(int ticketId, int usuarioId, bool esAdmin = false);
+
+        /// <summary>
         /// Obtiene estadísticas de tickets
         /// </summary>
         Task<TicketEstadisticasDto> GetEstadisticasAsync();

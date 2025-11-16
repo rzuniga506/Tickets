@@ -7,14 +7,16 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../logic/usuarios/usuario_cubit.dart';
 import '../../../logic/usuarios/usuario_state.dart';
-import '../../../data/models/ticket_model.dart';
+import '../../../logic/comentarios/comentario_cubit.dart';
+import '../../../data/models/ticket/ticket_model.dart';
+import '../../../data/models/user/user_model.dart';
 import '../../../config/constants.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/di/injection.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/priority_badge.dart';
-import '../../widgets/loading_card.dart';
+import '../../widgets/comentarios_section.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int ticketId;
@@ -88,7 +90,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
           // Mantener el ticket visible durante acciones
           if (state is TicketActionSuccess && state.ticket != null) {
-            return _buildTicketDetail(state.ticket);
+            return _buildTicketDetail(state.ticket!);
           }
 
           return Center(
@@ -145,7 +147,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    ticket.titulo,
+                    ticket.asunto,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -203,20 +205,15 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   _buildInfoRow(
-                    icon: Icons.category,
-                    label: 'Categoría',
-                    value: ticket.categoria.displayName,
-                  ),
-                  _buildInfoRow(
                     icon: Icons.person,
                     label: 'Creado por',
-                    value: ticket.usuario.nombreCompleto,
+                    value: ticket.solicitanteNombre,
                   ),
-                  if (ticket.tecnico != null)
+                  if (ticket.tecnicoAsignadoNombre != null)
                     _buildInfoRow(
                       icon: Icons.engineering,
                       label: 'Técnico asignado',
-                      value: ticket.tecnico!.nombreCompleto,
+                      value: ticket.tecnicoAsignadoNombre!,
                       valueColor: AppTheme.primaryColor,
                     ),
                   _buildInfoRow(
@@ -248,11 +245,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       label: 'Fecha de cierre',
                       value: _formatDate(ticket.fechaCierre!),
                     ),
-                  if (ticket.fechaLimite != null)
+                  if (ticket.fechaLimiteSLA != null)
                     _buildInfoRow(
                       icon: Icons.event,
                       label: 'Fecha límite (SLA)',
-                      value: _formatDate(ticket.fechaLimite!),
+                      value: _formatDate(ticket.fechaLimiteSLA!),
                       valueColor: ticket.slaVencido ? AppTheme.errorColor : null,
                     ),
                 ],
@@ -294,7 +291,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ],
 
           // Evaluación (si existe)
-          if (ticket.calificacion != null) ...[
+          if (ticket.calificacionServicio != null) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -317,7 +314,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     Row(
                       children: List.generate(5, (index) {
                         return Icon(
-                          index < ticket.calificacion!
+                          index < ticket.calificacionServicio!
                               ? Icons.star
                               : Icons.star_border,
                           color: AppTheme.warningColor,
@@ -338,6 +335,43 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             ),
             const SizedBox(height: 16),
           ],
+
+          // Sección de comentarios
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, authState) {
+                  if (authState is! Authenticated) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return BlocProvider(
+                    create: (context) => getIt<ComentarioCubit>(),
+                    child: BlocProvider(
+                      create: (context) => getIt<UsuarioCubit>()..getUsuarios(pageSize: 100),
+                      child: BlocBuilder<UsuarioCubit, UsuarioState>(
+                        builder: (context, usuarioState) {
+                          // Obtener lista de usuarios disponibles para menciones
+                          List<UserModel> availableUsers = [];
+                          if (usuarioState is UsuariosLoaded) {
+                            availableUsers = usuarioState.usuarios.items;
+                          }
+
+                          return ComentariosSection(
+                            ticketId: ticket.id,
+                            currentUserId: authState.user.id,
+                            availableUsers: availableUsers,
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // Botones de acción
           BlocBuilder<AuthCubit, AuthState>(
@@ -394,11 +428,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 
-  Widget _buildActionButtons(TicketModel ticket, dynamic user) {
+  Widget _buildActionButtons(TicketModel ticket, UserModel user) {
     final isAdmin = user.rol == RolUsuario.administrador;
     final isTecnico = user.rol == RolUsuario.tecnico;
-    final isCreador = ticket.usuario.id == user.id;
-    final isAsignado = ticket.tecnico?.id == user.id;
+    final isCreador = ticket.solicitanteId == user.id;
+    final isAsignado = ticket.tecnicoAsignadoId == user.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -460,7 +494,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ),
 
         // Evaluar ticket (creador)
-        if (isCreador && ticket.estado == EstadoTicket.cerrado && ticket.calificacion == null)
+        if (isCreador && ticket.estado == EstadoTicket.cerrado && ticket.calificacionServicio == null)
           ElevatedButton.icon(
             onPressed: () => _showEvaluarDialog(ticket),
             icon: const Icon(Icons.star),
@@ -524,6 +558,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
     if (!mounted) return;
 
+    // Capturar el TicketCubit antes de abrir el diálogo
+    final ticketCubit = context.read<TicketCubit>();
+
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -579,7 +616,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         selected: isAssigned,
                         onTap: () {
                           Navigator.pop(dialogContext);
-                          context.read<TicketCubit>().asignarTecnico(ticket.id, tecnico.id);
+                          ticketCubit.asignarTecnico(ticket.id, tecnico.id);
                         },
                       );
                     },
@@ -650,8 +687,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               if (controller.text.isNotEmpty) {
                 Navigator.pop(context);
                 context.read<TicketCubit>().resolverTicket(
-                      ticket.id,
-                      controller.text,
+                      ticketId: ticket.id,
+                      solucion: controller.text,
+                      tipoSolucion: TipoSolucion.resuelto, // Valor por defecto
                     );
               }
             },

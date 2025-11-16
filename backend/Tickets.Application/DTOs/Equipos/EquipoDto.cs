@@ -16,8 +16,33 @@ namespace Tickets.Application.DTOs.Equipos
         public string? CodigoQR { get; set; }
         public string? Modelo { get; set; }
         public string? EspecificacionesJson { get; set; }
+        public TipoEquipo Tipo { get; set; }
+        public string TipoNombre { get; set; } = string.Empty;
         public EstadoEquipo Estado { get; set; }
         public string EstadoNombre { get; set; } = string.Empty;
+
+        // Campos comunes - Información del fabricante
+        public string? Marca { get; set; }
+        public string? Proveedor { get; set; }
+        public string? SKU { get; set; }
+        public string? NumeroOrdenCompra { get; set; }
+        public string? UbicacionFisica { get; set; }
+
+        // Hardware - Computadoras/Laptops
+        public string? Procesador { get; set; }
+        public int? RamGB { get; set; }
+        public int? DiscoDuroCapacidadGB { get; set; }
+        public string? TipoAlmacenamiento { get; set; }
+
+        // Red - Computadoras/Dispositivos
+        public string? MacAddress { get; set; }
+        public string? DireccionIP { get; set; }
+        public string? Hostname { get; set; }
+
+        // Sistema Operativo - Computadoras/Laptops
+        public string? SistemaOperativo { get; set; }
+        public string? VersionSO { get; set; }
+        public string? LicenciaSO { get; set; }
         public CondicionEquipo Condicion { get; set; }
         public string CondicionNombre { get; set; } = string.Empty;
         public decimal? CostoAdquisicion { get; set; }

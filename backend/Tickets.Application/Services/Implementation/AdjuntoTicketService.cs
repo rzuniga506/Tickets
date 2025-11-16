@@ -175,6 +175,104 @@ namespace Tickets.Application.Services.Implementation
             return await GetByIdAsync(adjunto.Id);
         }
 
+        public async Task<List<AdjuntoTicketDto>> UploadMultipleAsync(List<IFormFile> files, int ticketId, int usuarioId)
+        {
+            // Validaciones iniciales
+            if (files == null || !files.Any())
+            {
+                throw new BusinessException("No se han proporcionado archivos");
+            }
+
+            // Validar límite de archivos (máximo 10 a la vez)
+            const int maxFilesPerUpload = 10;
+            if (files.Count > maxFilesPerUpload)
+            {
+                throw new BusinessException($"No se pueden subir más de {maxFilesPerUpload} archivos a la vez");
+            }
+
+            // Verificar que el ticket existe
+            var ticket = await _unitOfWork.Repository<Ticket>().GetByIdAsync(ticketId);
+            if (ticket == null)
+            {
+                throw new NotFoundException($"Ticket con ID {ticketId} no encontrado");
+            }
+
+            // Verificar que el usuario existe
+            var usuario = await _unitOfWork.Repository<Usuario>().GetByIdAsync(usuarioId);
+            if (usuario == null)
+            {
+                throw new NotFoundException($"Usuario con ID {usuarioId} no encontrado");
+            }
+
+            var uploadedFiles = new List<AdjuntoTicketDto>();
+            var errors = new List<string>();
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    // Validaciones individuales
+                    if (file == null || file.Length == 0)
+                    {
+                        errors.Add($"Archivo vacío ignorado");
+                        continue;
+                    }
+
+                    if (file.Length > _fileStorageService.GetMaxFileSizeBytes())
+                    {
+                        errors.Add($"{file.FileName}: Excede el tamaño máximo de {_fileStorageService.GetMaxFileSizeBytes() / (1024 * 1024)} MB");
+                        continue;
+                    }
+
+                    if (!_allowedMimeTypes.Contains(file.ContentType.ToLower()))
+                    {
+                        errors.Add($"{file.FileName}: Tipo de archivo no permitido ({file.ContentType})");
+                        continue;
+                    }
+
+                    // Guardar archivo
+                    var (rutaRelativa, nombreArchivoServidor) = await _fileStorageService.SaveFileAsync(file, "tickets");
+
+                    // Crear registro en base de datos
+                    var adjunto = new AdjuntoTicket
+                    {
+                        NombreArchivo = file.FileName,
+                        NombreArchivoServidor = nombreArchivoServidor,
+                        RutaArchivo = rutaRelativa,
+                        TipoMime = file.ContentType,
+                        TamanoBytes = file.Length,
+                        Extension = Path.GetExtension(file.FileName),
+                        TicketId = ticketId,
+                        UsuarioId = usuarioId,
+                        CreadoPor = usuario.Email
+                    };
+
+                    await _unitOfWork.Repository<AdjuntoTicket>().AddAsync(adjunto);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // Agregar a la lista de subidos exitosamente
+                    var adjuntoDto = await GetByIdAsync(adjunto.Id);
+                    uploadedFiles.Add(adjuntoDto);
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"{file.FileName}: {ex.Message}");
+                }
+            }
+
+            // Si ningún archivo se subió exitosamente, lanzar excepción
+            if (!uploadedFiles.Any())
+            {
+                var errorMessage = string.Join("; ", errors);
+                throw new BusinessException($"No se pudo subir ningún archivo. Errores: {errorMessage}");
+            }
+
+            // Si hubo errores parciales, se podrían agregar a un log o notificación
+            // Por ahora, se retornan solo los archivos exitosos
+
+            return uploadedFiles;
+        }
+
         public async Task<(byte[] contenido, string nombreArchivo, string tipoMime)> DownloadAsync(int id)
         {
             var adjunto = await _unitOfWork.Repository<AdjuntoTicket>()

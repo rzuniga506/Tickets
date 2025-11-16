@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Tickets.Application.DTOs.Comentarios
@@ -15,5 +16,10 @@ namespace Tickets.Application.DTOs.Comentarios
 
         [Required(ErrorMessage = "El ID del ticket es requerido")]
         public int TicketId { get; set; }
+
+        /// <summary>
+        /// IDs de usuarios mencionados con @
+        /// </summary>
+        public List<int> UsuariosIdMencionados { get; set; } = new List<int>();
     }
 }

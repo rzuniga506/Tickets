@@ -16,6 +16,8 @@ namespace Tickets.Application.DTOs.Tickets
         public string PrioridadNombre { get; set; } = string.Empty;
         public EstadoTicket Estado { get; set; }
         public string EstadoNombre { get; set; } = string.Empty;
+        public TipoSoporte TipoSoporte { get; set; }
+        public string TipoSoporteNombre { get; set; } = string.Empty;
         public DateTime FechaApertura { get; set; }
         public DateTime? FechaAsignacion { get; set; }
         public DateTime? FechaInicioProceso { get; set; }
@@ -43,6 +45,8 @@ namespace Tickets.Application.DTOs.Tickets
         public int? EquipoId { get; set; }
         public string? EquipoNombre { get; set; }
         public string? EquipoCodigoInterno { get; set; }
+        public int? CategoriaTicketId { get; set; }
+        public string? CategoriaTicketNombre { get; set; }
 
         // Auditoria
         public DateTime FechaCreacion { get; set; }

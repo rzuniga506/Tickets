@@ -156,6 +156,7 @@ class _PermisosViewScreenState extends State<PermisosViewScreen> {
                 child: _filteredPermisos.isEmpty
                     ? const EmptyState(
                         icon: Icons.security,
+                        title: 'Sin permisos',
                         message: 'No se encontraron permisos',
                       )
                     : RefreshIndicator(
@@ -171,7 +172,9 @@ class _PermisosViewScreenState extends State<PermisosViewScreen> {
                                   crossAxisCount: columns,
                                   mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                                      ? 1.0
+                                      : (constraints.maxWidth >= Breakpoints.desktop ? 0.75 : 0.65),
                                 ),
                                 itemCount: groupedPermisos.entries.length,
                                 itemBuilder: (context, index) {

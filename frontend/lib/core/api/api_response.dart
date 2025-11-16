@@ -77,9 +77,27 @@ class PagedResult<T> {
       items: (json['items'] as List)
           .map((item) => fromJsonT(item as Map<String, dynamic>))
           .toList(),
-      totalRecords: json['totalRecords'] ?? 0,
-      pageNumber: json['pageNumber'] ?? 1,
+      totalRecords: json['totalRecords'] ?? json['totalItems'] ?? 0,
+      pageNumber: json['pageNumber'] ?? json['currentPage'] ?? 1,
       pageSize: json['pageSize'] ?? 10,
+    );
+  }
+
+  // Getter aliases para compatibilidad
+  int get totalItems => totalRecords;
+  bool get hasMore => hasNextPage;
+
+  PagedResult<T> copyWith({
+    List<T>? items,
+    int? totalRecords,
+    int? pageNumber,
+    int? pageSize,
+  }) {
+    return PagedResult<T>(
+      items: items ?? this.items,
+      totalRecords: totalRecords ?? this.totalRecords,
+      pageNumber: pageNumber ?? this.pageNumber,
+      pageSize: pageSize ?? this.pageSize,
     );
   }
 }

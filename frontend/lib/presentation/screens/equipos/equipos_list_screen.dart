@@ -232,6 +232,7 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'equipos_fab',
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -296,7 +297,9 @@ class _EquiposListScreenState extends State<EquiposListScreen> {
                   crossAxisCount: columns,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.5 : 1.2,
+                  childAspectRatio: (!constraints.maxWidth.isFinite || constraints.maxWidth <= 0)
+                      ? 1.0
+                      : (constraints.maxWidth >= Breakpoints.desktop ? 1.0 : 0.9),
                 ),
                 itemCount: state.equipos.items.length +
                     (state.isLoadingMore ? 1 : 0),

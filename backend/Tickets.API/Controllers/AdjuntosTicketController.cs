@@ -63,6 +63,22 @@ namespace Tickets.API.Controllers
         }
 
         /// <summary>
+        /// Sube múltiples archivos adjuntos a un ticket
+        /// </summary>
+        [HttpPost("upload-multiple")]
+        public async Task<ActionResult<ApiResponse<List<AdjuntoTicketDto>>>> UploadMultiple(
+            [FromForm] List<IFormFile> files,
+            [FromForm] int ticketId)
+        {
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var result = await _adjuntoService.UploadMultipleAsync(files, ticketId, usuarioId);
+
+            return Ok(ApiResponse<List<AdjuntoTicketDto>>.SuccessResponse(
+                result,
+                $"{result.Count} archivo(s) subido(s) exitosamente"));
+        }
+
+        /// <summary>
         /// Descarga un archivo adjunto
         /// </summary>
         [HttpGet("download/{id}")]

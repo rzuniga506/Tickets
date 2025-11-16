@@ -91,9 +91,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.SetIsOriginAllowed(origin =>
+                {
+                    // Permitir todos los orígenes de localhost en desarrollo
+                    if (origin.StartsWith("http://localhost") || origin.StartsWith("https://localhost") ||
+                        origin.StartsWith("http://127.0.0.1") || origin.StartsWith("https://127.0.0.1"))
+                    {
+                        return true;
+                    }
+                    return false;
+                })
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 
     options.AddPolicy("Production", policy =>
@@ -119,6 +129,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 // Servicios de Infraestructura
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Servicios de Aplicación
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -220,8 +231,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-// CORS
-var corsPolicy = app.Environment.IsDevelopment() ? "AllowAll" : "Production";
+// CORS - Usar AllowAll para desarrollo (acepta todos los puertos de localhost)
+var corsPolicy = "AllowAll"; // Temporalmente forzado para desarrollo
 app.UseCors(corsPolicy);
 
 // Configuración de Archivos Estáticos (uploads)

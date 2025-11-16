@@ -7,7 +7,7 @@ import '../../../logic/equipos/equipo_state.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/auth/auth_state.dart';
 import '../../../data/models/equipo/equipo_model.dart';
-import '../../../config/constants.dart';
+import '../../../data/models/user/user_model.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../widgets/equipment_status_chip.dart';
@@ -99,7 +99,7 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
           }
 
           if (state is EquipoActionSuccess && state.equipo != null) {
-            return _buildEquipoDetail(state.equipo);
+            return _buildEquipoDetail(state.equipo!);
           }
 
           if (state is QRGenerated) {
@@ -211,6 +211,11 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   _buildInfoRow(
+                    icon: Icons.category,
+                    label: 'Tipo de Equipo',
+                    value: equipo.tipoNombre,
+                  ),
+                  _buildInfoRow(
                     icon: Icons.inventory_2,
                     label: 'Código Interno',
                     value: equipo.codigoInterno,
@@ -236,6 +241,186 @@ class _EquipoDetailScreenState extends State<EquipoDetailScreen> {
             ),
           ),
           const SizedBox(height: 16),
+
+          // Información de Inventario
+          if (equipo.marca != null ||
+              equipo.proveedor != null ||
+              equipo.sku != null ||
+              equipo.numeroOrdenCompra != null ||
+              equipo.ubicacionFisica != null) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Información de Inventario',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (equipo.marca != null)
+                      _buildInfoRow(
+                        icon: Icons.business,
+                        label: 'Marca',
+                        value: equipo.marca!,
+                      ),
+                    if (equipo.proveedor != null)
+                      _buildInfoRow(
+                        icon: Icons.store,
+                        label: 'Proveedor',
+                        value: equipo.proveedor!,
+                      ),
+                    if (equipo.sku != null)
+                      _buildInfoRow(
+                        icon: Icons.inventory_2,
+                        label: 'SKU',
+                        value: equipo.sku!,
+                        monospace: true,
+                        copyable: true,
+                      ),
+                    if (equipo.numeroOrdenCompra != null)
+                      _buildInfoRow(
+                        icon: Icons.receipt_long,
+                        label: 'Orden de Compra',
+                        value: equipo.numeroOrdenCompra!,
+                      ),
+                    if (equipo.ubicacionFisica != null)
+                      _buildInfoRow(
+                        icon: Icons.location_on,
+                        label: 'Ubicación Física',
+                        value: equipo.ubicacionFisica!,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Especificaciones de Hardware
+          if (equipo.esDispositivoComputo &&
+              (equipo.procesador != null ||
+                  equipo.ramGB != null ||
+                  equipo.discoDuroCapacidadGB != null ||
+                  equipo.tipoAlmacenamiento != null ||
+                  equipo.sistemaOperativo != null ||
+                  equipo.versionSO != null ||
+                  equipo.licenciaSO != null)) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Especificaciones de Hardware',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (equipo.procesador != null)
+                      _buildInfoRow(
+                        icon: Icons.memory,
+                        label: 'Procesador',
+                        value: equipo.procesador!,
+                      ),
+                    if (equipo.ramGB != null)
+                      _buildInfoRow(
+                        icon: Icons.developer_board,
+                        label: 'RAM',
+                        value: '${equipo.ramGB} GB',
+                      ),
+                    if (equipo.discoDuroCapacidadGB != null)
+                      _buildInfoRow(
+                        icon: Icons.storage,
+                        label: 'Capacidad de Disco',
+                        value: '${equipo.discoDuroCapacidadGB} GB',
+                      ),
+                    if (equipo.tipoAlmacenamiento != null)
+                      _buildInfoRow(
+                        icon: Icons.save,
+                        label: 'Tipo de Almacenamiento',
+                        value: equipo.tipoAlmacenamiento!,
+                      ),
+                    if (equipo.sistemaOperativo != null)
+                      _buildInfoRow(
+                        icon: Icons.computer,
+                        label: 'Sistema Operativo',
+                        value: equipo.sistemaOperativo!,
+                      ),
+                    if (equipo.versionSO != null)
+                      _buildInfoRow(
+                        icon: Icons.numbers,
+                        label: 'Versión SO',
+                        value: equipo.versionSO!,
+                      ),
+                    if (equipo.licenciaSO != null)
+                      _buildInfoRow(
+                        icon: Icons.key,
+                        label: 'Licencia SO',
+                        value: equipo.licenciaSO!,
+                        monospace: true,
+                        copyable: true,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Información de Red
+          if (equipo.requiereInfoRed &&
+              (equipo.macAddress != null ||
+                  equipo.direccionIP != null ||
+                  equipo.hostname != null)) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Información de Red',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (equipo.macAddress != null)
+                      _buildInfoRow(
+                        icon: Icons.settings_ethernet,
+                        label: 'Dirección MAC',
+                        value: equipo.macAddress!,
+                        monospace: true,
+                        copyable: true,
+                      ),
+                    if (equipo.direccionIP != null)
+                      _buildInfoRow(
+                        icon: Icons.network_check,
+                        label: 'Dirección IP',
+                        value: equipo.direccionIP!,
+                        monospace: true,
+                        copyable: true,
+                      ),
+                    if (equipo.hostname != null)
+                      _buildInfoRow(
+                        icon: Icons.dns,
+                        label: 'Hostname',
+                        value: equipo.hostname!,
+                        monospace: true,
+                        copyable: true,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Información Financiera
           if (equipo.costoAdquisicion != null || equipo.fechaAdquisicion != null) ...[

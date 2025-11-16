@@ -124,6 +124,14 @@ enum TipoSolucion {
   derivado     // 3 - Derivado a otra área
 }
 
+/// Tipos de soporte (alineado con TipoSoporte.cs del backend)
+enum TipoSoporte {
+  soporteTecnico,  // 0 - Soporte técnico general (hardware, software, redes)
+  softland,        // 1 - Soporte específico para sistema Softland
+  dodi,            // 2 - Soporte específico para sistema Dodi
+  otro             // 3 - Otros tipos de soporte no clasificados
+}
+
 /// Tipos de notificación
 enum TipoNotificacion {
   ticketNuevo,
@@ -207,6 +215,53 @@ extension CondicionEquipoExtension on CondicionEquipo {
   }
 }
 
+extension TipoEquipoExtension on TipoEquipo {
+  String get displayName {
+    switch (this) {
+      case TipoEquipo.computadora:
+        return 'Computadora';
+      case TipoEquipo.laptop:
+        return 'Laptop';
+      case TipoEquipo.servidor:
+        return 'Servidor';
+      case TipoEquipo.impresora:
+        return 'Impresora';
+      case TipoEquipo.scanner:
+        return 'Scanner';
+      case TipoEquipo.router:
+        return 'Router';
+      case TipoEquipo.switch_:
+        return 'Switch';
+      case TipoEquipo.firewall:
+        return 'Firewall';
+      case TipoEquipo.monitor:
+        return 'Monitor';
+      case TipoEquipo.teclado:
+        return 'Teclado';
+      case TipoEquipo.mouse:
+        return 'Mouse';
+      case TipoEquipo.telefono:
+        return 'Teléfono';
+      case TipoEquipo.tablet:
+        return 'Tablet';
+      case TipoEquipo.otro:
+        return 'Otro';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend
+  int toJson() {
+    if (this == TipoEquipo.otro) return 99;
+    return index;
+  }
+
+  /// Crea un TipoEquipo desde valor entero del backend
+  static TipoEquipo fromJson(int value) {
+    if (value == 99) return TipoEquipo.otro;
+    return TipoEquipo.values[value];
+  }
+}
+
 extension EstadoTicketExtension on EstadoTicket {
   String get displayName {
     switch (this) {
@@ -281,6 +336,29 @@ extension TipoSolucionExtension on TipoSolucion {
   /// Crea un TipoSolucion desde valor entero del backend
   static TipoSolucion fromJson(int value) {
     return TipoSolucion.values[value];
+  }
+}
+
+extension TipoSoporteExtension on TipoSoporte {
+  String get displayName {
+    switch (this) {
+      case TipoSoporte.soporteTecnico:
+        return 'Soporte Técnico';
+      case TipoSoporte.softland:
+        return 'Softland';
+      case TipoSoporte.dodi:
+        return 'Dodi';
+      case TipoSoporte.otro:
+        return 'Otro';
+    }
+  }
+
+  /// Convierte el enum a valor entero para el backend (0-3)
+  int toJson() => index;
+
+  /// Crea un TipoSoporte desde valor entero del backend
+  static TipoSoporte fromJson(int value) {
+    return TipoSoporte.values[value];
   }
 }
 

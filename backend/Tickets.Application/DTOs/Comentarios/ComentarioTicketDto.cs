@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Tickets.Application.DTOs.Comentarios
 {
@@ -19,8 +20,26 @@ namespace Tickets.Application.DTOs.Comentarios
         public string UsuarioNombre { get; set; } = string.Empty;
         public string UsuarioEmail { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Usuarios mencionados en el comentario
+        /// </summary>
+        public List<MencionDto> Menciones { get; set; } = new List<MencionDto>();
+
         // Auditoría
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
+    }
+
+    /// <summary>
+    /// DTO para información de mención
+    /// </summary>
+    public class MencionDto
+    {
+        public int Id { get; set; }
+        public int UsuarioMencionadoId { get; set; }
+        public string UsuarioMencionadoNombre { get; set; } = string.Empty;
+        public string UsuarioMencionadoEmail { get; set; } = string.Empty;
+        public bool Leida { get; set; }
+        public DateTime? FechaLeida { get; set; }
     }
 }

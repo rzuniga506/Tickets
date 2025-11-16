@@ -209,7 +209,9 @@ class AdaptiveListGrid extends StatelessWidget {
               crossAxisCount: columns,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: constraints.maxWidth >= Breakpoints.desktop ? 1.2 : 1.0,
+              childAspectRatio: (constraints.maxWidth.isFinite && constraints.maxWidth > 0)
+                  ? (constraints.maxWidth >= Breakpoints.desktop ? 1.2 : 1.0)
+                  : 1.0,
             ),
             itemCount: itemCount,
             itemBuilder: itemBuilder,

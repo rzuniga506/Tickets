@@ -19,6 +19,11 @@ namespace Tickets.Application.DTOs.Tickets
         [Required(ErrorMessage = "La prioridad es requerida")]
         public PrioridadTicket Prioridad { get; set; }
 
+        [Required(ErrorMessage = "El tipo de soporte es requerido")]
+        public TipoSoporte TipoSoporte { get; set; }
+
         public int? EquipoId { get; set; }
+
+        public int? CategoriaTicketId { get; set; }
     }
 }

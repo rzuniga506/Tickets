@@ -8,6 +8,10 @@ class ApiClient {
   late final Dio _dio;
   final SecureStorage _storage;
 
+  // Getters públicos
+  SecureStorage get storage => _storage;
+  String get baseUrl => AppConstants.apiBaseUrl;
+
   ApiClient(this._storage) {
     _dio = Dio(
       BaseOptions(

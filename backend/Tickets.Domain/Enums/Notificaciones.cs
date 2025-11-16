@@ -12,6 +12,7 @@ namespace Tickets.Domain.Enums
         TicketActualizado = 4,
         TicketResuelto = 5,
         TicketComentario = 6,
+        Mencion = 13,
         EquipoAsignado = 7,
         EquipoLiberado = 8,
         SoftwarePorVencer = 9,
